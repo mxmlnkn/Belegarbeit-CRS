@@ -77,12 +77,16 @@ Geany
 *.tbz2
 *.tgz
 
+# Python
+*.pyc
+
 # hidden files
 .*
 !/.git*
 .*~
 *~
 *.old
+*.bak
 /build*/
 
 .fuse*

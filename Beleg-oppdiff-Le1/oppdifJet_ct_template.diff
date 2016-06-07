@@ -1,0 +1,44 @@
+166c166
+< libs( "libequations.so" );
+---
+> libs( "libequations.so", "postChi.so" );
+336a337,340
+>             Le
+>             {
+>                 updateType constant;
+>             }
+353c357,362
+<     F
+---
+>     LeiDefault
+>     {
+>         write YES; // gebe Lewis-Zahlen aus
+>         fixedValue 1.0;
+>     }
+>     F // Pseudo velocity f like in lecture = rho u / 2
+358c367
+<     G
+---
+>     G // pseudo velocity G = rho v
+362c371
+<     pEig
+---
+>     pEig // Druckeigenwert 1/r dp/dr
+370a380
+>         // P defined as 101.325kPa in smooke.ulf
+405c415
+<               fixedValue 0.0;
+---
+>         //      fixedValue 0.0;
+433a445,455
+>
+> postProcessing
+> {
+>     eqID postProcess_SDR;
+>     species
+>     {
+>         CO  1.0;
+>         CO2 1.0;
+>     }
+> }
+>

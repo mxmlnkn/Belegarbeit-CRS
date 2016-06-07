@@ -1,0 +1,63 @@
+# Questions
+#   - Where is the distance of the two jets? -> AXIS_MIN and AXIS_MAX ?
+#   - Doesn't compile for Le=1 (is bug) -> try for Le!=1 -> This affects the lines adding Lewis numbers (sed commands below)
+
+# helpful for creating this document:
+#   diff oppdifJet_ct_CH4Air_smooke.ulf /home/knespel/CRS/ulf/oppdifJetLewis1/oppdifJet_ct_CH4Air_smooke.ulf
+#   diff oppdifJet_ct_template.ulf /home/knespel/CRS/ulf/oppdifJetLewis1/oppdifJet_ct_template.ulf
+
+
+
+
+# Register ulf in path
+
+export ULF_VERSION=1.07-1
+export ULF_MAIN=/opt/ulf
+export PATH=$PATH:$ULF_MAIN
+
+# copy example files of counter flow (opposed jets) diffusion flame
+ulf -x
+cp setups/oppdifJet/oppdifJet_ct_CH4Air_smooke.gnu setups/oppdifJet/oppdifJet_ct_CH4Air_smooke.ulf setups/oppdifJet/oppdifJet_ct_CH4Air_smooke.ulf setups/oppdifJet/ch4_smooke.xml setups/oppdifJet/oppdifJet_ct_template.ulf .
+rm -r ./setups
+
+# Make adjustments to smooke.ulf (chemical and fluid setup)
+sed -i 's|^#define U_LOWER|//#define U_LOWER|;
+s|^#define U_UPPER|//#define U_UPPER|;
+s|^#define Y1_FUEL|//#define Y1_FUEL|;
+s|^#define Y2_FUEL|//#define Y2_FUEL|;
+s|^#define Y3_FUEL|//#define Y3_FUEL|;
+s|^#define Y4_FUEL|//#define Y4_FUEL|;
+s|^#define Y5_FUEL|//#define Y5_FUEL|;
+s|^#define Y6_FUEL|//#define Y6_FUEL|;
+s|^#define Y1_OXID|//#define Y1_OXID|;
+s|^#define Y2_OXID|//#define Y2_OXID|;
+s|^#define Y3_OXID|//#define Y3_OXID|;
+s|^#define Y4_OXID|//#define Y4_OXID|;
+s|^#define Y5_OXID|//#define Y5_OXID|;
+s|^#define Y6_OXID|//#define Y6_OXID|;
+' oppdifJet_ct_CH4Air_smooke.ulf
+printf "\n#include smooke-changes.ulf\n" >> oppdifJet_ct_CH4Air_smooke.ulf
+
+ulf -z postChi.so postChi.cpp
+
+
+# Make Lewis-number constant 1
+if ! grep -qE 'Le$' oppdifJet_ct_template.ulf; then
+    sed -i '/mixtureEntries/{N;s|mixtureEntries\n        {|mixtureEntries\n        {\n            Le\n            {\n                updateType constant;\n            }|}' oppdifJet_ct_template.ulf
+fi
+
+# Insert Settings to set Lewis number for all species to 1.0 on startup and also write all Lewis numbers out
+#  search for fields, but only replace fields if on next line a curly brace is found. Check this by loading next line if 'fields' found.
+if ! grep -qE 'LeiDefault$' oppdifJet_ct_template.ulf; then
+    sed -i "/fields/{N;s|fields\n{|fields\n{\n    LeiDefault\n    {\n        write YES; // output Lewis numbers for debugging\n        fixedValue 1.0;\n    }|}" oppdifJet_ct_template.ulf
+fi
+
+
+#cat > plotScurve.sh << 'EOF'
+#   # see pltScurve.sh (later copy this into this file ...)
+#EOF
+
+chmod u+x plotScurve.sh
+
+
+

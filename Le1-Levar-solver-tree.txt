@@ -1,0 +1,478 @@
+knespel@vtc060:~$ cd Beleg-flamelet-Le1
+knespel@vtc060:~/Beleg-flamelet-Le1$ ulf -f flameletLe1_CH4_air.ulf -p
+# RUNNING VERSION '1.07-1'
++==========================================================================================================+
+|                                                                                                          |
+|                                                                                              #           |
+|                                                                                             ##           |
+|                                                                                            ###           |
+|                                                                                          ####            |
+|                                                          TU Freiberg                    ######           |
+|                                                          Chair of Numerical            #### ##           |
+|                                                          Thermo-Fluid-Dynamics         ########          |
+|        Universal Laminar Flame Solver                                                  #### #####        |
+|                                                                                          ##########      |
+|                                                                                                #####     |
+|                            ###    ##########             ####  ################################# ###     |
+|                           ####  ####                    #####     ####   ####          ######### ###     |
+|                          ####  ####                    ######     ###   ###                  ### ###     |
+|         ####      ####  ################              ###  ###   ###   #########   ###       ### ##      |
+|        ####      ####  ################              ###   ###  ###   ########    ###       ### ###      |
+|       ####       ###  #### ####                     ###    ### ###   ###         ##       ### ###        |
+|       #####   #####  #### ####                     ###      #####   ###         ###    ##### ###         |
+|        ##########   ####  ###                     ###       #############      ########## #####          |
+|                                                        #######################################           |
+|                                                      ###               #####################             |
+|                                                                             ############                 |
+|                                                                                                          |
++==========================================================================================================+
+
+ULF run at Mon Sep 14 19:12:18 2015
+
+
++ options [0x1531cc0] = {
+  + END_TIME = 1.0 [0x1531fe0]
+  + WRITE_INTERVAL = 1.0 [0x1532070]
+  + RESULT_BASENAME = flameletLe1Template_ [0x1532100]
+  + RESTART_OPTION = NO [0x15321a0]
+  + RESTART_FILE = flameletLe1_1.0.ulf [0x1532230]
+  + START_FILE = startProfiles.ulf [0x15322d0]
+  + Z_STOIC = 0.055 [0x1532370]
+  + P = 100000.0 [0x1532400]
+  + AXIS_LENGTH = 201 [0x1532490]
+  + AXIS_MIN = 0.0 [0x1532520]
+  + AXIS_MAX = 1.0 [0x15325b0]
+  + MECHANISM = ch4_smooke.xml [0x1532640]
+  + GAS_ID = gas [0x15326d0]
+  + options [0x1532760] = {
+    + runTime [0x1532a80] = {
+      + startTime = 0.0 [0x1532af0]
+      + endTime = 1.0 [0x1532b80]
+      + writeInterval = 1.0 [0x1532c10]
+      + timePrecision = 5 [0x1532ca0]
+    - }
+    + solution [0x1532d30] = {
+      + requiredFields [0x1532da0] = {
+        + chi = chi [0x1532e10]
+      - }
+      + solutionEntries [0x1532ea0] = {
+        + T [0x1532f10] = {
+          + eqID = T_flameletLe1 [0x1532f80]
+          + minValue = 280.0 [0x1533010]
+          + maxValue = 3500.0 [0x15330a0]
+          + boundaryConditions [0x1533130] = {
+            + bounds [0x15331b0] = {
+              + patchList [0x1533220] = {
+                + oxidizer = oxidizer [0x1533290]
+                + fuel = fuel [0x1533320]
+              - }
+              + eqID = dirichlet [0x15333b0]
+            - }
+          - }
+        - }
+        + Yi [0x1533440] = {
+          + eqID = Yi_flameletLe1 [0x15334b0]
+          + minValue = 0.0 [0x1533540]
+          + maxValue = 1.0 [0x15335d0]
+          + boundaryConditions [0x1533660] = {
+            + bounds [0x15336e0] = {
+              + patchList [0x1533750] = {
+                + oxidizer = oxidizer [0x15337c0]
+                + fuel = fuel [0x1533850]
+              - }
+              + eqID = dirichlet [0x15338e0]
+            - }
+          - }
+        - }
+      - }
+    - }
+    + solver [0x1533970] = {
+      + solverType = bzzODE [0x15339e0]
+      + absTol = 1e-9 [0x1533a70]
+      + relTol = 1e-6 [0x1533b00]
+      + maxSteps = 100000 [0x1533b90]
+      + maxOrder = 5 [0x1533c20]
+    - }
+    + libs [0x1533cb0] = {
+      + libequations.so = libequations.so [0x1533d20]
+    - }
+    + resultFileBaseName = flameletLe1Template_ [0x1533db0]
+    + resultType = ASCII [0x1533e50]
+    + restart = NO [0x1533ee0]
+    + restartFile = flameletLe1_1.0.ulf [0x1533f70]
+    + restartType = ASCII [0x1534000]
+    + mesh [0x1534090] = {
+      + dimensions = 1 [0x1534100]
+      + constructionFrom = cartesianLimits [0x1534190]
+      + axisNames [0x1534220] = {
+        + Z = Z [0x1534290]
+      - }
+      + axisLength [0x1534320] = {
+        + 201 = 201 [0x1534390]
+      - }
+      + cartesianMin [0x1534420] = {
+        + 0.0 = 0.0 [0x1534490]
+      - }
+      + cartesianMax [0x1534520] = {
+        + 1.0 = 1.0 [0x1534590]
+      - }
+      + patches [0x1534620] = {
+        + oxidizer [0x1534690] = {
+          + patchMin [0x1534700] = {
+            + 0.0 = 0.0 [0x1534770]
+          - }
+          + patchMax [0x1534800] = {
+            + 0.0 = 0.0 [0x1534870]
+          - }
+        - }
+        + fuel [0x1534900] = {
+          + patchMin [0x1534970] = {
+            + 1.0 = 1.0 [0x15349e0]
+          - }
+          + patchMax [0x1534a70] = {
+            + 1.0 = 1.0 [0x1534ae0]
+          - }
+        - }
+      - }
+    - }
+    + mixture [0x1534b70] = {
+      + mainMixture = theMixture [0x1534be0]
+      + theMixture [0x1534c70] = {
+        + mixtureType = CANTERA_MIXTURE [0x1534ce0]
+        + mechanism = ch4_smooke.xml [0x1534d70]
+        + gasId = gas [0x1534e00]
+        + transportType = Mix [0x1534e90]
+        + mixtureEntries [0x1534f20] = {
+          + tdot [0x1534f90] = {
+            + updateType = standard [0x1535000]
+          - }
+          + reactionRate [0x1535090] = {
+            + updateType = standard [0x1535100]
+          - }
+          + hMean [0x1535190] = {
+            + updateType = standard [0x1535200]
+          - }
+        - }
+      - }
+    - }
+    + fields [0x1535290] = {
+      + default [0x1535300] = {
+        + referenceFrame = cellCentered [0x1535370]
+        + interpolate = YES [0x1535400]
+        + frozen = NO [0x1535490]
+        + write = NO [0x1535520]
+        + fixedValue = 0.0 [0x15355b0]
+        + firstOrder = CDS [0x1535640]
+        + secondOrder = CDS [0x15356d0]
+        + diffusive = CDS [0x1535760]
+      - }
+      + YiDefault [0x15357f0] = {
+        + write = YES [0x1535860]
+      - }
+      + chi [0x15358f0] = {
+        + eqID = erfc_startProfile [0x1535960]
+        + eqParameters [0x1535a00] = {
+          + Zst = 0.055 [0x1535a70]
+          + chiSt = 0.25 [0x1535b00]
+        - }
+        + frozen = YES [0x1535b90]
+        + write = YES [0x1535c20]
+      - }
+      + T [0x1535cb0] = {
+        + readFrom = startProfiles.ulf [0x1535d20]
+        + readType = ASCII [0x1535db0]
+        + write = YES [0x1535e40]
+      - }
+      + p [0x1535ed0] = {
+        + fixedValue = 100000.0 [0x1535f40]
+        + write = YES [0x1535fd0]
+      - }
+      + CH4 [0x1536060] = {
+        + readFrom = startProfiles.ulf [0x15360d0]
+        + readType = ASCII [0x1536160]
+        + write = YES [0x15361f0]
+      - }
+      + O2 [0x1536280] = {
+        + readFrom = startProfiles.ulf [0x15362f0]
+        + readType = ASCII [0x1536380]
+        + write = YES [0x1536410]
+      - }
+      + CO2 [0x15364a0] = {
+        + readFrom = startProfiles.ulf [0x1536510]
+        + readType = ASCII [0x15365a0]
+        + write = YES [0x1536630]
+      - }
+      + H2O [0x15366c0] = {
+        + readFrom = startProfiles.ulf [0x1536730]
+        + readType = ASCII [0x15367c0]
+        + write = YES [0x1536850]
+      - }
+      + N2 [0x15368e0] = {
+        + readFrom = startProfiles.ulf [0x1536950]
+        + readType = ASCII [0x15369e0]
+        + write = YES [0x1536a70]
+      - }
+      + rho [0x1536b00] = {
+        + write = YES [0x1536b70]
+      - }
+      + hMean [0x1536c00] = {
+        + write = YES [0x1536c70]
+      - }
+    - }
+  - }
+  + #include = flameletLe1_template.ulf [0x15327d0]
+  + options [0x1532870] = {
+    + CHI_STOIC = 0.25 [0x15328e0]
+  - }
+  + #include = smooke-changes.ulf [0x1532970]
+- }
+
+ULF run took 9.49 s
+
+==== ULF END ====
+knespel@vtc060:~/Beleg-flamelet-Le1$ cd ..
+knespel@vtc060:~$ cd Beleg-flamelet-Le1-Levar/
+knespel@vtc060:~/Beleg-flamelet-Le1-Levar$ ulf -f flameletLe1_CH4_air.ulf -p
+# RUNNING VERSION '1.07-1'
++==========================================================================================================+
+|                                                                                                          |
+|                                                                                              #           |
+|                                                                                             ##           |
+|                                                                                            ###           |
+|                                                                                          ####            |
+|                                                          TU Freiberg                    ######           |
+|                                                          Chair of Numerical            #### ##           |
+|                                                          Thermo-Fluid-Dynamics         ########          |
+|        Universal Laminar Flame Solver                                                  #### #####        |
+|                                                                                          ##########      |
+|                                                                                                #####     |
+|                            ###    ##########             ####  ################################# ###     |
+|                           ####  ####                    #####     ####   ####          ######### ###     |
+|                          ####  ####                    ######     ###   ###                  ### ###     |
+|         ####      ####  ################              ###  ###   ###   #########   ###       ### ##      |
+|        ####      ####  ################              ###   ###  ###   ########    ###       ### ###      |
+|       ####       ###  #### ####                     ###    ### ###   ###         ##       ### ###        |
+|       #####   #####  #### ####                     ###      #####   ###         ###    ##### ###         |
+|        ##########   ####  ###                     ###       #############      ########## #####          |
+|                                                        #######################################           |
+|                                                      ###               #####################             |
+|                                                                             ############                 |
+|                                                                                                          |
++==========================================================================================================+
+
+ULF run at Mon Sep 14 19:12:39 2015
+
+
++ options [0x20e7cc0] = {
+  + END_TIME = 1.0 [0x20e7fe0]
+  + WRITE_INTERVAL = 1.0 [0x20e8070]
+  + RESULT_BASENAME = flameletLe1Template_ [0x20e8100]
+  + RESTART_OPTION = NO [0x20e81a0]
+  + RESTART_FILE = flameletLe1_1.0.ulf [0x20e8230]
+  + START_FILE = startProfiles.ulf [0x20e82d0]
+  + Z_STOIC = 0.055 [0x20e8370]
+  + P = 100000.0 [0x20e8400]
+  + AXIS_LENGTH = 201 [0x20e8490]
+  + AXIS_MIN = 0.0 [0x20e8520]
+  + AXIS_MAX = 1.0 [0x20e85b0]
+  + MECHANISM = ch4_smooke.xml [0x20e8640]
+  + GAS_ID = gas [0x20e86d0]
+  + options [0x20e8760] = {
+    + runTime [0x20e8a80] = {
+      + startTime = 0.0 [0x20e8af0]
+      + endTime = 1.0 [0x20e8b80]
+      + writeInterval = 1.0 [0x20e8c10]
+      + timePrecision = 5 [0x20e8ca0]
+    - }
+    + solution [0x20e8d30] = {
+      + requiredFields [0x20e8da0] = {
+        + chi = chi [0x20e8e10]
+        + rhoChi = rhoChi [0x20e8ea0]
+        + lamCpLeZ = lamCpLeZ [0x20e8f30]
+        + YeqM = YeqM [0x20e8fc0]
+      - }
+      + solutionEntries [0x20e9050] = {
+        + T [0x20e90c0] = {
+          + eqID = T_flameletLeVar [0x20e9130]
+          + minValue = 280.0 [0x20e91c0]
+          + maxValue = 3500.0 [0x20e9250]
+          + boundaryConditions [0x20e92e0] = {
+            + bounds [0x20e9360] = {
+              + patchList [0x20e93d0] = {
+                + oxidizer = oxidizer [0x20e9440]
+                + fuel = fuel [0x20e94d0]
+              - }
+              + eqID = dirichlet [0x20e9560]
+            - }
+          - }
+        - }
+        + Yi [0x20e95f0] = {
+          + eqID = Yi_flameletLeVar [0x20e9660]
+          + minValue = 0.0 [0x20e96f0]
+          + maxValue = 1.0 [0x20e9780]
+          + boundaryConditions [0x20e9810] = {
+            + bounds [0x20e9890] = {
+              + patchList [0x20e9900] = {
+                + oxidizer = oxidizer [0x20e9970]
+                + fuel = fuel [0x20e9a00]
+              - }
+              + eqID = dirichlet [0x20e9a90]
+            - }
+          - }
+        - }
+      - }
+    - }
+    + solver [0x20e9b20] = {
+      + solverType = bzzODE [0x20e9b90]
+      + absTol = 1e-9 [0x20e9c20]
+      + relTol = 1e-6 [0x20e9cb0]
+      + maxSteps = 100000 [0x20e9d40]
+      + maxOrder = 5 [0x20e9dd0]
+    - }
+    + libs [0x20e9e60] = {
+      + libequations.so = libequations.so [0x20e9ed0]
+    - }
+    + resultFileBaseName = flameletLe1Template_ [0x20e9f60]
+    + resultType = ASCII [0x20ea000]
+    + restart = NO [0x20ea090]
+    + restartFile = flameletLe1_1.0.ulf [0x20ea120]
+    + restartType = ASCII [0x20ea1b0]
+    + mesh [0x20ea240] = {
+      + dimensions = 1 [0x20ea2b0]
+      + constructionFrom = cartesianLimits [0x20ea340]
+      + axisNames [0x20ea3d0] = {
+        + Z = Z [0x20ea440]
+      - }
+      + axisLength [0x20ea4d0] = {
+        + 201 = 201 [0x20ea540]
+      - }
+      + cartesianMin [0x20ea5d0] = {
+        + 0.0 = 0.0 [0x20ea640]
+      - }
+      + cartesianMax [0x20ea6d0] = {
+        + 1.0 = 1.0 [0x20ea740]
+      - }
+      + patches [0x20ea7d0] = {
+        + oxidizer [0x20ea840] = {
+          + patchMin [0x20ea8b0] = {
+            + 0.0 = 0.0 [0x20ea920]
+          - }
+          + patchMax [0x20ea9b0] = {
+            + 0.0 = 0.0 [0x20eaa20]
+          - }
+        - }
+        + fuel [0x20eaab0] = {
+          + patchMin [0x20eab20] = {
+            + 1.0 = 1.0 [0x20eab90]
+          - }
+          + patchMax [0x20eac20] = {
+            + 1.0 = 1.0 [0x20eac90]
+          - }
+        - }
+      - }
+    - }
+    + mixture [0x20ead20] = {
+      + mainMixture = theMixture [0x20ead90]
+      + theMixture [0x20eae20] = {
+        + mixtureType = CANTERA_MIXTURE [0x20eae90]
+        + mechanism = ch4_smooke.xml [0x20eaf20]
+        + gasId = gas [0x20eafb0]
+        + transportType = Mix [0x20eb040]
+        + mixtureEntries [0x20eb0d0] = {
+          + tdot [0x20eb140] = {
+            + updateType = standard [0x20eb1b0]
+          - }
+          + reactionRate [0x20eb240] = {
+            + updateType = standard [0x20eb2b0]
+          - }
+          + hMean [0x20eb340] = {
+            + updateType = standard [0x20eb3b0]
+          - }
+          + LeRatio [0x20eb440] = {
+            + updateType = standard [0x20eb4b0]
+          - }
+          + LeZ [0x20eb540] = {
+            + updateType = standard [0x20eb5b0]
+          - }
+        - }
+      - }
+    - }
+    + fields [0x20eb640] = {
+      + default [0x20eb6b0] = {
+        + referenceFrame = cellCentered [0x20eb720]
+        + interpolate = YES [0x20eb7b0]
+        + frozen = NO [0x20eb840]
+        + write = NO [0x20eb8d0]
+        + fixedValue = 0.0 [0x20eb960]
+        + firstOrder = CDS [0x20eb9f0]
+        + secondOrder = CDS [0x20eba80]
+        + diffusive = CDS [0x20ebb10]
+      - }
+      + YiDefault [0x20ebba0] = {
+        + write = YES [0x20ebc10]
+      - }
+      + chi [0x20ebca0] = {
+        + eqID = erfc_startProfile [0x20ebd10]
+        + eqParameters [0x20ebdb0] = {
+          + Zst = 0.055 [0x20ebe20]
+          + chiSt = 0.25 [0x20ebeb0]
+        - }
+        + frozen = YES [0x20ebf40]
+        + write = YES [0x20ebfd0]
+      - }
+      + T [0x20ec060] = {
+        + readFrom = startProfiles.ulf [0x20ec0d0]
+        + readType = ASCII [0x20ec160]
+        + write = YES [0x20ec1f0]
+      - }
+      + p [0x20ec280] = {
+        + fixedValue = 100000.0 [0x20ec2f0]
+        + write = YES [0x20ec380]
+      - }
+      + LeZ [0x20ec410] = {
+        + fixedValue = 1.0 [0x20ec480]
+        + write = YES [0x20ec510]
+      - }
+      + CH4 [0x20ec5a0] = {
+        + readFrom = startProfiles.ulf [0x20ec610]
+        + readType = ASCII [0x20ec6a0]
+        + write = YES [0x20ec730]
+      - }
+      + O2 [0x20ec7c0] = {
+        + readFrom = startProfiles.ulf [0x20ec830]
+        + readType = ASCII [0x20ec8c0]
+        + write = YES [0x20ec950]
+      - }
+      + CO2 [0x20ec9e0] = {
+        + readFrom = startProfiles.ulf [0x20eca50]
+        + readType = ASCII [0x20ecae0]
+        + write = YES [0x20ecb70]
+      - }
+      + H2O [0x20ecc00] = {
+        + readFrom = startProfiles.ulf [0x20ecc70]
+        + readType = ASCII [0x20ecd00]
+        + write = YES [0x20ecd90]
+      - }
+      + N2 [0x20ece20] = {
+        + readFrom = startProfiles.ulf [0x20ece90]
+        + readType = ASCII [0x20ecf20]
+        + write = YES [0x20ecfb0]
+      - }
+      + rho [0x20ed040] = {
+        + write = YES [0x20ed0b0]
+      - }
+      + hMean [0x20ed140] = {
+        + write = YES [0x20ed1b0]
+      - }
+    - }
+  - }
+  + #include = flameletLe1_template.ulf [0x20e87d0]
+  + options [0x20e8870] = {
+    + CHI_STOIC = 0.25 [0x20e88e0]
+  - }
+  + #include = smooke-changes.ulf [0x20e8970]
+- }
+
+ULF run took 9.43 s
+
+==== ULF END ====

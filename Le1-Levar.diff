@@ -1,0 +1,47 @@
+knespel@vtc060:~$ diff Beleg-flamelet-Le1-Levar/results/chist_0.4918.ulf Beleg-flamelet-Le1/results/chist_0.4918.ulf
+knespel@vtc060:~$ diff Beleg-flamelet-Le1-Levar/flameletLe1_template.ulf Beleg-flamelet-Le1/flameletLe1_template.ulf
+11c11
+<       requiredFields ( chi, rhoChi, lamCpLeZ, YeqM);
+---
+>       requiredFields ( chi );
+16c16
+<                       eqID        T_flameletLeVar;
+---
+>                       eqID        T_flameletLe1;
+30c30
+<                       eqID        Yi_flameletLeVar;
+---
+>                       eqID        Yi_flameletLe1;
+110,117d109
+<             LeRatio
+<             {
+<                 updateType standard;
+<             }
+<             LeZ
+<             {
+<                 updateType standard;
+<             }
+161,165d152
+<     LeZ
+<     {
+<         fixedValue 1.0;
+<         write YES;
+<     }
+knespel@vtc060:~$ diff Beleg-flamelet-Le1-Levar/flameletLe1_template.ulf flameletLeVar_template.ulf
+47c47,48
+<       solverType bzzODE;
+---
+>       //solverType bzzODE;
+>       solverType ulfNewton;
+161,165c162,166
+<     LeZ
+<     {
+<         fixedValue 1.0;
+<         write YES;
+<     }
+---
+>       LeZ
+>       {
+>               fixedValue 1.0;
+>               write YES;
+>       }
