@@ -1,0 +1,569 @@
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Vorbetrachtungen}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Grundlegende Größen}
+
+%% => using glossaries now
+%\begin{table}
+%    \begin{center}\begin{minipage}{\linewidth}\begin{tabularx}{\linewidth}{rcX}
+%	    $x   $ & $\ldots$ & eindimensionale Raumkoordinate \\
+%	    $N_s $ & $\ldots$ & Anzahl Spezies/Stoffe \\
+%	    $n_i $ & $\ldots$ & Stoffmenge des Stoffes \gls{i} in $\SI{}{\mole}$. \gls{i} z.B. $\mathrm{O}_2$ oder $\mathrm{CH}_4$ \\
+%	    $n   $ & $\ldots$ & Gesamtstoffmenge. $n:=\sum\limits_i^{N_s} n_i$ \\
+%	    $X_i $ & $\ldots$ & Molenbruch. $X_i:=\frac{n_i}{n}$ \\
+%	    $m_i $ & $\ldots$ & Masse des Stoffes \gls{i} \\
+%	    $m   $ & $\ldots$ & Gesamtmasse \\
+%	    $Y_i $ & $\ldots$ & Massenbruch des Stoffes \gls{i} wie er real vorliegt $Y_i:=\frac{m_i}{m}$, vgl. $Y_{i,\text{a}}$ \\
+%	    $Y_{i,\text{a}} $ & $\ldots$ & Massenbruch des Stoffes \gls{i} wie er bei einer rein hydrodynamischen Simulation ohne jegliche Stoffumwandlung vorliegen würde. \\
+%	    $m_j $ & $\ldots$ & Masse des Elements \gls{j}, z.B. C,H,O,$\ldots$ \\
+%	    $Z_j $ & $\ldots$ & Massenbruch der in den Stoffen enthaltenen Elemente \gls{j}. $Z_j :=\frac{m_j}{m}$. Es wird nicht mehr $Y$ für diesen Massenbruch benutzt, da $Y_\mathrm{C}$ für reinen Kohlenstoff, also Ruß vorgesehen ist, währen $Z_\mathrm{C}$ den Kohlenstoff in allen vorkommenden Stoffen wie $\mathrm{CO}_2,\mathrm{CH}_4,\ldots$ umfasst.\\
+%	    $M_i $ & $\ldots$ & Molare Masse des Stoffes \gls{i} \\
+%	    $M_j $ & $\ldots$ & Molare Masse des Elementes \gls{j} \\
+%	    $M   $ & $\ldots$ & Gesamtmolare Masse $M:=\sum\limits_{i\in\text{Stoffe}} M_i = \sum\limits_{j\in\text{Elemente}} M_j$  \\
+%	    $c_i $ & $\ldots$ & Stoffmengenkonzentration des Stoffes \gls{i} in $\SI{}{\mole\per\cubic\meter}$. In der Literatur auch unschöner Weise als $[X_i]$ bezeichnet, obwohl eckige Klammern für das Einheitenzeichen gemäß  EN ISO 80000 vorgesehen sind.
+%    \end{tabularx}\end{minipage}\end{center}
+%    \caption{Zusammenstellung von benutzten Formelzeichen, die nicht im Text erklärt werden}
+%\end{table}
+Während Größen wie die Masse \gls{m} und die Stoffmenge \gls{n} nur für ein zu betrachtendes endliches Volumen Sinn machen, ist das für den Molenbruch \gls{X} und den Massenbruch \gls{Y} nicht der Fall, da sich das Volumen bei ihnen rauskürzt. Damit kann z.B. \gls{Y} auch als Dichtebruch angesehen werden, d.h. das Verhältnis der Partialdichte zur Gesamtdichte. Weiterhin sind die Brüche dimensionslos. Aus diesen beiden Gründen ist es praktisch nur mit \gls{X} und \gls{Y} zu rechnen.
+
+Der Elementmassenbruch kann aus den Stoffmassenbrüchen, den molaren Massen sowie den Stoffkonfigurationen \gls{a_ij} gewonnen werden. Die Konfiguration des Stoffes \gls{i}, falls alle Stoffe aus den Elementen C,H und O bestehen, kann angegeben werden als:
+\begin{align}
+    \label{eq:defaij}
+    \mathrm{C}_{a_{i,\mathrm{C}}} \mathrm{H}_{a_{i,\mathrm{H}}} \mathrm{O}_{a_{i,\mathrm{O}}}
+\end{align}
+
+Für z.B. $i=\mathrm{CO}_2$ wäre also $a_{\mathrm{CO}_2,\mathrm{C}}=1$, $a_{\mathrm{CO}_2,\mathrm{H}}=0$, $a_{\mathrm{CO}_2,\mathrm{O}}=2$. In Rechnungen und Programmen wird man als Indizes die Elemente und Stoffe durchnummerieren, sodass $\mathrm{C}\hat{=}0$, $\mathrm{H}\hat{=}1$ und $\mathrm{O}\hat{=}2$. Damit ist die Konfiguration von $\mathrm{CO}_2$, ausgedrückt durch Index $i=0$, wie folgt: $a_{0,0}=1$, $a_{0,1}=0$, $a_{0,2}=2$
+
+Damit ergibt sich die Formel für den Elementmassenbruch des Elements \gls{j} zu:
+\begin{align}
+    \label{eq:zfromy}
+    \gls{Z_j}
+    = \sum\limits_{i \in \text{Stoffe}} \gls{a_ij} \frac{\gls{M_j}}{\gls{M_i}} \gls{Y_i}
+    = \frac{\gls{m_j}}{\gls{m}}
+\end{align}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Chemische Reaktionen}
+\label{sct:chemreact}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+Die hier betrachtete Reaktion ist die Verbrennung von $\mathrm{CH}_4$ mit Luft zu unter anderem $\mathrm{CO}_2$ und $\mathrm{H}_2\mathrm{O}$. Der genaue Mechanismus, inklusive aller in Betrachtung gezogenen Zwischenprodukte wird im Smooke-Mechanismus in \lstinline!ch4_smooke.xml! festgelegt. Die darin definierten teilnehmenden Stoffe und Zwischenprodukte sind:
+\begin{lstlisting}[language=xml,label=lst:ch4smooke,caption={Auszug aus \lstinline!ch4_smooke.xml!}]
+<speciesArray datasrc="#species_data">
+   CH4  O2  H2O  H2O2  CO2  CH3  HO2  CH2O  HCO  CH3O
+   CO  OH  H  O  H2  AR  N2
+</speciesArray>
+\end{lstlisting}
+Weiterhin werden durch \lstinline!ch4_smooke.xml! 25 verschiedene Reaktionen dieser Stoffe charakterisiert.
+\begin{lstlisting}[language=xml,caption={Auszug aus \lstinline!ch4_smooke.xml!}]
+  <reactionData id="reaction_data">
+    <!-- reaction 0001    -->
+    <reaction reversible="yes" id="0001">
+      <equation>H + O2 [=] OH + O</equation>
+      <rateCoeff>
+        <Arrhenius>
+           <A>2.000000E+11</A>
+           <b>0</b>
+           <E units="cal/mol">16800.000000</E>
+        </Arrhenius>
+      </rateCoeff>
+      <reactants>H:1.0 O2:1</reactants>
+      <products>O:1 OH:1.0</products>
+    </reaction>
+    <!-- reaction 0002    -->
+    <reaction reversible="yes" id="0002">
+      <equation>O + H2 [=] OH + H</equation>
+\end{lstlisting}
+Der Umsatz der Stoffmengen (oder Stoffmengenbrüchen) einer Reaktion $k$ ist gegeben durch, vgl.Ref.\cite[32]{hasse-pdf02}:
+\begin{align}
+    \sum\limits_{i\in\text{Stoffe}} \nu_{ik} n_i = 0
+\end{align}
+Eine simple Ersetzung von $n_i$ zu $X_i$ ist problematisch, da sich durch die Reaktion die Gesamtstoffmenge $n$ in der Definition des Molenbruchs ändern kann. Die stöchiometrischen Faktoren \gls{nu_ik} für z.B. die Verbrennung von $\mathrm{CH}_4$ (Reaktion $k$) sind:
+$\nu_{\mathrm{CH}_4           ,k}= 1$,
+$\nu_{\mathrm{O}_2            ,k}= 2$,
+$\nu_{\mathrm{CO}_2           ,k}=-1$,
+$\nu_{\mathrm{H}_2\mathrm{O}  ,k}=-2$,
+$\nu_{\mathrm{H}_2\mathrm{O}_2,k}= 0$,
+$\nu_{\mathrm{CH}_3           ,k}= 0$,
+$\ldots$. Hierbei sind gemäß Ref.\cite[187]{iupacreactionglossary} die Stöchiometriezahlen der Reaktanden negativ und die der Produkte positiv.
+\begin{align}
+    \label{eq:ch4+o2}
+    \mathrm{CH}_4 + 2 \mathrm{O}_2 \Rightarrow \mathrm{CO}_2 + \mathrm{H}_2\mathrm{O}
+\end{align}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Massenbezogener Mindestsauerstoffbedarf}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+Mit dem massenbezogenen Mindestsauerstoffbedarf \gls{o_min} wird das Verhältnis von Sauerstoffmasse zu Brennstoffmasse für eine vollständige Verbrennung bezeichnet. Eine vollständige Verbrennung kann nur bei stöchiometrischem (bezogen auf die Verbrennungsreaktion) Molverhältnis stattfinden:
+\begin{align}
+      \left. \frac{ n_{\mathrm{O}_2} }{ n_{\mathrm{CH}_4} } \right|_{\text{stöch.}}
+    = \left. \frac{ X_{\mathrm{O}_2} }{ X_{\mathrm{CH}_4} } \right|_{\text{stöch.}}
+    = \frac{ \nu_{\mathrm{O}_2,0} \SI{1}{\mole} }{ \nu_{\mathrm{CH}_4,0} \SI{1}{\mole} }
+    =: o_{\text{min,m}}
+\end{align}
+gegeben, auch als molarer Mindestsauerstoffbedarf bezeichnet.
+%Da $X_i$ in der Anordnung ortsabhängig ist, aber $o_\text{min}$ ein globaler Wert für die Gesamtreaktion sein soll, wird mit $X_{i,\text{u}}$ der Massenbruch des Stoffes \gls{i} auf der unverbrannten Seite bezeichnet. Damit ist der Massenbruch im durch die jeweilige Düse einströmenden Gas gemeint.
+Über die Beziehung $\gls{m} = \gls{M} \gls{n}$ lässt sich der massenbezogene Mindestsauerstoffbedarf berechnen.
+\begin{align}
+    \label{eq:omin}
+    \gls{o_min} \equiv \gls{nu} :=
+      \left. \frac{ m_{\mathrm{O}_2} }{ m_{\mathrm{CH}_4} } \right|_{\text{stöch.}}
+    = \left. \frac{ Y_{\mathrm{O}_2} }{ Y_{\mathrm{CH}_4} } \right|_{\text{stöch.}}
+    = \frac{ \nu_{\mathrm{O}_2,0} M_{\mathrm{O}_2} }{ \nu_{\mathrm{CH}_4,0} M_{\mathrm{CH}_4} }
+    = \frac{ 2\cdot\SI{31.9988}{\gram\per\mole} }{ \SI{16.04}{\gram\per\mole} }
+    = 3.99
+\end{align}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Kopplungsbeziehung}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+Mit Hilfe der stöchiometrischen Faktoren aus der Methanverbrennungsreaktion in \autoref{eq:ch4+o2} kann mit Kenntnis der Massenbrüche im unverbrannten Anfangsgemisch $Y_{\mathrm{CH}_4,\text{a}}$, $Y_{\mathrm{O}_2,\textbf{a}}$ und der Kenntnis von z.B. des Brennstoffmassenbruches $Y_{\mathrm{CH}_4}$ nachdem die Verbrennung eine beliebige Zeit aktiv war der Sauerstoffmassenbruch zu der Zeit errechnet werden.
+\label{pg:anfangsgemisch}
+\begin{align}
+    n_{\mathrm{O}_2} = n_{\mathrm{O}_2,\text{a}} - \left( n_{\mathrm{CH}_4,\text{a}}-n_{\mathrm{CH}_4} \right) \frac{ \nu_{\mathrm{O}_2} }{ \nu_{\mathrm{CH}_4} } \\
+    \Leftrightarrow
+    X_{\mathrm{O}_2} = X_{\mathrm{O}_2,\text{a}} - \left( X_{\mathrm{CH}_4,\text{a}}-X_{\mathrm{CH}_4} \right) \frac{ \nu_{\mathrm{O}_2} }{ \nu_{\mathrm{CH}_4} }
+\end{align}
+Durch Umstellen und Ausnutzen von $\gls{Y_i} = \frac{ \gls{M_i} }{ \gls{M} } \gls{X_i}$ erhält man die Kopplungsbeziehung für die Massenbrüche.
+\begin{align}
+   \frac{ Y_{\mathrm{CH}_4,\text{a}} - Y_{\mathrm{CH}_4} }{ \nu_{\mathrm{CH}_4} M_{\mathrm{CH}_4} }
+   = \frac{ Y_{\mathrm{O}_2,\text{a}} - Y_{\mathrm{O}_2} }{ \nu_{\mathrm{O}_2} M_{\mathrm{O}_2} }
+\end{align}
+Mit dem massenbezogenen Mindestsauerstoffbedarf schreibt sie sich:
+\begin{align}
+    \label{eq:kopplungsbeziehung}
+    \frac{ Y_{\mathrm{O}_2 ,\text{a}} - Y_{\mathrm{O}_2} }
+         { Y_{\mathrm{CH}_4,\text{a}} - Y_{\mathrm{CH}_4} }
+    = \gls{nu}
+    = \frac{ \nu_{\mathrm{O}_2}  M_{\mathrm{O}_2} }
+           { \nu_{\mathrm{CH}_4} M_{\mathrm{CH}_4} }
+\end{align}
+Das heißt nichts anderes, als das Verhältnis aus umgesetzter Sauerstoffmasse zu umgesetzter Brennstoffmasse dem Massenverhältnis in der (stöchiometrischen) Reaktion identisch ist.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Mischungsbruch}
+\label{sct:mischungsbruch}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+Der Mischungsbruch \gls{Z} wird zur Beschreibung des Mischungszustandes zwischen Oxidatordüse und Brennstoffdüse eingeführt und ist definiert als Anteil von Brennstoffgas zu Gesamtgasgemisch\cite[559]{merker2009grundlagen}
+\begin{align}
+    \label{eq:defZ}
+    Z(x) := \frac{ \varrho_\text{B}(x) }{ \varrho_\text{B}(x) + \varrho_\text{Ox}(x) }
+    = \frac{ \varrho_\text{B}(x) }{ \varrho(x) }
+\end{align}
+Teilweise findet man auch die Definition mit Brenstoff- und Sauerstoffmassen:
+\begin{align}
+    Z := \frac{ m_\text{B} }{ m_\text{B} + m_\text{Ox} }
+\end{align}
+Eine Masse impliziert aber ein endliches Volumen und damit ein homogenes, d.h. ortsunabhängiges, Gasgemisch. Dies ist für diesen Anwendungszweck nicht geeignet.
+
+Falls eines der beiden Gase ein Gasgemisch ist, dann macht die Definition des Mischungsbruches nur Sinn, wenn alle Gasbestandteile vom Brennstoff- und Oxidatorgasgemisch gleich schnell diffundieren, sonst ist möglicherweise eine Zerlegung des Gasgemischs in $\varrho_\text{B}$ und $\varrho_\text{Ox}$ nicht mehr eindeutig möglich. Man beachte, dass bei reinem Brennstoff und Oxidator immer noch Zwischenprodukte auftreten können.
+
+Durch Diffusion und Konvektion bedingt wird \gls{Z} kontinuierlich von einem reinen Brennstoffgemisch in ein reines Oxidatorgemisch übergehen, d.h. von $1$ auf $0$. Falls \gls{Z} nicht exakt $1$ an der Brennstoffdüse oder nicht exakt $0$ an der Oxidatordüse ist, dann sind Fremdstoffe entgegen dem konvektiven Massenstrom in die Düsen reindiffundiert. Dies führt häufig dazu, dass Annahmen über die Randbedingungen verletzt werden und die Simulation nicht mehr physikalisch ist.
+
+Der Massenbruch von Methan in der Brennstoffdüse sei $Y_{\mathrm{CH}_4,\text{B}}=1.0$, d.h. wir verbrennen reines Methan, was nur ein Idealfall ist, da das technisch wichtiges Erdgas ein Gemisch aus vielen verschiedenen brennbaren Kohlenwasserstoffgasen ist.
+
+\label{pg:aircomposition}
+Der Massenbruch von Sauerstoff im Oxidatorstrom (Luft) sei $Y_{\mathrm{O}_2,\text{Ox}}=0.23$ wie vom Betreuer vorgegeben. Das entspricht dem aus zwei Stellen gerundeten Wert aus Tabelle~\ref{tbl:luft}. In der Simulation wird ein vereinfachtes Modell von Luft genommen, was nur aus Stickstoff und Sauerstoff besteht. Argon und andere Nebenbestandteile werden als Stickstoff behandelt, sodass $Y_{\mathrm{N}_2,\text{Ox}}=0.77$, siehe Listing~\ref{lst:ch4smooke.ulf} \\
+\begin{table}[H]
+    \begin{center}\begin{tabular}{cccc}
+    \textbf{Gas}    & \textbf{Volumenanteil}\cite[13]{moeller2003luft}\cite{pseiupac} & \textbf{Molare Masse}\cite{nistwebbook} & \textbf{Massenanteil} \\
+    $\mathrm{N}_2 $  &  $78.084\%$  &  $\SI{28.0134}{\gram\per\mole}$  &  $75.518\%$    \\
+    $\mathrm{O}_2 $  &  $20.946\%$  &  $\SI{31.9988}{\gram\per\mole}$  &  $23.140\%$    \\
+    $\mathrm{Ar}  $  &  $ 0.934\%$  &  $\SI{39.948 }{\gram\per\mole}$  &  $ 1.289\%$    \\
+    $\mathrm{CO}_2$  &  $ 0.036\%$  &  $\SI{44.0095}{\gram\per\mole}$  &  $ 0.055\%$    \\
+    \end{tabular}\end{center}
+    \caption{Zusammensetzung der Luft zum Vergleich der vom Betreuer vorgegebenen Werte. Man beachte, dass durch Rundung der Voumenanteile auf drei Nachkommastellen und Auslassen weiterer Luftbestandteile wie z.B. Neon und Helium die Summe nicht exakt $100.000\%$ ergeben wird. Durch Zufall heben sich die Rundungs- und Auslassungsfehler für die Volumenanteil auf (gesamt: $100.000\%$). Die Massenanteile wurde über $\frac{\gls{m_i}}{\gls{m}} = \frac{ \frac{V_i}{V} \gls{M_i} }{ \sum\limits_n \frac{V_n}{V} M_n }$ aus den gerundeten in der Tabelle stehenden Werte berechnet. Die Summe der Massenanteil ist aufgrund von Rundungsfehler auf die dritte Nachkommastelle $100.002\%$.}
+    \label{tbl:luft}
+    %#!/usr/bin/python
+    %from numpy import *
+    %phi = array([ 78.084, 20.946, 0.934, 0.036 ])
+    %M   = array([ 28.0134, 31.9988, 39.948, 44.0095 ])
+    %print phi * M / sum( phi * M ) * 100
+\end{table}
+Aus \autoref{eq:defZ} geht hervor, dass an der Brennstoffdüse $Z=1$ und an der Luftdüse $Z=0$ ist. Unter Annahme gleich schneller Diffusionsgeschwindigkeiten und keiner chemischen Reaktion kann man die Zerlegung von $\varrho$ in $\varrho_\text{B}$ und $\varrho_\text{Ox}$ anhand eines beliebigen Bestandteiles \gls{i} (z.B. $i=\mathrm{CH}_4 \Rightarrow Y_{\mathrm{CH}_4,\text{Ox}}=0$) der beiden Gase wie folgt berechnen. Außerdem wird beachtet, dass dieser Bestandteil in beiden einströmenden Gasen vorkommen kann.
+\begin{align}
+    \varrho_{\text{B}}  = \frac{ \gls{Y_ia} - Y_{i,\text{Ox}} }{ Y_{i,\text{B}}-Y_{i,\text{Ox}} } \varrho \\
+    \label{eq:zy}
+    \Rightarrow
+    Z(x) = \frac{ \gls{Y_ia}(x) - Y_{i,\text{Ox}} }{ Y_{i,\text{B}}-Y_{i,\text{Ox}} }
+\end{align}
+Bisher ist die Anwendbarkeit des Mischungsbruches \gls{Z} stark beschränkt, nämlich auf Gase gleicher Diffusion und falls keine Reaktion stattfindet. Reaktionen würden die Gaskomponentenanteile derart verändern, dass keine eindeutige Zerlegung mehr in Gas 1 und Gas 2 möglich ist. Dies wurde durch die Benutzung von \gls{Y_ia} anstatt von \gls{Y_i} beachtet, siehe auch S.\pageref{pg:anfangsgemisch}\\
+
+Um zumindest auch unter reaktiven Prozessen mit dem Mischungsbruch zu rechnen, wollen wir die Kopplungsbeziehung aus \autoref{eq:kopplungsbeziehung} und darin die Massenanteile vor jeglicher Reaktion mit denen nach beliebiger Zeit ersetzen. Dafür geben wir \gls{Z} mit $i=\mathrm{O}_2$ und $i=\mathrm{CH}_4$ ausgedrückt an, stellen nach den im Allgemeinen unbekannten \gls{Y_ia} um und setzen in die Kopplungsbeziehung ein.
+\begin{align}
+    Y_{\mathrm{O}_2,\text{a}}(x)
+        & \overset{\text{\autoref{eq:zy}}}{=}
+        \gls{Z}(x) \left( Y_{\mathrm{O}_2,\text{B}} -
+                          Y_{\mathrm{O}_2,\text{Ox}} \right)
+        + Y_{\mathrm{O}_2,\text{Ox}}
+    \\
+    Y_{\mathrm{CH}_4,\text{a}}(x)
+        & \overset{\text{\autoref{eq:zy}}}{=}
+        \gls{Z}(x) \left( Y_{\mathrm{CH}_4,\text{B}} -
+                          Y_{\mathrm{CH}_4,\text{Ox}} \right)
+        + Y_{\mathrm{CH}_4,\text{Ox}}
+    \\
+    \gls{nu}
+        & \overset{\text{\autoref{eq:kopplungsbeziehung}}}{=}
+        \frac{ \gls{Z}(x) \left( Y_{\mathrm{O}_2,\text{B}} -
+                                 Y_{\mathrm{O}_2,\text{Ox}} \right)
+            + Y_{i,\text{Ox}} - Y_{\mathrm{O}_2}(x) }
+        { \gls{Z}(x) \left( Y_{\mathrm{CH}_4,\text{B}} -
+                            Y_{\mathrm{CH}_4,\text{Ox}} \right)
+            + Y_{\mathrm{CH}_4,\text{Ox}} - Y_{\mathrm{CH}_4}(x) }
+    \\ \Leftrightarrow
+    \gls{Z}(x) & =
+        \frac{ \gls{nu}\left( Y_{\mathrm{CH}_4,\text{Ox}} -
+                              Y_{\mathrm{CH}_4} \right)
+            + Y_{\mathrm{O}_2}(x) - Y_{\mathrm{O}_2,\text{Ox}}
+        }{
+            Y_{\mathrm{O}_2,\text{B}} - Y_{\mathrm{O}_2,\text{Ox}}
+            - \gls{nu}\left( Y_{\mathrm{CH}_4,\text{B}} -
+                             Y_{\mathrm{CH}_4,\text{Ox}} \right)
+        }
+\end{align}
+Weiterhin ist für unseren Fall bekannt, dass der Brennstoffstrom kein Sauerstoff enthält und der Luftstrom kein Methan, sodass $Y_{\mathrm{O}_2,\text{B}}=0$ und $Y_{\mathrm{CH}_4,\text{Ox}}=0$.
+\begin{align}
+    \gls{Z}(x) & = \frac{ - \gls{nu}
+        Y_{\mathrm{CH}_4}(x) + Y_{\mathrm{O}_2}(x) - Y_{\mathrm{O}_2,\text{Ox}}
+    }{
+        - Y_{\mathrm{O}_2,\text{Ox}} - \gls{nu} Y_{\mathrm{CH}_4,\text{B}}
+    }
+    \\
+    \label{eq:zreaktiv}
+    \Leftrightarrow
+    \gls{Z}(x) & =
+        \frac{
+            \gls{nu}
+            Y_{\mathrm{CH}_4}(x) -
+            Y_{\mathrm{O}_2}(x) +
+            Y_{\mathrm{O}_2,\text{Ox}}
+        }{
+            \gls{nu}
+            Y_{\mathrm{CH}_4,\text{B}} +
+            Y_{\mathrm{O}_2,\text{Ox}}
+        }
+\end{align}
+Dieser Ausdruck für \gls{Z} hängt damit nur von den während der Simulation bekannten \gls{Y_i} anstatt den unbekannten \gls{Y_ia} ab!\\
+
+Es von Nutzen den stöchiometrischen Mischungsbruch zu berechnen, da dort ein optimales Brennstoff-Oxidator-Gemisch vorliegt. %. Denn bei Stöchiometrie befindet sich die Flamme. % WARUM (!!!???)
+Stöchiometrie heißt, dass das Methan restlos verbrannt ist, d.h.
+\begin{align}
+    \label{eq:xst}
+    \frac{ Y_{\mathrm{O}_2 }( \gls{x_st} ) }
+         { Y_{\mathrm{CH}_4}( \gls{x_st} ) }
+    = \gls{nu}
+\end{align}
+Dies setzen wir in \autoref{eq:zreaktiv} ein, wodurch sich die ortsabhängigen Massenbrüche rauskürzen und ein rein reaktionsabhängiger Ausdruck für den stöchiometrischen Mischungsdruck resultiert.
+\begin{align}
+    \label{eq:zstoch}
+    Z_\text{stöch} \equiv Z( \gls{x_st} )
+    = \frac{ Y_{\mathrm{O}_2,\text{Ox}} }
+           { \gls{nu} Y_{\mathrm{CH}_4,\text{B}} + Y_{\mathrm{O}_2,\text{Ox}} }
+    \overset{\text{\autoref{eq:omin}}}{=}
+        \frac{ 0.23 }{ 3.99\cdot 1.0 + 0.23 } = 0.0545
+\end{align}
+
+\begin{figure}[H]
+    \begin{center}
+    % Note that there is a bug with tikzs + glossaries + scale! The hyperlinks won't be overlayed correctly, but at the unscaled positions -> don't use \gls inside tikzpicture
+	\begin{tikzpicture}[->,>=stealth', scale=0.8, every node/.style={transform shape}]
+		\node[box,
+		    text width=7cm
+		] (CH4AirSmooke) { \small
+			\lstinline!oppdifJet_ct_CH4_Air_smooke.ulf! \\
+			Enthält u.a. chemische und thermische Konfiguration der einströmenden Gase
+		};
+		\node[box,
+			below left of=CH4AirSmooke,
+			node distance=4cm,
+			text width=4cm,
+			xshift=-2cm
+		] (ch4smooke) { \small
+			\lstinline!ch4_smooke.xml! \\
+			Konstanten für die reagierenden Stoffe und Reaktionen sowie überhaupt eine Auflistung aller teilnehmenden Stoffe
+		};
+		\node[box,
+			below of=CH4AirSmooke,
+			node distance=4cm,
+			text width=4.5cm
+		] (oppdifJet) { \small
+			\lstinline!oppdifJet_ct_template.ulf! \\
+			Konfiguration der Felder wie $Y_i$, $T$, $\ldots$, wie deren Startwerte, Grenzwerte u.a., Konfiguration des numerischen Algorithmuses, Pre- und Postprocessing
+		};
+		\node[box,
+			below right of=CH4AirSmooke,
+			node distance=4cm,
+			text width=4cm,
+			xshift=2cm
+		] (changes) { \small
+			\lstinline!smooke-changes.ulf!\\
+			Zu variiendere Einströmtemperatur
+		};
+		\path
+			(CH4AirSmooke) edge (ch4smooke)
+			(CH4AirSmooke) edge (oppdifJet)
+			(CH4AirSmooke) edge (changes)
+	    ;
+	\end{tikzpicture}\end{center}
+	\caption{Abhängigkeitsgraph für die Konfigurationsdateien für ULF}
+\end{figure}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Bilger-Mischungsbruch}
+\label{sct:ZBilger}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+Der Bilger-Mischungsbruch oder auch Elementmischungsbruch \gls{Z_Bilger} ist als Linearkombination von Elementmassenbrüchen definiert. Wie auch der Mischungsbruch \gls{Z} aus Kapitel~\ref{sct:mischungsbruch} ist $\gls{Z_Bilger}=1$ im Brennstoffstrom und $\gls{Z_Bilger}=0$ im Oxidatorstrom. Für die Definition sind einige Vorarbeiten notwendig. Ausgegangen wird von der Verbrennung eines beliebigen Kohlenwasserstoffes bestehend aus $a$ Kohlen"-stoff"~ und $b$ Wasserstoffatomen:
+\begin{align}
+    \label{eq:khreaktion}
+    \nu_B \mathrm{C}_a \mathrm{H}_b + \nu_{\mathrm{O}_2} \mathrm{O}_2 \Rightarrow
+    - \nu_{\mathrm{CO}_2} \mathrm{CO}_2 - \nu_{\mathrm{H}_2\mathrm{O}} \mathrm{H}_2\mathrm{O}
+\end{align}
+Für $\mathrm{Le}_i := \left. \frac{\lambda}{D\cdot c_\mathrm{P}\cdot\varrho} \right|_i = 1$, also insbesondere für $D_i=D$ gilt die Erhaltungsgleichung der Elemente $j=\mathrm{C,H,O}$:
+\begin{align}
+    \varrho \fpart{ \gls{Z_j} }{t} + \varrho \left( \vec{u}\cdot\nabla \right) \gls{Z_j} = \nabla\cdot\left(\varrho D \nabla \gls{Z_j} \right)
+\end{align}
+Falls außer dem einen Brennstoffkohlenwasserstoff keine anderen Stoffe mit Kohlen"-stoff"~ oder Wasserstoffatomen in den einströmenden Gasgemischen enthalten sind, also auch kein $\mathrm{CO}_2$ im Oxidatorgemisch - und das ist hier der Fall -, ergibt sich dieser Zusammenhang:
+\begin{align}
+    \label{eq:khmasses}
+    \frac{ n_{\mathrm{C}_a \mathrm{H}_b} }{ \gls{m} } =
+    \frac{ 1 }{ M_{\mathrm{C}_a \mathrm{H}_b} } =
+    \frac{ Z_{\mathrm{C}} }{ a\cdot M_\mathrm{C} } =
+    \frac{ Z_{\mathrm{H}} }{ b\cdot M_\mathrm{H} } =
+    \frac{ Y_{\mathrm{B},\mathrm{a}} }{ M_\mathrm{B} } =
+    \frac{ Z_\mathrm{C} + Z_\mathrm{H} }{ a\cdot M_\mathrm{C} + b\cdot M_\mathrm{H} }
+\end{align}
+Man beachte, dass in den einströmenden Gasgemischen keine Reaktion stattfinden sollte und auch keine anderen Stoffe reindiffundieren sollten, sodass $\left[Y_{\mathrm{B},\mathrm{a}} = Y_{\mathrm{B}} \right]_{x\in\lbrace 0,1 \rbrace}$
+
+Falls Sauerstoffatome in den einströmenden Gasgemischen nur in Form von reinem Sauerstoff und nicht z.B. in Stickoxiden vorliegt, dann gilt
+\begin{align}
+    \label{eq:YO2ZO}
+    Y_{\mathrm{O}_2,\text{a}} = Z_\mathrm{O}
+\end{align}
+Aus der Reaktionsgleichung~\ref{eq:khreaktion} ergeben sich die Stoffmengenverhältnisse der Reaktionspartner, unter Annahme, das (noch) keine Verbrennung stattgefunden hat, zu folgender Formel, vgl. \autoref{eq:kopplungsbeziehung}.
+\begin{align}
+    \label{eq:khstoich}
+    \frac{ Y_{\mathrm{B}  ,\mathrm{a}} }{ \nu_{\mathrm{B}}   M_{\mathrm{B}}   } +
+    \frac{ Y_{\mathrm{O}_2,\mathrm{a}} }{ \nu_{\mathrm{O}_2} M_{\mathrm{O}_2} } = 0
+\end{align}
+Um eine Linearkombination aus den Elementmassenbrüchen für C,H und O zu erhalten, betrachten wir das Doppelte von \autoref{eq:khstoich} und ersetzen dann $Y_{\mathrm{B},\text{a}}$ einmal mit $\frac{ Z_{\mathrm{C}} }{ a\cdot M_\mathrm{C} }$ und einmal mit $\frac{ Z_{\mathrm{H}} }{ b\cdot M_\mathrm{H} }$ aus \autoref{eq:khmasses}:
+\begin{align}
+    \overset{ \text{\autoref{eq:khmasses},\ref{eq:YO2ZO}} }{\Leftrightarrow}
+    \label{eq:khstoich2}
+    2 \frac{ Z_\mathrm{O} }{ \nu_{\mathrm{O}_2} M_{\mathrm{O}_2} }
+    + \frac{ Z_\mathrm{C} }{ a \nu_\mathrm{B} M_\mathrm{C} }
+    + \frac{ Z_\mathrm{H} }{ b \nu_\mathrm{B} M_\mathrm{H} } = 0
+\end{align}
+Der Übergang zu Elementmassenbrüchen macht eine Unterscheidung zwischen $Z_{\mathrm{C},\text{a}}$, also dem Massenbruch von Kohlenstoffatomen wie er ohne jegliche Stoffumwandlung vorliegen würde, und $Z_{\mathrm{C}}$ überflüssig, da beide (im Gegensatz zu $Y_\mathrm{C}$) alle Kohlenstoffatome in allen Stoffen inkludieren, sodass sie bei chemischen Stoffumwandlungen erhalten bleiben.\\
+
+Gleichung~\ref{eq:khstoich2} nutzen wir nun zur Definition des kombinierten Elementmassenbruchs $\beta$, der sowohl reaktiv als auch nicht-reaktiv anwendbar ist:
+\begin{align}
+    \label{eq:betax}
+    \beta(x) & := \frac{ Z_\mathrm{C}(x) }{ a \nu_\mathrm{B} M_\mathrm{C} }
+          +   \frac{ Z_\mathrm{H}(x) }{ b \nu_\mathrm{B} M_\mathrm{H} }
+          + 2 \frac{ Z_\mathrm{O}(x) }{ \nu_{\mathrm{O}_2} M_{\mathrm{O}_2} }
+    \\   &  = \frac{ Z_\mathrm{C}(x) }{ a \nu_\mathrm{B} M_\mathrm{C} }
+          +   \frac{ Z_\mathrm{H}(x) }{ b \nu_\mathrm{B} M_\mathrm{H} }
+          +   \frac{ Z_\mathrm{O}(x) }{ \nu_{\mathrm{O}_2} M_\mathrm{O} }
+\end{align}
+Für die Verbrennung von Methan ist $\nu_\mathrm{B} \equiv \nu_{\mathrm{CH}_4} = 1$ und $\nu_{\mathrm{O}_2} = -2$ sowie $a=1$ und $b=4$, vgl. \autoref{eq:ch4+o2}.
+\begin{align}
+    \label{eq:betach4}
+    \beta(x) & \overset{\mathrm{CH}_4}{=}
+        \frac{ Z_\mathrm{C}(x) }{ M_\mathrm{C} }
+      + \frac{ Z_\mathrm{H}(x) }{ 4 M_\mathrm{H} }
+      - \frac{ Z_\mathrm{O}(x) }{ M_{\mathrm{O}_2} }
+\end{align}
+An den Rändern, wo keine Reaktion stattfinde ist auch die Definition mit Massenbrüchen anwendbar:
+\begin{align}
+    \label{eq:betach4Y}
+    \left.\beta(x)\right|_{x\in\lbrace 0,1 \rbrace} &
+    \overset{\text{\autoref{eq:betax},\ref{eq:khmasses}}}{=}
+    2 \cdot \left(
+        \frac{ Y_{\mathrm{CH}_4}(x) }{ \nu_{\mathrm{CH}_4} M_{\mathrm{CH}_4} } -
+        \frac{ Z_{\mathrm{O}_2}(x) }{ \nu_{\mathrm{O}_2} M_{\mathrm{O}_2} }
+    \right)
+    \overset{\text{Gl.\pageref{eq:omin}}}{=}
+        \frac{2}{ \nu_{\mathrm{O}_2} M_{\mathrm{O}_2} } \left(
+            \gls{nu} Y_{\mathrm{CH}_4}(x) +
+            Y_{\mathrm{O}_2}(x)
+        \right)
+\end{align}
+
+Der kombinierte Elementmassenbruch ist also 0 bei stöchiometrischen Verhältnissen der Elemente. Dies ist aber nur unter sehr eingeschränkten Bedingungen auch bei stöchiometrischem Verhältnis der Stoffe der Fall. So könnte z.B. ein Teil der Sauerstoffatome in Stickstoffoxiden enthalten sein und damit die Stöchiometrie-Formel verfälschen. In der Luft enthaltenes Kohlenstoffdioxid oder Wasser würde auch zu einem überschätzen der Kohlen"-stoff"~ / Wasserstoffatome führen. Man könnte argumentieren dass sich diese durch ein Pseudokohlenwasserstoff erklären lassen, aber dafür müssten $a$ und $b$ umständlich angepasst werden. Unter der Annahme, dass nur Kohlenwasserstoff mit reinem Sauerstoff reagiert ist $\beta=0$ bei stöchiometrischem Verhältnis der Stoffe. Für diesen Beleg, wo reines Methan mit Luft modelliert als $\mathrm{N}_2$ und $\mathrm{O}_2$-Gemisch reagiert sind die Voraussetzungen für die sinnvolle Anwendbarkeit des kombinierten Elementmassenbruches und damit des Bilger-Mischungsbruches also erfüllt.\\
+
+Um aus dieser Linearkombination der Elementmassenbrüche ein \gls{Z} zu konstruieren, das 0 im Oxidatorstrom und 1 im Brennstoffstrom ist, definieren wir die kombinierten Elementmassenbrüche in beiden Strömen $\beta_\mathrm{B}$ und $\beta_\mathrm{Ox}$ und definieren damit einen genormten Mischungsbruch, den Bilger-Mischungsbruch:
+\begin{align}
+    \beta_\mathrm{B} & := \beta(0)
+    \overset{\text{\autoref{eq:betach4Y}}}{=}
+        \frac{ 2 Y_{\mathrm{B}  ,\mathrm{B}} }{ \nu_\mathrm{B}     M_\mathrm{B}     } +
+        \frac{ 2 Y_{\mathrm{O}_2,\mathrm{B}} }{ \nu_{\mathrm{O}_2} M_{\mathrm{O}_2} }
+    \\ &
+    \overset{\text{S.\pageref{pg:aircomposition}}}{=}
+       \frac{ 2 \cdot 1.0 }{ 1 \cdot \SI{16.0425}{\gram\per\mole} } +
+       \frac{ 2 \cdot 0.0 }{-2 \cdot \SI{31.9988}{\gram\per\mole} }
+    = 0.12467
+    \\
+    \beta_\mathrm{Ox} & := \beta(1)
+    \overset{\text{\autoref{eq:betach4Y}}}{=}
+        \frac{ 2 Y_{\mathrm{B}  ,\mathrm{Ox}} }{ \nu_\mathrm{B}     M_\mathrm{B}     } +
+        \frac{ 2 Y_{\mathrm{O}_2,\mathrm{Ox}} }{ \nu_{\mathrm{O}_2} M_{\mathrm{O}_2} }
+    \\ &
+    \overset{\text{S.\ref{lst:ch4smooke.ulf}}}{=}
+        \frac{ 2 \cdot 0.0 }{ 1 \cdot \SI{16.0425}{\gram\per\mole} } +
+        \frac{ 2 \cdot 0.23}{-2 \cdot \SI{31.9988}{\gram\per\mole} }
+    = -0.0072
+\end{align}
+\begin{align}
+    \label{eq:ZBilger}
+    Z_\mathrm{Bilger}(x) & :=
+        \frac{ \beta(x) - \beta_\mathrm{Ox} }{ \beta_\mathrm{B} - \beta_\mathrm{Ox} }
+\end{align}
+
+Da der Smooke-Mechanismus aus vielen Zwischenprodukten besteht die alle Sauer"-stoff"~, Wasserstoff- und Kohlenstoffatome beinhalten können, muss für die Berechnung der Elementmassenbrüche über die Massenbrüche aller Stoffe, vgl. Listing~\ref{lst:ch4smooke}, multipliziert mit den Atomzahlen \gls{a_ij} und einem Gewichtungsfaktor aus den molaren Massen summiert werden, vgl. \autoref{eq:zfromy}. Also z.B. für Wasserstoff:
+\begin{align}
+    Z_\mathrm{H} =
+        \frac{ 4 M_\mathrm{H} }{ M_{\mathrm{CH}_4} } Y_{\mathrm{CH}_4} +
+        \frac{ 2 M_\mathrm{H} }{ M_{\mathrm{H}_2\mathrm{O}} } Y_{\mathrm{H}_2\mathrm{O}} +
+        \frac{ 2 M_\mathrm{H} }{ M_{\mathrm{H}_2\mathrm{O}_2} } Y_{\mathrm{H}_2\mathrm{O}_2} +
+        \frac{ 3 M_\mathrm{H} }{ M_{\mathrm{CH}_3} } Y_{\mathrm{CH}_3} +
+        \ldots
+\end{align}
+Aus der Darstellung kann bewiesen werden, dass gilt:
+\begin{align}
+    \sum\limits_{i \in \text{Stoffe} } \gls{Y_i} = 1
+    \Rightarrow
+    \sum\limits_{j \in \text{Elemente}} \gls{Z_j} = 1
+\end{align}
+
+Nun, da schon zwei verschiedene Mischungsbrüche eingeführt wurden, stellt sich die Frage, welcher von \gls{ULF} ausgegeben wird. Hierfür wurden alle drei Mischungsbrüche und deren Differenzen zueinander in \autoref{fig:zcomparison} geplottet.
+
+\begin{figure}[H]
+    \begin{center}\begin{minipage}{0.5\linewidth}
+        \includegraphics[width=\linewidth]{Beleg-oppdiff-Le1/Mischungsbruchvergleich}
+    \end{minipage}\begin{minipage}{0.5\linewidth}
+        \includegraphics[width=\linewidth]{Beleg-oppdiff-Levar/Mischungsbruchvergleich}
+    \end{minipage}\end{center}
+    \caption{Hier wird der Mischungsbruch \gls{Z_ULF} wie er von \gls{ULF} intern berechnet zum einen verglichen mit \gls{Z} aus \autoref{eq:zreaktiv} und zum zweiten mit \gls{Z_Bilger}. \gls{Z} wird aus den von \gls{ULF} ausgegebenen Massenbrüchen errechnet. Zum Vergleich ist eine horizontale Linie bei stöchiometrischer Mischung sowie eine vertikale für \gls{x_st} ( $\gls{Z_ULF}( \gls{x_st} ) \overset{!}{=} Z_\mathrm{st}$ ) eingezeichnet. Die Daten sind aus der physikalischen Simulation für eine Einströmgeschwindigkeit $\gls{v}=\SI{0.5}{\meter\per\second}$ und für den Fall \textbf{Links:} $\mathrm{Le}=1$ und \textbf{Rechts:} $\mathrm{Le}\neq 1$. Vergleiche auch Kapitel~\ref{sct:oppdiffLe=1} und \ref{sct:oppdiffLevar}}
+    \label{fig:zcomparison}
+\end{figure}
+
+Für $\mathrm{Le}=1$ sollte $\gls{Z_ULF} = \gls{Z_Bilger}$ sein. In \autoref{fig:zcomparison} links, wo $\mathrm{Le}=1$ ist, ist zu erkennen, dass \gls{Z_Bilger} besser auf \gls{Z_ULF} passt, als \gls{Z} bzw. als in \autoref{fig:zcomparison} rechts. Systematische Abweichungen sind dennoch in den 50-fach vergrößerten Abweichungsplots zu erkennen. Die maximalen relativen Fehler sind $25\%$ für \gls{Z_ULF} vs. \gls{Z} und $1\%$ für \gls{Z_ULF} vs. \gls{Z_Bilger}.
+
+Der $1\%$-Fehler lässt sich womöglich mit numerischen Ungenauigkeiten erklären, also durch zu geringe örtliche Diskretisierung oder womöglich sogar Fehler in der Diskretisierung der Ableitungen. Maschinengenauigkeitsfehler scheinen keine Ursache zu sein, da diese bei einfacher Genauigkeit im Bereich $10^{-7}$ relativen Fehlers wären.
+
+Die Differenz $\gls{Z_ULF} - \gls{Z}$ ist vor allem im Verbrennungsbereich groß. Außerdem ist sie dort positiv, was heißt dass $\gls{Z_ULF} > \gls{Z}$ ist. Da \gls{Z_ULF} gleich \gls{Z_Bilger} sein sollte, kann man sich diesen Unterschied mit \autoref{eq:zreaktiv} und \autoref{eq:ZBilger} erklären. Während \gls{Z_Bilger} nämlich $Z_\mathrm{C}$ als additive konstante hat, hat \gls{Z} nur $Y_{\mathrm{CH}_4}$. Das heißt \gls{Z} ignoriert die Verbrennungsprodukte, sodass vor allem in der Flammenzone \gls{Z} kleiner ist als \gls{Z_Bilger}, welches auch den Kohlenstoff in Kohlenstoffdioxid und -monoxid einbezieht.
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Skalare Dissipationsrate}
+\label{sct:chist}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% 08_FlameletModell_Diffusion
+% http://www.itv.rwth-aachen.de/fileadmin/LehreSeminar/TechnischeVerbrennung/VL_TV_Folien/14_TechVerbr_Kap7_Teil2von2.pdf
+Führt man eine Koordinatentransformation von \gls{x} auf den Mischungsbruch \gls{Z}, durch, dann erhält man die Flamelet-Gleichungen\cite[16]{hasse-pdf08}\cite[94]{poinsot2005theoretical}.
+\begin{align}
+    \varrho \fpart{ \gls{Y_i} }{t} -
+    \varrho D \left( \nabla\gls{Z} \right)^2
+        \frac{ \partial^2 \gls{Y_i}  }{ \partial \gls{Z}^2 }
+    = \dot{\omega}_i \\
+    c_\mathrm{p} \varrho \fpart{T}{t} -
+    c_\mathrm{p} \varrho D \left( \nabla \gls{Z} \right)^2
+        \frac{ \partial^2 T }{ \partial \gls{Z}^2 }
+    = \fpart{p}{t} + q_r + \sum\limits_{i \in \text{Stoffe} } \dot{\omega}_i h_i
+    =: \dot{\omega}_T
+\end{align}
+Die Skalare Dissipationsrate \gls{chi} wird definiert als
+\begin{align}
+    \chi\left( \gls{Z} \right)
+    := 2 D \left( \left. \nabla \gls{Z}(x) \right|_{ x = x \left( \gls{Z} \right) } \right)^2 \\
+    \gls{chi_st}
+    := \left.
+        2 D \left( \nabla \gls{Z}( \gls{x} ) \right)^2
+    \right|_{ \gls{x} = \gls{x_st} }
+\end{align}
+Sie entspricht damit dem Diffusionskoeffizienten im Mischungsbruchraum, also der Flameletgleichung. Die Einheit des Diffusionskoeffizienten $D$ ist \SI{}{\square\meter\per\second} und \gls{Z} ist einheitenlos, sodass die Einheit der skalaren Dissipationsrate \SI{}{\per\second} ist. Aus der Bedingung $1=\mathrm{Le}=\frac{\lambda}{D c_\mathrm{p} \varrho}$ kann $D$ berechnet werden.
+
+Die Ableitung wird numerisch durch eine Vorwärts-(\gls{FDS}) bzw. Rückwärtsdifferenz(\gls{BDS}) (am ersten Punkt) 1.Ordnung berechnet:
+\begin{align}
+    \fpart{Z}{x}\left( x_i \right) = \frac{Z_{i+1}-Z_i}{x_{i+1}-x_i} + \mathcal{O}\left( x_{i+1}-x_i \right)
+\end{align}
+Für \gls{Z} wurden die aus ULF ausgegebenen Werte genommen, die sich von den eigens berechneten Mischungsbrüchen marginal unterscheiden, vgl. \autoref{fig:plotZ}.
+\begin{figure}[H]
+    \begin{center}\begin{minipage}{0.6\linewidth}
+        \includegraphics[width=\linewidth]{Beleg-oppdiff-Le1/ix}
+    \end{minipage}\end{center}
+    \caption{Die \gls{x}-Stellen geplottet über den Index. Der Ortsraum geht von \SI{0}{\meter} bis \SI{0.02}{\meter}, die Düsen sind also \SI{2}{\centi\meter} auseinander. Man sieht, dass insbesondere in der Mitte von \gls{ULF} eine höhere Punktdichte gewählt wurde, um die dünne Flamme aufzulösen. Bei der numerischen Ableitung in der Auswertung ist zu beachten, dass der Abstand zweier aufeinander folgender Punkte nicht immer derselbe ist.}
+    % Warum sind die x-Abstände nicht gleichmäßig gewählt (???)
+    \label{fig:plotx}
+\end{figure}
+
+\begin{figure}[H]
+    \begin{center}\begin{minipage}{0.6\linewidth}
+        \includegraphics[width=\linewidth]{Beleg-oppdiff-Le1/ZULF-ZBilger-diff-for-5-chist}
+    \end{minipage}\end{center}
+    \caption{Dargestellt sind die Abweichungen vom errechneten Bilgermischungsbruch \gls{Z_Bilger} vom Mischungsbruch \gls{Z_ULF} für die Simulation im physikalischen Raum bei konstanter Lewis-Zahl. Die Abweichungen sind im Promille-Bereich und damit womöglich numerischen Ursprungs. Vergleiche auch \autoref{fig:zcomparison}, in der diese Kurve für ein bestimmtes $\chi$, über den Ort aufgetragen ist (Kurve mit kleinstem Ausschlag).}
+    \label{fig:plotZ}
+\end{figure}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Fortschrittsvariable}
+\label{sct:PV}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% 08_FlameletModell_Premix.pdf
+Die Fortschrittsvariable $Y_c$ wird als Ersatz für den bei Vormischflammen konstanten Mischungsbruch eingeführt. Er ist in der Aufgabenstellung definiert als:
+\begin{align}
+    \label{eq:pv}
+    Y_c(x,\alpha) := Y_\mathrm{CO} (x) + Y_{\mathrm{CO}_2} (x)
+\end{align}
+Es gibt auch andere Defintionen, z.B. mit Temperaturen, vgl. Ref.\cite[45]{poinsot2005theoretical}.
+% Verstehe nicht wie der Divisor in der Aufgabenstellung gemeint ist ... (!!!)
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Abhängigkeit von der Einströmgeschwindigkeit}
+\label{sct:skurve}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+In der Aufgabenstellung \ref{itm:ople1-1} wird zwar die Auftragung von \gls{T_max} über \gls{chi_st} gefordert, aber da die dort zu erwartende S-Kurve häufig über die Streckungsrate \gls{kstrain} anstatt \gls{chi_st} eingeführt wird, wird die Streckungsrate hier mit behandelt.\\
+
+Erhöht man die Geschwindigkeit der aufeinander strömenden Gase in der Konfiguration aus \autoref{fig:stream} so erlischt die Flamme ab einem Schwellwert. Die Ursache liegt in der zu starken Abkühlung durch Wärmediffusion und -konvektion, sodass nicht genügend Aktivierungsenergie zum Erhalt der Verbrennungsreaktion vorhanden ist. Um dieses Verhalten zu charakterisieren betrachtet man die Streckungsrate \gls{kstrain}, die angibt, wie schnell sich die Flammenfläche $A$ vergrößert.
+\begin{align}
+    \gls{kstrain}
+    := \frac{1}{A} \ftdif{A}{t}
+\end{align}
+Für die planare Gegenstromflamme wird die Streckungsrate in der Stauebene durch das Verhältnis der Impulse der beiden Gasströme definiert\cite{seshadri1978}\cite{fisher1997determination}:
+\begin{align}
+    \label{eq:kstrain}
+    \gls{kstrain}
+    = \frac{2 v_\mathrm{Ox}}{L} \left( 1 +
+        \sqrt{ \frac{ \varrho_\mathrm{B} v_\mathrm{B}^2 }
+        { \varrho_\mathrm{Ox} v_\mathrm{Ox}^2 } } \right)
+    = \frac{2}{L} \left( v_\mathrm{Ox} + v_\mathrm{B}
+      \sqrt{ \frac{ \varrho_\mathrm{B} }{ \varrho_\mathrm{Ox} } } \right)
+\end{align}
+Hierbei ist $\varrho_\mathrm{Ox} \approx \SI{1.16}{\kilo\gram\per\cubic\meter}$ bei \SI{300}{\kelvin}, vgl. Temperaturen in Listing~\ref{lst:ch4smooke.ulf}, $\varrho_\mathrm{B} \approx \SI{0.656}{\kilo\gram\per\cubic\meter}$ die Dichte von Methan bei \SI{300}{\kelvin} und $L=\SI{0.02}{\meter}$ der Abstand der Düsen.\\
+
+Trägt man die maximale Temperatur, also die Temperatur der Verbrennungszone, über die inverse Streckungsrate auf, erhält man eine hystereseartige S-Kurve, vgl. \autoref{fig:s-kurve}. Bei Erhöhung der Streckungsrate (Verkleinerung der Inversen) erlischt die Flamme beim Punkt $Q$ und die Temperatur fällt sprungartig auf den unteren Ast ab. Senkt man langsam die Streckungsrate wieder, kommt es bei $I$ (Ignition) zur erneuten Zündung und die Flammentemperatur springt sprungartig auf den oberen Ast.
+\begin{figure}[h]
+    \begin{center}\begin{minipage}{0.5\linewidth}
+        \includegraphics[width=\linewidth]{S-Kurve}
+    \end{minipage}\end{center}
+    \caption{Die maximale Temperatur $T_\mathrm{max}$ aufgetragen über die inverse Streckungsrate $\gls{kstrain}^{-1}$. Q$\ldots$Quenching, I$\ldots$Ignition. Abb. aus \cite{hasse-pdf05} }
+    \label{fig:s-kurve}
+\end{figure}
+Durch das Variieren der Streckungsraten verändert sich auch \gls{chi_st}, was es in der Aufgabenstellung zu variieren gilt.

@@ -1,0 +1,65 @@
+// velocities (commented because it needs to be varied and therefore is included in an extra file smooke-changes.ulf (see bottom)
+//#define U_LOWER  0.2; // m/s
+//#define U_UPPER -0.2; // m/s
+
+// temperatures
+#define T_OXID    300.0;
+#define T_FUEL    300.0;
+#define T_MIDDLE  2200.0;
+
+// pressure
+#define P   101325.0;
+
+// mechanism && fuel species
+#define MECHANISM     ch4_smooke.xml;
+#define GASID         gas;
+#define MOLE_OR_MASS  massFrac;  // specifies wether "Y1",... should be interpreted as the mass fraction or mole fraction
+
+// specify what species each Y corresponds to
+#define Y1   CH4;
+#define Y2   O2;
+#define Y3   N2;
+#define Y4   CO2;
+#define Y5   H2O;
+#define Y6   H2;
+
+// species
+#define Y1_FUEL    1.0;   // CH4 (see above)
+#define Y2_FUEL    0.0;   // O2
+#define Y3_FUEL    0.0;   // N2
+#define Y4_FUEL    0.0;   // CO2
+#define Y5_FUEL    0.0;   // H2O
+#define Y6_FUEL    0.0;   // H2
+
+#define Y1_OXID    0.0;   // CH4
+#define Y2_OXID    0.23;  // O2
+#define Y3_OXID    0.77;  // N2
+#define Y4_OXID    0.0;   // CO2
+#define Y5_OXID    0.0;   // H2O
+#define Y6_OXID    0.0;   // H2
+
+
+// mixture fraction
+#define Z_LOWER     1.0;
+#define Z_UPPER     0.0;
+
+// result and restart options
+#define RESULT_BASENAME oppdifJet_ct_CH4Air_smooke_;
+#define RESTART_OPTION  NO;
+#define RESTART_FILE    oppdifJet_ct_CH4Air_smooke_100.0.ulf;
+
+// mesh and remesh options
+#define AXIS_LENGTH     28;
+#define AXIS_MIN        0.0;  // Position linke  Duese in Meter
+#define AXIS_MAX        0.02; // Position rechte Duese in Meter
+
+#define PLATEAU_WIDTH   0.005;
+
+#define INIT_ADD_POINTS   0;
+#define REFINE_ADD_POINT  10;
+#define REFINE_TARGET     300;
+
+//include template file
+#include oppdifJet_ct_template.ulf;
+
+#include smooke-changes.ulf;

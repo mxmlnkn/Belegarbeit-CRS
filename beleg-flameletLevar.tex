@@ -1,0 +1,146 @@
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Simulation mittels Flamelets für \texorpdfstring{$\mathrm{Le}\neq 1$}{Le!=1}}
+\label{sct:flameletLevar}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Durchführung}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+Im wesentlichen sind die Schritte aus Kapitel~\ref{sct:flameletLe1-execution} zu befolgen. Jedoch sind einige Änderungen in \lstinline!flameletLe1_template.ulf! notwendig, damit mit variabler Lewis-Zahl gerechnet wird.
+
+Zum einen müssen die equation-IDs für die Temperatur und die Massenbrüche umgestellt werden und zum zweiten muss der \texttt{updateType} der Felder \texttt{LeRatio} und \texttt{LeZ} auf \texttt{standard} gesetzt werden, vgl. Listing~\ref{lst:flameletLeVar}.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Auswertung}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+Es gilt dasselbe wie in Kapitel~\ref{sct:oppdiffLevar:note} auch für dieses Kapitel.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%\subsubsection{\texorpdfstring{$T_\mathrm{max}$}{Tmax} über \texorpdfstring{$\chi_\mathrm{st}$}{chist}}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+%Siehe Kap.\ref{sct:cmp-Tmax-chist}.
+%\begin{center}
+%    \captionsetup{type=figure}
+%    \begin{minipage}{0.5\linewidth}\begin{center}
+%        \includegraphics[width=\linewidth]{Beleg-flamelet-Levar/chist-Tmax-zoom}
+%    \end{center}\end{minipage}
+%    \caption{Die S-Kurve, siehe Kapitel~\ref{sct:skurve}; Annotiert sind die jeweiligen $\chi_\mathrm{st}$}
+%    \label{fig:flameletLevar:s-kurve-ulf}
+%\end{center}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsubsection{\texorpdfstring{$T_\mathrm{max}$}{Tmax} über \texorpdfstring{$\chi_\mathrm{st}$}{chist}}
+\label{sct:cmp-Tmax-chist}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+Der Verlauf der S-Kurve ist für alle Simulationen annähernd gleich. Vor allem aber die Simulationen im Ortsraum für $\mathrm{Le}\neq 1$ sind viel heißer als die anderen drei Simulationsmethoden. Am kühlsten ist die Simulation mittels Flamelets für $\mathrm{Le}\neq 1$, womöglich weil dort die Diffusion des Wasserstoffs aus der Flammenzone raus am stärksten ist, womit weniger Reaktionsenergie in der Flammenzone freigesetzt wird.
+
+\begin{figure}[H]
+    \begin{center}\begin{minipage}{0.6\linewidth}
+        \includegraphics[width=\linewidth]{Beleg-flamelet-Le1/chist-Tmax-comparison}
+    \end{minipage}\end{center}
+    \caption{Der obere Ast der S-Kurve, siehe Kapitel~\ref{sct:skurve}.}
+\end{figure}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsubsection{Speziesprofile}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+Wie auch schon in Kapitel~\ref{sct:flameletLe1:auswertung} wurde auch hier der Fall $\gls{chi_st}=\SI{3.7859}{\meter\per\second}$ ausgenommen, da es zu keiner Zündung der Flamme kam, vgl. \autoref{fig:flameletLevar:yi-z} im Anhang~\ref{appendix:flameletLeVar:yi-z}.
+
+Schon in bei \autoref{fig:opplevar:yi-z-comp} fiel auf, dass der dreieckförmige Verlauf durch die Beachtung der stoffabhängigen Lewis-Zahlen sich verformt, da Wasserstoff stärker von der Flammenzone weg diffundiert. Bei Nutzung von Flamelets zur Simulation wird dieser Unterschied noch stärker. Der Kohlenstoffdioxidanteil wird in der Flammenzone höher und der Wassermassenbruch weniger. Womöglich wird durch die bessere Auflösung der dünnen Flammenzone bei Nutzung von Flamelets die Diffusion von Wasserstoff aus der Flammenzone noch besser beschrieben, bzw. besser numerisch aufgelöst, vgl. auch \autoref{fig:yi-z-species-comp}.
+
+\begin{figure}[H]\begin{center}
+    \begin{minipage}{0.33\linewidth}\begin{center}
+        \includegraphics[width=\linewidth]{{{Beleg-flamelet-Levar/Yi-over-Z-chist-1.9816}}}
+    \end{center}\end{minipage}\begin{minipage}{0.33\linewidth}\begin{center}
+        \includegraphics[width=\linewidth]{{{Beleg-oppdiff-Levar/Yi-over-Z-v-0.25}}}
+    \end{center}\end{minipage}\begin{minipage}{0.33\linewidth}\begin{center}
+        \includegraphics[width=\linewidth]{{{Beleg-flamelet-Le1/Yi-over-Z-chist-1.9816}}}
+    \end{center}\end{minipage}
+    \caption{Vergleich der Speziesprofile mit \textbf{Mitte:} Simulation im Ortsraum für $\mathrm{Le}\neq 1$, vgl. \autoref{fig:opplevar:yi-z} \textbf{Rechts:} Simulation mittels Flamelets für $\mathrm{Le}=1$, vgl. \autoref{fig:flameletLe1:yi-z}.}
+    \label{fig:flameletLevar:yi-z-comp}
+\end{center}\end{figure}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsubsection{Vergleich der skalaren Dissipationsrate mit der analytischen Lösung}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+Wie schon bei der Simulation mit Flamelets und konstanter Lewis-Zahl festgestellt stimmt die analytische Lösung viel besser mit der numerischen Simulation überein als die numerische Lösung im Ortsraum.
+
+\begin{figure}[H]\begin{center}
+    \begin{minipage}{0.5\linewidth}\begin{center}
+        \includegraphics[width=\linewidth]{Beleg-flamelet-Levar/chianal}
+    \end{center}\end{minipage}
+    \caption{Plot der skalaren Dissipationsraten über den Mischungsbruch aus der Simulation (Punkte) und Vergleich zum analytischen Verhalten (gestrichelte Linien) aus \autoref{eq:chianal}. Gleiche Farben gehören zur gleichen Konfiguration.}
+    \label{fig:flameletLevar:chianal}
+\end{center}\end{figure}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsubsection{\texorpdfstring{$T_\mathrm{max}$}{Tmax} über die Fortschrittsvariable}
+\label{sct:cmp-Tmax-PV}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+In \autoref{fig:yi-z-comp} sind alle Verläufe der maximalen Temperatur aufgetragen über die Summe der Kohlenstoffreaktionsprodukte dargestellt. Alle Verläufe weisen eine ungefähr gleich starke Proportionalität auf, wobei die Simulation im Ortsraum für $\mathrm{Le}\neq 1$, wie auch schon bei obigen Vergleichen, am stärksten aus der Reihe fällt.
+
+Alle Simulationsmethoden weisen eine Verschiebung der Geraden auf der $\mathrm{PV}$-Achse auf. Da \gls{T_max} in der Flammenzone ist, ist die Verschiebung möglicherweise der unterschiedlichen Wasserstoffdiffusion geschuldet. Für den Fall $\mathrm{Le}\neq 1$ diffundiert Wasserstoff stärker aus der Flammenzone raus, sodass der Kohlenstoffanteil und damit $\mathrm{PV}$ größer wird.
+
+\begin{figure}[H]
+    \begin{center}\begin{minipage}{0.6\linewidth}
+        \includegraphics[width=\linewidth]{Beleg-flamelet-Le1/PV-Tmax-comparison}
+    \end{minipage}\end{center}
+    \caption{Der obere Ast der S-Kurve, siehe Kapitel~\ref{sct:skurve}, aufgetragen über die Fortschrittsvariable. Annotiert sind die Einströmgeschwindigkeiten in \SI{}{\meter\per\second}.}
+    \label{fig:yi-z-comp}
+\end{figure}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%\subsubsection{\texorpdfstring{$T_\mathrm{max}$}{Tmax} über die Fortschrittsvariable}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+%\begin{figure}[H]
+%    \begin{minipage}{0.5\linewidth}\begin{center}
+%        \includegraphics[width=\linewidth]{Beleg-flamelet-Levar/PV-Tmax}
+%    \end{center}\end{minipage}\begin{minipage}{0.5\linewidth}\begin{center}
+%        \includegraphics[width=\linewidth]{Beleg-flamelet-Levar/PV-Tmax-zoom}
+%    \end{center}\end{minipage}
+%    \caption{Plot der maximalen Temperatur über die Fortschrittsvariable am Ort stöchiometrischer Mischung. Die Annotationen sind die jeweiligen $\chi_\mathrm{st}$ \textbf{Rechts:} Zoom unter Auslassung der Werte für $v=\SI{1.0}{\meter\per\second}$ und $v=\SI{1.5}{\meter\per\second}$}
+%    \label{fig:flameletLevar:tmax-pv}
+%\end{figure}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsubsection{Massenbrüche über die Fortschrittsvariable}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+Wie bei allen anderen Simulationsarten ist bei höheren skalaren Dissipationsraten weniger Kohlenstoffdioxid und mehr Kohlenstoffmonoxid und Wasser in der Flammenzone, d.h. die Verbrennung wird unvollständiger und damit die Flammentemperatur auch niedriger.
+
+Im Gegensatz zur Lösung im Ortsraum für $\mathrm{Le}\neq 1$, vgl. \autoref{fig:opplevar:yi-pv}, fallen der Ort maximaler Temperatur und Stöchiometrie nicht mehr überein, also genau wie in beiden Simulationsmethoden für $\mathrm{Le}=1$, vgl. \autoref{fig:yi-pv} und \ref{fig:flameletLe1:yi-pv}. Das lässt darauf schließen, dass für $\mathrm{Le}\neq 1$ die Simulation im Ortsraum die Flammenzone zu schlecht auflöst und daher das andersartige Verhalten zustande kommt.
+
+Wie schon in \autoref{fig:flameletLevar:yi-z-comp} aufgefallen, verschiebt sich durch die Simulation im Mischungsbruchraum der Wasserstoffanteil noch weiter weg von der Flammenzone als wie es schon beim Übergang von $\mathrm{Le}=1$ zu $\mathrm{Le}\neq 1$ passierte.
+
+\begin{figure}[H]
+    \begin{minipage}{0.33\linewidth}\begin{center}
+        % fucking three braces, because there are dots in the filenames -.-... see http://tex.stackexchange.com/questions/10574/includegraphics-dots-in-filename
+        \includegraphics[width=\linewidth]{{{Beleg-flamelet-Levar/Yi-over-PV-chist-0.4918}}}
+    \end{center}\end{minipage}\begin{minipage}{0.33\linewidth}\begin{center}
+        \includegraphics[width=\linewidth]{{{Beleg-flamelet-Levar/Yi-over-PV-chist-0.8800}}}
+    \end{center}\end{minipage}\begin{minipage}{0.33\linewidth}\begin{center}
+        \includegraphics[width=\linewidth]{{{Beleg-flamelet-Levar/Yi-over-PV-chist-1.2686}}}
+    \end{center}\end{minipage}\\
+    \begin{minipage}{0.33\linewidth}\begin{center}
+        \includegraphics[width=\linewidth]{{{Beleg-flamelet-Levar/Yi-over-PV-chist-1.6383}}}
+    \end{center}\end{minipage}\begin{minipage}{0.33\linewidth}\begin{center}
+        \includegraphics[width=\linewidth]{{{Beleg-flamelet-Levar/Yi-over-PV-chist-1.9816}}}
+    \end{center}\end{minipage}\fbox{\begin{minipage}{0.33\linewidth}\begin{center}
+        \includegraphics[width=\linewidth]{{{Beleg-oppdiff-Levar/Yi-over-PV-v-0.25}}}
+    \end{center}\end{minipage}}
+    \caption{Plot ausgewählter Massenbruchverteilungen über die Fortschrittsvariable. \textbf{Rechts:} Plot übernommen aus \autoref{fig:opplevar:yi-pv} für den Fall stoffspezifischer Lewis-Zahlen und Simulation im Ortsraum.}
+    \label{fig:flameletLevar:yi-pv}
+\end{figure}
+

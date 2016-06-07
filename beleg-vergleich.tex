@@ -1,0 +1,86 @@
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Vergleich}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{\texorpdfstring{$T_\mathrm{max}$}{Tmax} über \texorpdfstring{$\chi_\mathrm{st}$}{chist}}
+\label{sct:cmp-Tmax-chist}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{figure}[H]
+    \begin{center}\begin{minipage}{0.7\linewidth}
+        \includegraphics[width=\linewidth]{Beleg-flamelet-Le1/chist-Tmax-comparison}
+    \end{minipage}\end{center}
+    \caption{Der obere Ast der S-Kurve, siehe Kapitel~\ref{sct:skurve}.}
+\end{figure}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{\texorpdfstring{$T_\mathrm{max}$}{Tmax} über PV}
+\label{sct:cmp-Tmax-PV}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{figure}[H]
+    \begin{center}\begin{minipage}{0.7\linewidth}
+        \includegraphics[width=\linewidth]{Beleg-flamelet-Le1/PV-Tmax-comparison}
+    \end{minipage}\end{center}
+    \caption{Der obere Ast der S-Kurve, siehe Kapitel~\ref{sct:skurve}, aufgetragen über die Fortschrittsvariable. Annotiert sind die Einströmgeschwindigkeiten in \SI{}{\meter\per\second}.}
+\end{figure}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Spezienprofile}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+Für konstante Lewis-Zahlen sehen die beiden Simulationsmethoden gleich aus. Für $\mathrm{Le}\neq 1$ jedoch sind Unterschiede vor allem im Verlauf von $Y_{\mathrm{H}_2\mathrm{O}}$ zu erkennen, aber auch $Y_{\mathrm{CO}_2}$ liegt bei \texttt{flamelet} allgemein höher als bei \texttt{oppdiffJet}. Eigentlich sollten die Resultate unabhängig von der Simulationsmethode sein.
+
+
+\begin{minipage}{\linewidth}
+    \captionsetup{type=table}
+    \begin{tabular}{ccc}
+        & \texttt{oppdiffJet} & \texttt{flamelet} \\
+        $\mathrm{Le}=1$ &
+        \includegraphics[width=0.4\linewidth]{{{Beleg-oppdiff-Le1/Yi-over-Z-v-0.2}}}   &
+        \includegraphics[width=0.4\linewidth]{{{Beleg-flamelet-Le1/Yi-over-Z-chist-1.6383}}} \\
+        $\mathrm{Le}\neq 1$ &
+        \includegraphics[width=0.4\linewidth]{{{Beleg-oppdiff-Levar/Yi-over-Z-v-0.2}}}   &
+        \includegraphics[width=0.4\linewidth]{{{Beleg-flamelet-Levar/Yi-over-Z-chist-1.6383}}}
+    \end{tabular}
+    \captionof{figure}{Plot der Massenbruchverteilungen für $v=\SI{20}{\centi\meter\per\second}$ bzw. $\chi_\mathrm{st}=1.6383$}
+\end{minipage}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%\subsection{$T_\mathrm{max}$ über die Fortschrittsvariable}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+%\begin{minipage}{\linewidth}
+%    \begin{minipage}{0.4\linewidth}\begin{center}
+%        \includegraphics[width=\linewidth]{Beleg-flamelet-Levar/PV-Tmax}
+%    \end{center}\end{minipage}\begin{minipage}{0.4\linewidth}\begin{center}
+%        \includegraphics[width=\linewidth]{Beleg-flamelet-Levar/PV-Tmax-zoom}
+%    \end{center}\end{minipage}
+%    \captionof{figure}{Plot der maximalen Temperatur über die Fortschrittsvariable am Ort stöchiometrischer Mischung. Die Annotationen sind die Einlassgeschwindigkeiten in \SI{}{\meter\per\second} \textbf{Rechts:} Zoom unter Auslassung der Werte für $v=\SI{1.0}{\meter\per\second}$ und $v=\SI{1.5}{\meter\per\second}$}
+%    \label{fig:flameletLevar:tmax-pv}
+%\end{minipage}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Massenbrüche über die Fortschrittsvariable}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+Für $\mathrm{Le}=1$ sind die Simulationsresultate qualitativ die gleichen, auch wenn die Verteilung der Samplingpunkte anders ist. Für $\mathrm{Le}\neq 1$ jedoch sind wieder Unterschiede beim Verlauf des Wasser-Massenbruches zu erkennen, was nicht sein sollte.
+
+\begin{minipage}{\linewidth}
+    \captionsetup{type=table}
+    \begin{tabular}{ccc}
+        & \texttt{oppdiffJet} & \texttt{flamelet} \\
+        $\mathrm{Le}=1$ &
+        \includegraphics[width=0.4\linewidth]{{{Beleg-oppdiff-Le1/Yi-over-PV-v-0.2}}}   &
+        \includegraphics[width=0.4\linewidth]{{{Beleg-flamelet-Le1/Yi-over-PV-chist-1.6383}}} \\
+        $\mathrm{Le}\neq 1$ &
+        \includegraphics[width=0.4\linewidth]{{{Beleg-oppdiff-Levar/Yi-over-PV-v-0.2}}}   &
+        \includegraphics[width=0.4\linewidth]{{{Beleg-flamelet-Levar/Yi-over-PV-chist-1.6383}}}
+    \end{tabular}
+    \captionof{figure}{Plot der Massenbruchverteilungen für $v=\SI{20}{\centi\meter\per\second}$ bzw. $\chi_\mathrm{st}=1.6383$}
+\end{minipage}
+

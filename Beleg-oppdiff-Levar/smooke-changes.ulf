@@ -1,0 +1,2 @@
+#define U_LOWER  0.5; // velocity of the Fluid expelled from the upper jet
+#define U_UPPER -0.5; // velocity for other jet

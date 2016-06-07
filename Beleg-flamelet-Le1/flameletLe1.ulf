@@ -1,0 +1,222 @@
+runTime
+{
+	startTime		  0.0;
+	endTime			  1.0;
+	writeInterval	  1.0;
+	timePrecision	  3;
+}
+
+solution
+{
+	requiredFields ( chi );
+	solutionEntries
+	{
+		T
+		{
+			eqID        T_flameletLe1;
+			minValue    0.0;
+			maxValue    3000.0;
+			boundaryConditions 
+			{
+				bounds
+				{
+					patchList (oxidizer, fuel);
+					eqID dirichlet;
+				}
+			}
+		}
+		Yi
+		{
+			eqID        Yi_flameletLe1;
+			minValue    0.0;
+			maxValue    1.0;
+			boundaryConditions 
+			{
+				bounds
+				{
+					patchList (oxidizer, fuel);
+					eqID dirichlet;
+				}
+			}
+		}
+	}
+}
+
+solver
+{
+	solverType bzzODE;
+	//solverType cvode;
+	absTol 1e-9;
+	relTol 1e-6;
+	maxSteps 100000;
+	maxOrder 5;
+}
+
+libs( "libequations.so" );
+
+resultFileBaseName  flameletLe1_;
+resultType ASCII;
+
+restart NO;
+
+mesh
+{
+	dimensions 1;
+	constructionFrom cartesianLimits;
+	axisNames( Z );
+	axisLength( 201 );
+	cartesianMin( 0 );
+	cartesianMax( 1 );
+	//initialMeshAdaption
+	//{
+	//	Z
+	//	{
+	//		referenceField "T";
+	//		//referenceField "Tinit";
+	//		additionalPoints 0;
+	//	}
+	//}
+
+	patches
+	{
+		oxidizer
+		{
+			patchMin ( 0 );
+			patchMax ( 0 );
+		}
+		fuel
+		{
+			patchMin ( 1 );
+			patchMax ( 1 );
+		}
+	}
+}
+
+mixture
+{
+    mainMixture   theMixture;
+    theMixture
+    {
+        mixtureType       CANTERA_MIXTURE;
+        //mechanism       gri30.xml;
+        //gasId           gri30_mix;
+        mechanism       ch4_smooke.xml;
+        gasId           gas;
+        transportType   Mix;
+        //fluidType       dcs;
+        //mechanism       ch4_grimech;
+        //egFile          "EGlib/src/EGlib/ch4_grimech";
+        mixtureEntries
+        {
+            tdot
+            {
+                updateType standard;
+            }
+            reactionRate
+            {
+                updateType standard;
+            }
+            hMean
+            {
+                updateType standard;
+            }
+        }
+    }
+}
+
+fields
+{
+	default
+	{
+		referenceFrame cellCentered;
+		interpolate YES;
+		frozen NO;
+		write NO;
+		fixedValue 0.0;
+		firstOrder CDS;
+		secondOrder CDS;
+		diffusive CDS;
+	}
+	YiDefault
+	{
+		write YES;
+	}
+	//Tinit // for initial mesh adaptioni...
+	//{
+	//	eqID mesh_gauss;
+	//	eqParameters {
+	//		axis 0.0;
+	//		mean 0.5;
+	//		spread 0.1;
+	//	}
+	//	frozen YES;
+	//	write YES;
+	//}
+	chi
+	{
+		//readFrom chi.ulf;
+		//readType ASCII;
+        eqID erfc_startProfile;
+        eqParameters
+        {
+            Zst 0.055;
+            chiSt 1.0; 
+        }
+		frozen YES;
+		write YES;
+		//fixedValue 0.0;
+	}
+	T
+	{
+		readFrom startProfiles.ulf;
+		readType ASCII;
+		write YES;
+	}
+	p
+	{
+		fixedValue 100000;
+		write YES;
+	}
+	CH4
+	{
+		readFrom startProfiles.ulf;
+		readType ASCII;
+		write YES;
+	}
+	O2
+	{
+		readFrom startProfiles.ulf;
+		readType ASCII;
+		write YES;
+	}
+	CO2
+	{
+		readFrom startProfiles.ulf;
+		readType ASCII;
+		write YES;
+	}
+	H2O
+	{
+		readFrom startProfiles.ulf;
+		readType ASCII;
+		write YES;
+	}
+	N2
+	{
+		readFrom startProfiles.ulf;
+		readType ASCII;
+		write YES;
+	}
+	rho
+	{
+		write YES;
+	}
+	hMean
+	{
+		write YES;
+	}
+	//reactionRateiDefault
+	//{
+	//	write YES;
+	//}
+}

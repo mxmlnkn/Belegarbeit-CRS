@@ -1,0 +1,142 @@
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Simulation mittels einer Diffusionsmodellierung von \texorpdfstring{$\mathrm{Le}\neq 1$}{Le!=1}}
+\label{sct:oppdiffLevar}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Durchführung}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+Im wesentlichen sind die Schritte aus Kapitel~\ref{sct:oppdiffLe1-execution} zu befolgen.
+Einzig die Schritte bezüglich \lstinline!Le! und \lstinline!Dtherm! in \lstinline!fields{ }! müssen ausgelassen werden. Le selber muss nicht komplett auskommentiert werden, es reicht, wenn bei \lstinline!LeiDefault! der Eintrag \lstinline!fixedValue 1.0;! auskommentiert wird und man \lstinline!Le { updateType constant; }! auf \lstinline!Le { updateType standard; }! abändert.
+
+\subsection{Auswertung}
+\label{sct:oppdiffLevar:note}
+
+Da viele der Diskussionen der Plots die in den vorigen Kapitel für konstante Lewis-Zahl gemacht wurden, auch für dieses Kapitel gelten, wurde sich nur auf die Unterschiede, falls vorhanden, konzentriert. Die vollständigen Plots wie von der Aufgabenstellung gefordert sind im Anhang~\ref{appendix:oppdiffLeVar} zu finden. Die Vergleiche der S-Kurven sind in den Kapiteln~\ref{sct:cmp-Tmax-chist} und \ref{sct:cmp-Tmax-PV} zu finden.
+
+%\subsubsection{\texorpdfstring{$T_\mathrm{max}$}{Tmax} über \texorpdfstring{$\chi_\mathrm{st}$}{chist}}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+%Siehe Kap.\ref{sct:cmp-Tmax-chist}.
+%\begin{center}
+%    \captionsetup{type=figure}
+%    \begin{minipage}{0.5\linewidth}\begin{center}
+%        \includegraphics[width=\linewidth]{Beleg-oppdiff-Levar/chist-Tmax}
+%    \end{center}\end{minipage}\begin{minipage}{0.5\linewidth}\begin{center}
+%        \includegraphics[width=\linewidth]{Beleg-oppdiff-Levar/chist-Tmax-zoom}
+%    \end{center}\end{minipage}
+%    \caption{\textbf{Links:} Die S-Kurve, siehe Kapitel~\ref{sct:skurve} \textbf{Rechts:} Zoom in die obere linke Ecke des linken Graphen. Annotiert sind die Einströmgeschwindigkeiten in \SI{}{\meter\per\second}}
+%    \label{fig:opplevar:s-kurve-ulf}
+%\end{center}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsubsection{\texorpdfstring{\gls{Z_Bilger}}{ZBilger} über \texorpdfstring{\gls{Z_ULF}}{ZULF}}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+Im Vergleich zum Fall $\mathrm{Le}=1$ in Kapitel~\ref{sct:oppdiffLe1:ZBilger_Z} ist der absolute und der relative Fehler um einen Faktor 10 größer. Es ist also zu vermuten, dass zusätzlich zu den numerischen Unterschieden noch systematische hinzugekommen sind, weil die Diffusion nicht mehr für alle Spezies gleich stark ist.
+
+%\begin{figure}[H]
+%    \begin{minipage}{0.5\linewidth}\begin{center}
+%        \includegraphics[width=\linewidth]{Beleg-oppdiff-Levar/Zcalc-ZBilger-for-5-chist}
+%    \end{center}\end{minipage}\begin{minipage}{0.5\linewidth}\begin{center}
+%        \includegraphics[width=\linewidth]{Beleg-oppdiff-Levar/Zcalc-ZBilger-diff-for-5-chist}
+%    \end{center}\end{minipage}
+%    \caption{Der Elementemischungsbruch dargestellt über den Mischungsbruch wie ihn ULF ausgibt. \textbf{Rechts:} Dargestellt ist die Differenz der Plots links zur winkelhalbierenden Geraden.}
+%    \label{fig:opplevar:zbilger-z}
+%\end{figure}
+
+\begin{figure}[H]
+    \begin{minipage}{0.33\linewidth}\begin{center}
+        \includegraphics[width=\linewidth]{Beleg-oppdiff-Levar/ZULF-ZBilger-for-5-chist}
+    \end{center}\end{minipage}\begin{minipage}{0.33\linewidth}\begin{center}
+        \includegraphics[width=\linewidth]{Beleg-oppdiff-Levar/ZULF-ZBilger-diff-for-5-chist}
+    \end{center}\end{minipage}\begin{minipage}{0.33\linewidth}\begin{center}
+        \includegraphics[width=\linewidth]{Beleg-oppdiff-Levar/ZULF-ZBilger-relerr-for-5-chist}
+    \end{center}\end{minipage}
+    \caption{
+        \textbf{Links:} Der Bilgermischungsbruch \gls{Z_Bilger} dargestellt über den Mischungsbruch wie ihn \gls{ULF} ausgibt.
+        \textbf{Mitte:} Differenz der Plots links zur Identität
+        \textbf{Rechts:} Relativer Fehler von \gls{Z_Bilger} zu \gls{Z_ULF}
+    }
+    \label{fig:opplevar:zbilger-zcalc}
+\end{figure}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsubsection{Speziesprofile}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+Im Vergleich in \autoref{fig:opplevar:yi-x-comp} fällt auf, dass für den Fall stoffabhängiger Lewis-Zahlen, am Ort stöchiometrischer Mischung, weniger Wasser, aber dafür mehr $\mathrm{CO}_2$ vorliegt, außerdem sind die Massenbrüche von $\mathrm{H}_2$ und $\mathrm{CO}$ leicht niedriger. Dafür ist die Kurve aber breiter, wenn man sich am Temperaturverlauf orientiert. Es findet also eine erhöhte Diffusion der Stoffe statt weg vom Zentrum der Flamme statt. Vor allem Wasserstoff diffundiert so schnell weg vom Zentrum, dass weniger Wasser im Zentrum der Flamme vorliegen hat. Diese Auswertung trifft auch für andere \gls{chi_st} zu, siehe \autoref{fig:opplevar:yi-x}.
+
+\begin{figure}[H]\begin{center}
+    \begin{minipage}{0.4\linewidth}\begin{center}
+        \includegraphics[width=\linewidth]{{{Beleg-oppdiff-Le1/Yi-over-x-v-0.25}}}
+    \end{center}\end{minipage}\begin{minipage}{0.4\linewidth}\begin{center}
+        \includegraphics[width=\linewidth]{{{Beleg-oppdiff-Levar/Yi-over-x-v-0.25}}}
+    \end{center}\end{minipage}
+    \caption{Vergleich der Massenbruchverteilungen für \textbf{Links:} $\mathrm{Le}=1$ und \textbf{Rechts:} variable Lewis-Zahlen.}
+    \label{fig:opplevar:yi-x-comp}
+\end{center}\end{figure}
+
+In \autoref{fig:opplevar:yi-z-comp} links, also für $\mathrm{Le}=1$, hat man fast perfekt gerade Dreieckskurven, während rechts die Seiten der aufgespannten Dreiecke gekrümmt sind. Das trifft vor allem auf Wasser und Wasserstoff zu, weil durch die stoffabhängigen Lewis-Zahlen die relativ hohe Diffusionsgeschwindigkeit von Wasserstoff einkalkuliert wird, wie auch schon obig festgestellt wurde. Hier jedoch ist die Verschiebung des Massenbruchs von Wasser weg vom Flammenzentrum noch besser zu sehen. Der Flammentemperaturverlauf ändert sich jedoch kaum, dafür steigt aber der Massenbruch von $\mathrm{CO}_2$ und der von $\mathrm{CO}$ sinkt beim Übergang von $\mathrm{Le}=1$ zu variablen $\mathrm{Le}_i$. Es sieht demnach so aus, als verbrenne das Methan vollständiger. Dieser Unterschied kann technisch relevant sein.
+
+\begin{figure}[H]\begin{center}
+    \begin{minipage}{0.4\linewidth}\begin{center}
+        \includegraphics[width=\linewidth]{{{Beleg-oppdiff-Le1/Yi-over-Z-v-0.25}}}
+    \end{center}\end{minipage}\begin{minipage}{0.4\linewidth}\begin{center}
+        \includegraphics[width=\linewidth]{{{Beleg-oppdiff-Levar/Yi-over-Z-v-0.25}}}
+    \end{center}\end{minipage}
+    \caption{Vergleich der Massenbruchverteilungen \gls{Y_i} über den Mischungsbruch \gls{Z_ULF}. Bei $\gls{Z_ULF}=1$ ist die Methandüse, bei $\gls{Z_ULF}=0$ die Luftdüse. \textbf{Links:} Diffusionsmodellierung mit stoffunabhängiger Lewis-Zahl $\mathrm{Le}=1$. \textbf{Rechts:} stoffabhängige Lewis-Zahlen. }
+    \label{fig:opplevar:yi-z-comp}
+\end{center}\end{figure}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsubsection{Massenbrüche über die Fortschrittsvariable}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+Zwei Dinge fallen im Vergleich in \autoref{fig:opplevar:yi-pv} auf: Zum einen ist die Kurve für Wasserstoff jetzt auch wie die für die Kohlenstoffoxide aufgefächert, das heißt asymmetrisch. Und zum anderen fallen jetzt die Orte stöchiometrischer Mischung und der maximalen Temperatur fast perfekt übereinander. Nur für sehr hohe Einströmgeschwindigkeiten scheint sich abzuzeichnen, dass sie sich wieder entzweien. Im Vergleich zu \autoref{fig:yi-pv} sind zudem die Kohlenstoffoxid-Kurven schmäler, also symmetrischer.
+
+\begin{table}[h]
+    \begin{center}\begin{scriptsize}\begin{tabular}{|c|c|c|}
+        \hline
+        $v / \SI{}{\meter\per\second}$ &
+        $\gls{chi_st}_{\mathrm{Le}\neq 1} / \SI{}{\per\second}$ &
+        $\gls{chi_st}_{\mathrm{Le}= 1} / \SI{}{\per\second}$
+        \\
+        \hline
+        0.05  & 0.4863 & 0.4625 \\
+        0.1   & 0.8875 & 0.8407 \\
+        0.15  & 1.2623 & 1.1964 \\
+        0.2   & 1.6265 & 1.5464 \\
+        0.25  & 1.9845 & 1.9122 \\
+        0.5   & 3.7520 & 3.5782 \\
+        \hline
+    \end{tabular}\end{scriptsize}\end{center}
+    \caption{Umrechnungstabelle zwischen Einlassgeschwindigkeit und skalarer Dissipationsrate bei Stöchiometrie bei der Diffusionsmodellierung für \textbf{Mitte:} $\mathrm{Le}\neq 1$ und \textbf{Rechts:} $\mathrm{Le}=1$, Werte zum Vergleich übernommen aus Tabelle~\ref{tbl:v-chist} auf Seite~\pageref{tbl:v-chist}.}
+    \label{tbl:opplevar:v-chist}
+\end{table}
+
+Die Asymmetrie des Wasser bedeutet, dass weniger Wasser auf Seite der Methandüse ist, als auf der Luftstromseite, vgl. auch \autoref{fig:yi-pv-half}. Das liegt daran, dass das bei Teilreaktionen aus dem Methan entstehende Wasserstoff schnell vom Verbrennungsort wegdiffundiert, wobei es auf Seite des Luftstroms schnell zu Wasser verbrannt werden kann, aber auf Seite des Brennstoffstroms nicht, da dort kaum Sauerstoff vorhanden ist. Damit diffundiert nur in Richtung der Luftdüse schnell neuer Wasserstoff nach; es entsteht eine Asymmetrie.
+
+\begin{figure}[h]
+    \begin{minipage}{0.33\linewidth}\begin{center}
+        \includegraphics[width=\linewidth]{{{Beleg-oppdiff-Levar/Yi-over-PV-v-0.05}}}
+    \end{center}\end{minipage}\begin{minipage}{0.33\linewidth}\begin{center}
+        \includegraphics[width=\linewidth]{{{Beleg-oppdiff-Levar/Yi-over-PV-v-0.1}}}
+    \end{center}\end{minipage}\begin{minipage}{0.33\linewidth}\begin{center}
+        \includegraphics[width=\linewidth]{{{Beleg-oppdiff-Levar/Yi-over-PV-v-0.15}}}
+    \end{center}\end{minipage}\\
+    \begin{minipage}{0.33\linewidth}\begin{center}
+        \includegraphics[width=\linewidth]{{{Beleg-oppdiff-Levar/Yi-over-PV-v-0.25}}}
+    \end{center}\end{minipage}\begin{minipage}{0.33\linewidth}\begin{center}
+        \includegraphics[width=\linewidth]{{{Beleg-oppdiff-Levar/Yi-over-PV-v-0.5}}}
+    \end{center}\end{minipage}\fbox{\begin{minipage}{0.33\linewidth}\begin{center}
+        \includegraphics[width=\linewidth]{{{Beleg-oppdiff-Le1/Yi-over-PV-v-0.5}}}
+    \end{center}\end{minipage}}
+    \caption{Plot ausgewählter Massenbruchverteilungen über die Fortschrittsvariable. Unten rechts wurde ein Plot aus \autoref{fig:yi-pv} für den Fall $\mathrm{Le}=1$ übernommen.}
+    \label{fig:opplevar:yi-pv}
+\end{figure}
+
+Ein weiterer Unterschied sind, die für kleine Geschwindigkeiten $v=\SI{0.5}{\meter\per\second}$ unterschiedlich ausfallenden stöchiometrischen Dissipationsraten. Für $\mathrm{Le}\neq 1$ ist \gls{chi_st} in allen Fällen größer als für $\mathrm{Le}=1$, vgl. Tabelle~\ref{tbl:v-chist} und \ref{tbl:opplevar:v-chist}.

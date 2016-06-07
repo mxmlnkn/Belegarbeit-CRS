@@ -1,0 +1,242 @@
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Simulation mittels Flamelets für \texorpdfstring{$\mathrm{Le}=1$}{Le=1}}
+\label{sct:flameletLe=1}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Durchführung}
+\label{sct:flameletLe1-execution}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{sloppypar} % to better break \lstinline (allows larger word distances
+Im wesentlich sind die Schritte aus Kapitel~\ref{sct:oppdiffLe1-execution} zu befolgen, nur der letzte Schritt wird mit \lstinline!cd setups/flameletLe1! ersetzt. In diesem Beispielsetup ist nicht mehr viel anzupassen. Die Gasgemische sind gemäß der Aufgabenstellung in \lstinline!startProfiles.ulf! auf Luft und Methan eingestellt. Die Struktur ist in \autoref{fig:flameletLe1} dargestellt.
+\end{sloppypar}
+
+Das einzige was sich unterscheidet ist \lstinline!AXIS_MAX!. Das liegt daran, dass die Achse nicht mehr im physikalischen Raum ist, sodass dies nicht der Düsenabstand ist, sondern das Maximum von \gls{Z} auf der Achse!
+
+Der Druck wurde auf Normaldruck \lstinline!#define P 101325.0;! abgeändert. Weiterhin wurde \lstinline!#define Z_STOIC 0.055;! auf \lstinline!#define Z_STOIC 0.0545;! abgeändert.
+
+Da die Rechnung mit Flamelets abstrahiert erfolgt, wird dieses mal nicht die Geschwindigkeit von den Düsen variiert, sondern \gls{chi_st} wird direkt mit \lstinline!#define CHI_STOIC 1.0;! in \lstinline!flameletLe1_CH4_air.ulf! angepasst.
+
+Das Ausschreiben von \lstinline!cpMean! und \lstinline!lambda! ist nicht mehr nötig, da \gls{chi} direkt ausgegeben wird. Dies musste im Python-Auswerteskript berücksichtigt werden.
+
+\begin{figure}[H]
+    \begin{center}
+	\begin{tikzpicture}[->,>=stealth', scale=0.8, every node/.style={transform shape}]
+		\node[box,
+		    text width=7cm
+		] (CH4AirSmooke) {
+			\lstinline!flameletLe1_CH4_air.ulf! \\
+			Enthält u.a. Einstellungen zum Mechanismus und den Verweis auf die Startkonfiguration
+		};
+		\node[box,
+			below left of=CH4AirSmooke,
+			node distance=4cm,
+			text width=5cm,
+			xshift=-3cm
+		] (ch4smooke) {
+			\lstinline!ch4_smooke.xml! \\
+			Konstanten für die reagierenden Stoffe und Reaktionen sowie eine Auflistung aller teilnehmenden Stoffe
+		};
+		\node[box,
+			below of=CH4AirSmooke,
+			node distance=4cm,
+			text width=5cm
+		] (oppdifJet) {
+			\lstinline!flameletLe1_template.ulf! \\
+			Konfiguration der Felder $Y_i$, $T$, $\ldots$, sowie deren Startwerte, Grenzwerte und ob sie ausgeschrieben werden
+		};
+		\node[box,
+			below right of=CH4AirSmooke,
+			node distance=4cm,
+			text width=5cm,
+			xshift=3cm
+		] (changes) {
+			\lstinline!smooke-changes.ulf!:\\
+			Zu variienderes \lstinline!CHI_ST!
+		};
+		\node[box,
+			below of=oppdifJet,
+			node distance=4cm,
+			text width=5cm,
+		] (startprofiles) {
+			\lstinline!startProfiles.ulf!:\\
+			Initiale Gaszusammensetzung
+		};
+		\path
+			(CH4AirSmooke) edge (ch4smooke)
+			(CH4AirSmooke) edge (oppdifJet)
+			(CH4AirSmooke) edge (changes)
+			(oppdifJet)    edge (startprofiles)
+	    ;
+	\end{tikzpicture}
+    \end{center}
+	\caption{Abhängigkeitsgraph für die Konfigurationsdateien für ULF}
+	\label{fig:flameletLe1}
+\end{figure}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Auswertung}
+\label{sct:flameletLe1:auswertung}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsubsection{\texorpdfstring{$T_\mathrm{max}$}{Tmax} über \texorpdfstring{$\chi_\mathrm{st}$}{chist}}
+\label{sct:flameletLe1-chist-anal}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+Die S-Kurve, ermittelt durch Lösen der Flameletgleichungen, vgl. \autoref{fig:flameletLe1:s-kurve-ulf} links, unterscheidet sich kaum von der Simulation im Ortsraum, siehe \autoref{fig:s-kurve-ulf}. In \autoref{fig:flameletLe1:s-kurve-ulf} rechts sind beide zum Vergleich, unter Auslassung von Ausreißern, eingezeichnet. Es fällt auf, dass die Flamelet-Lösung allgemein leicht heißer ist, als die Lösung im Ortsraum. Dies könnte daran liegen, dass die berechneten \gls{chi_st} im Ortsraum (\lstinline!oppdiffJet!) systematisch zu klein sind. Bemerkenswert ist, dass die Lösung im Flameletraum auch für sehr kleine \gls{chi_st} konvergiert, weil es hier nicht das Problem gibt, dass Reaktionsprodukte in die Düsen diffundieren, weil es im Flameletraum gar keine solchen gibt. Oder anders interpretiert werden im Flameletraum die Düsenabstände automatisch weit genug gewählt, dass nichts hinein diffundieren kann und die Randbedingungen gewahrt werden.
+
+Die Konfiguration mit $\gls{chi_st}=\SI{3.79}{\per\second}$ wurde exkludiert, weil es dort zu keiner Verbrennung kam, wie man an der Temperatur in \autoref{fig:flameletLe1:s-kuve-ulf} links ablesen kann. Dies ist seltsam, da bei der Lösung im Ortsraum höhere Werte noch zündeten, mit Ausnahme von zwei Ausreißern.
+Der Wert $\gls{chi_st}=\SI{0.01}{\per\second}$ hingegen wurde rausgenommen, da dieser Wert in \autoref{fig:flameletLe1:tmax-pv} den linearen Zusammenhang zwischen \gls{T_max} und $\gls{PV}_\mathrm{st}$ bricht, sodass er als Ausreißer erscheint. Möglicherweise deutet dieser Bruch auf ein unbekanntes Problem in der Simulation hin. Eine genauere Untersuchung für $\gls{chi_st} \in [0.01,0.1]\SI{}{\per\second}$ wäre aber notwendig, um zu entscheiden, ob der Bruch des linearen Zusammenhangs physikalisch oder numerisch ist.
+
+Für höhere Dissipationsraten sinkt die Flammentemperatur, bis die Flamme für genügend hohe \gls{chi_st} erlischt. Im Vergleich zu den Ergebnissen aus Kapitel~\ref{sct:oppdiffLe1:Tmax-chist} sind die Lösungen mittels Flamelets entweder leicht kälter, oder aber die Dissipationsraten \gls{chi_st} unterscheiden sich systematisch.
+
+\begin{figure}[H]
+    \begin{center}\begin{minipage}{0.49\linewidth}
+        \includegraphics[width=\linewidth]{Beleg-flamelet-Le1/chist-Tmax}
+    \end{minipage}\begin{minipage}{0.49\linewidth}
+        \includegraphics[width=\linewidth]{Beleg-flamelet-Le1/chist-Tmax-zoom}
+    \end{minipage}\end{center}
+    \caption{Der obere Ast der S-Kurve, vgl. Kapitel~\ref{sct:skurve}. \textbf{Links:} Alle simulierten Werte. \textbf{Rechts:} Der erste und der letzte Wert wurden ausgenommen und zum Vergleich wurden die Werte aus \autoref{fig:s-kurve-ulf} mitgeplottet.}
+    \label{fig:flameletLe1:s-kurve-ulf}
+\end{figure}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsubsection{Speziesprofile}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+In \autoref{fig:Le1:yi-z:cmp:oppLe} sind keine großen Unterschiede der Speziesprofile der Flameletlösung und der der Lösung im Ortsraum in. Vergleiche auch die vollständigen Ergebnisse in \autoref{fig:flameletLe1:yi-z} in Anhang~\ref{appendix:flameletLe1:yi-z} und \autoref{fig:yi-z}. Für eine genauere Auswertung also Kapitel~\ref{sct:oppdiffLe1-yi-z}.
+Die Ähnlichkeit der Ergebnisse zeigt empirisch, zusätzlich zur mathematischen Herleitung, dass man die jeweilige numerisch einfachere Differentialgleichung lösen kann und damit auch die Lösung der anderen äquivalenten hat.
+
+\begin{figure}[H]\begin{center}
+    \begin{minipage}{0.5\linewidth}\begin{center}
+        \includegraphics[width=\linewidth]{{{Beleg-oppdiff-Le1/Yi-over-Z-v-0.2}}}
+    \end{center}\end{minipage}\begin{minipage}{0.5\linewidth}\begin{center}
+        \includegraphics[width=\linewidth]{{{Beleg-flamelet-Le1/Yi-over-Z-chist-1.6383}}}
+    \end{center}\end{minipage}
+    \caption{Plot ausgewählter Massenbruchverteilungen über den Mischungsbruch aufgetragen. Bei $\gls{Z_ULF}=1$ ist die Methandüse, bei $\gls{Z_ULF}=0$ die Luftdüse. \textbf{Links:} Ergebnis für den Ortsraum aus \autoref{fig:yi-z} übernommen \textbf{Rechts:} Ergebnis für Flamelet.}
+    \label{fig:Le1:yi-z:cmp:oppLe}
+\end{center}\end{figure}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsubsection{Vergleich der skalaren Dissipationsrate mit der analytischen Lösung}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{figure}[H]\begin{center}
+    \begin{minipage}{0.5\linewidth}\begin{center}
+        \includegraphics[width=\linewidth]{Beleg-flamelet-Le1/chianal}
+    \end{center}\end{minipage}\begin{minipage}{0.5\linewidth}\begin{center}
+        \includegraphics[width=\linewidth]{Beleg-flamelet-Le1/chianal-calc}
+    \end{center}\end{minipage}
+    \caption{Plot der skalaren Dissipationsraten über den Mischungsbruch aus der Simulation (Punkte) und Vergleich zum analytischen Verhalten (gestrichelte Linie) aus \autoref{eq:chianal}. Gleiche Farben gehören zur gleichen Konfiguration. \textbf{Links:} $\chi_\mathrm{st}$ wie mit \lstinline!CHI_STOIC! festgelegt. Damit die Punkte aus der Simulation von der analytischen Kurve zu unterscheiden sind, wurde nur jeder vierte Punkt geplottet. \textbf{Rechts:} $\chi_\mathrm{st}$ naiv errechnet, vgl. Listing~\ref{lst:chist-naiv}.}
+    \label{fig:flameletLe1:chianal}
+\end{center}\end{figure}
+
+\label{pg:chistproblem}
+Um zu überprüfen, ob die Berechnung von \gls{chi_st} in den Kapiteln~\ref{sct:oppdiffLe=1} und \ref{sct:oppdiffLevar} korrekt ist, wurde diese, hier eigentlich unnötige, Berechnung auch durchgeführt und mit dem Eingabewert in \lstinline!smooke-changes.ulf!, z.B. \lstinline!#define CHI_STOIC 3.7859;! verglichen. Die naiv errechneten Werte, vgl. Listing~\ref{lst:chist-naiv}, wichen jedoch stark ab, sodass eine Interpolation mit insgesamt drei Werten (\lstinline!chist_intp!) und fünf Werten (\lstinline!chist_intp2!) mittels Lagrange-Polynomen implementiert wurde, vgl. Listing~\ref{lst:chi-lagrange}.
+\begin{lstlisting}[language=Python, label=lst:chi-lagrange, caption={Lagrange-Interpolation für \gls{chi_st}}]
+def p(x0,y0,x):
+    """
+    This function approximates f so that f(x0)=y0 and returns f(x)
+    """
+    assert( len(x0) == len(y0) )
+    # number of values. Approximating polynomial is of degree n-1
+    n = len(x0)
+    assert( n > 1 )
+    res = 0
+    for k in range(n):
+        prod = y0[k]
+        for j in range(n):
+            if j != k:
+                prod *= (x0[j]-x)/(x0[j]-x0[k])
+        res += prod
+    return res
+chist_intp  = p( data[ist-1:ist+1,hdict["Z"]], chi[ist-1:ist+1], Zstanal )
+chist_intp2 = p( data[ist-2:ist+2,hdict["Z"]], chi[ist-2:ist+2], Zstanal )
+\end{lstlisting}
+Einige so errechneten stöchiometrischen skalaren Dissipationsraten sind:
+\begin{lstlisting}
+Chist configured              :  0.4918
+Chist calculated naively      :  0.4598521
+Chist interpolated (3 points) :  0.491781955415
+Chist interpolated (5 points) :  0.491801129667
+
+Chist configured              :  0.88
+Chist calculated naively      :  0.8228343
+Chist interpolated (3 points) :  0.879967836602
+Chist interpolated (5 points) :  0.880002167719
+
+Chist configured              :  1.2686
+Chist calculated naively      :  1.18619
+Chist interpolated (3 points) :  1.26855333494
+Chist interpolated (5 points) :  1.26860274477
+\end{lstlisting}\vspace{-2\baselineskip}
+%
+%Chist configured              :  1.6383
+%Chist calculated naively      :  1.531874
+%Chist interpolated (3 points) :  1.63823995741
+%Chist interpolated (5 points) :  1.63830385158
+%
+%Chist configured              :  1.9816
+%Chist calculated naively      :  1.852873
+%Chist interpolated (3 points) :  1.98152754069
+%Chist interpolated (5 points) :  1.98160482622
+%
+%Chist configured              :  3.7859
+%Chist calculated naively      :  3.539964
+%Chist interpolated (3 points) :  3.78576132741
+%Chist interpolated (5 points) :  3.78590893252
+
+Erst unter Einbezug von zwei Nachbarn, also fünf Werten, wird die Genauigkeit von vier Nachkommastellen erreicht, die auch in der Konfigurationsdatei angegeben wurde. Die Unterschiede sind signifikant, siehe \autoref{fig:flameletLe1:chianal} links im Vergleich zu rechts. Leider stellte sich heraus, dass die fehlende Interpolation nicht für die multiplikative Abweichung bei der Simulation im Ortsraum, vgl. \autoref{fig:chianal} für $\mathrm{Le}=1$ und \ref{fig:opplevar:chianal} für $\mathrm{Le}\neq1$, verantwortlich ist.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsubsection{\texorpdfstring{$T_\mathrm{max}$}{Tmax} über die Fortschrittsvariable}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+In \autoref{fig:flameletLe1:tmax-pv} kann man viel besser als in \autoref{fig:tmax-pv} einen linearen Zusammenhang zwischen Fortschrittsvariable und maximaler Temperatur erkennen. Die Konfiguration mit $\gls{chi_st}=\SI{0.01}{\per\second}$ weicht als einzige aus unbekannten Gründen von diesem linearen Verhalten ab. Wahrscheinlich gibt es Probleme in der Konvergenz der Lösung oder aber es ist ein reales physikalisches Verhalten im Grenzfall für strömungslose Flammen. Dieser Wert von einigen Betrachtungen ausgenommen.
+
+\begin{figure}[H]
+    \begin{minipage}{0.5\linewidth}\begin{center}
+        \includegraphics[width=\linewidth]{Beleg-flamelet-Le1/PV-Tmax}
+    \end{center}\end{minipage}\begin{minipage}{0.5\linewidth}\begin{center}
+        \includegraphics[width=\linewidth]{Beleg-flamelet-Le1/PV-Tmax-zoom}
+    \end{center}\end{minipage}
+    \caption{Plot der maximalen Temperatur über die Fortschrittsvariable am Ort stöchiometrischer Mischung. Die Annotationen sind die jeweiligen \gls{chi_st} in \SI{}{\per\second}. \textbf{Rechts:} Zoom unter Auslassung der Werte für $v=\SI{1.0}{\meter\per\second}$ und $v=\SI{1.5}{\meter\per\second}$}
+    \label{fig:flameletLe1:tmax-pv}
+\end{figure}
+
+Im Vergleich zu \lstinline!oppdiffJet! in \autoref{fig:tmax-pv} rechts stellt sich heraus, dass für gleiche \gls{chi_st} die maximalen Temperaturen zwar ungefähr gleich sind, aber die Fortschrittsvariable in dieser Darstellung doch sehr zwischen den beiden Lösungsverfahren unterscheidet. Die Unterschiede sind aber in der dritten Nachkommastelle, sodass dies nur schwer im Vergleich der Speziesprofilen auffallen würde. Da die Kurve von \lstinline!oppdiffJet! chaotischer aussieht, sind Probleme in der Stabilität der Lösung im Ortsraum als Ursache zu vermuten.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsubsection{Massenbrüche über die Fortschrittsvariable}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+Die Graphen in \autoref{fig:flameletLe1:yi-pv} stimmen sehr gut mit denen in Kapitel~\ref{sct:oppdiff-Le1:yi-pv} überein. Siehe also jenes Kapitel für eine vollständige Auswertung. Ein großer Unterschied der auffällt ist jedoch die Verteilung der Punkte mit denen die numerische Simulation rechnet. Während im Falle von \lstinline!oppdiffJet! die Punkte in dieser Darstellung sehr gleichmäßig verteilt sind, sind hier die Kurven halb sehr dicht aufgelöst und halb sehr grob aufgelöst. Hierbei sind sehr viel weniger Punkte auf Seite des Brennstoffes.
+%Dies liegt daran, dass $Z_\mathrm{st}=0.0545$ sehr klein ist. Das heißt, vgl. Formel~\ref{eq:zstoch}, für Stöchiometrie ist ein sehr großer Sauerstoffanteil nötig
+
+\begin{figure}[H]
+    \begin{minipage}{0.33\linewidth}\begin{center}
+        % fucking three braces, because there are dots in the filenames -.-... see http://tex.stackexchange.com/questions/10574/includegraphics-dots-in-filename
+        \includegraphics[width=\linewidth]{{{Beleg-flamelet-Le1/Yi-over-PV-chist-0.4918}}}
+    \end{center}\end{minipage}\begin{minipage}{0.33\linewidth}\begin{center}
+        \includegraphics[width=\linewidth]{{{Beleg-flamelet-Le1/Yi-over-PV-chist-0.8800}}}
+    \end{center}\end{minipage}\begin{minipage}{0.33\linewidth}\begin{center}
+        \includegraphics[width=\linewidth]{{{Beleg-flamelet-Le1/Yi-over-PV-chist-1.2686}}}
+    \end{center}\end{minipage}\\
+    \begin{minipage}{0.33\linewidth}\begin{center}
+        \includegraphics[width=\linewidth]{{{Beleg-flamelet-Le1/Yi-over-PV-chist-1.6383}}}
+    \end{center}\end{minipage}\begin{minipage}{0.33\linewidth}\begin{center}
+        \includegraphics[width=\linewidth]{{{Beleg-flamelet-Le1/Yi-over-PV-chist-1.9816}}}
+    \end{center}\end{minipage}\fbox{\begin{minipage}{0.33\linewidth}\begin{center}
+        \includegraphics[width=\linewidth]{{{Beleg-oppdiff-Le1/Yi-over-PV-v-0.25}}}
+    \end{center}\end{minipage}}
+    \caption{Plot ausgewählter Massenbruchverteilungen über die Fortschrittsvariable \gls{PV} und unten rechts zum Vergleich eine Darstellung aus \autoref{fig:yi-pv}.}
+    \label{fig:flameletLe1:yi-pv}
+\end{figure}

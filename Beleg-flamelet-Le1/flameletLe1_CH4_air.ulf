@@ -1,0 +1,31 @@
+// timing
+#define END_TIME        1.0;
+#define WRITE_INTERVAL  1.0;
+
+// result and restart options
+#define RESULT_BASENAME flameletLe1Template_;
+#define RESTART_OPTION  NO;
+#define RESTART_FILE    flameletLe1_1.0.ulf;
+
+#define START_FILE      startProfiles.ulf;
+
+// stoichiometric values
+#define Z_STOIC   0.0545;
+//#define CHI_STOIC 1.0;
+
+// pressure
+#define P   100000.0;
+
+// mesh and remesh options
+#define AXIS_LENGTH     201;
+#define AXIS_MIN        0.0;
+#define AXIS_MAX        1.0;
+
+// mechanism
+#define MECHANISM ch4_smooke.xml;
+#define GAS_ID    gas;
+
+//include template file
+#include flameletLe1_template.ulf;
+#include smooke-changes.ulf;
+

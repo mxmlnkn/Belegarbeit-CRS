@@ -1,0 +1,121 @@
+\documentclass[12pt,a4paper]{article}
+\usepackage[utf8]{inputenc}  % important for correct displayment of Umlaute (must appear before \title command!)
+\usepackage[T1]{fontenc}
+\title{
+    \begin{Huge}
+        Modellierung chemisch-reagierender Strömungen
+    \end{Huge}
+    \\[1cm]
+    \begin{Large}
+        Belegarbeit: Eindimensionale Laminare nicht vorgemischte Flammen
+    \end{Large}
+    \\[5cm]
+}
+\author{Maximilian Knespel}
+
+%\documentclass[hausschrift]{TUBAFarbeiten}
+%%\usepackage[T1]{fontenc}
+%\usepackage[utf8]{inputenc}  % important for correct displayment of Umlaute (must appear before \title command!)
+%\TUBAFTitel{Modellierung chemisch-reagierender Strömungen - Belegarbeit: 1D Diffusionsflammen}
+%\TUBAFAutor[M.Knespel]{Maximilian Knespel}
+
+\usepackage[parfill]{parskip} % adds a bit of spacing after each paragraph
+% not sure why this package is better than \setlength{\parskip}{10pt plus 1pt minus 1pt}
+% http://tex.stackexchange.com/questions/74170/have-new-line-between-paragraphs-no-indentation
+% http://ctan.org/pkg/parskip
+\input{mk_definitions.tex}
+
+\usepackage[backend=bibtex,style=numeric]{biblatex} % ist default style=numeric, % sudo apt-get install biblatex
+\usepackage{bibgerm}                  % sudo apt-get install texlive-lang-german
+\addbibresource{literatur.bib}
+
+
+\usepackage{tikz}
+\usepackage{pgf}
+\usetikzlibrary{arrows,automata}
+\usetikzlibrary{positioning}
+
+\tikzset{
+    box/.style={ rectangle, draw=black, very thick, minimum height=2em,
+                 inner sep=2pt, text centered }
+}
+
+\usepackage[
+%nonumberlist,   % keine Seitenzahlen anzeigen
+toc,             % Einträge im Inhaltsverzeichnis
+%,hyperfirst    % only add link to first usage
+%,notree, nosuper, nolist % reduces overhead by excluding styles
+%nogroupskip%=true % no line skip after single letter group
+style=long3col % 3 columns of fixed width (symbol, description, pages)
+]
+{glossaries}
+%Ein eigenes Symbolverzeichnis erstellen
+\newglossary[slg]{symbols}{syi}{syg}{Symbolverzeichnis}
+\newglossary[slg]{acronyms}{syi}{syg}{Abkürzungen}
+%\makeglossaries
+\makenoidxglossaries
+\loadglsentries[symbols]{beleg-symbols.tex}
+\loadglsentries[acronyms]{beleg-acronyms.tex}
+
+% Token not allowed in a PDF string (PDFDocEncoding): removing `math shift'
+% http://tex.stackexchange.com/questions/53513/hyperref-token-not-allowed
+% => use \ensuremath{$\lambda_2$}{lambda_2}
+
+% The option "hypcap=true" will be ignored for this(caption)
+% http://www.mrunix.de/forums/showthread.php?65435-Seltsame-Warnung-bei-Hyperref-Hypercap
+% http://tex.stackexchange.com/questions/32344/issue-with-capt-of-package
+% => use \captionsetup{type=figure} % or type=table,...
+
+\addto\extrasngerman{\def\figureautorefname{Abb.}} % for use with autoref
+\addto\extrasngerman{\def\equationautorefname{Gl.}} 
+\addto\extrasngerman{\def\sectionautorefname{Kapitel}} 
+\addto\extrasngerman{\def\subsectionautorefname{Kapitel}} 
+\addto\extrasngerman{\def\subsubsectionautorefname{Kapitel}} 
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+
+\begin{document}
+
+\maketitle
+\newpage
+\tableofcontents
+\newpage
+
+\glsaddall	% adds all defined, even unused, symbols to symbol list
+\setglossarystyle{long3col}
+\setlength{\glsdescwidth}{0.6\linewidth}
+\setlength{\glspagelistwidth}{0.2\linewidth}
+\renewcommand*{\glsgroupskip}{}
+\printnoidxglossary[type=symbols]
+\newpage
+\printnoidxglossary[type=acronyms]
+%\printnoidxglossaries
+\newpage
+
+\input{beleg-aufgabenstellung.tex}
+\newpage
+\input{beleg-theorie.tex}
+\newpage
+\input{beleg-oppdiffLe1.tex}
+\newpage
+\input{beleg-flameletLe1.tex}
+\newpage
+\input{beleg-oppdiffLevar.tex}
+\newpage
+\input{beleg-flameletLevar.tex}
+%\newpage
+% Deprecated! included in flameletLevar.tex and raw-plots.tex
+%\input{beleg-vergleich.tex}
+
+\newpage
+\appendix
+\input{beleg-listing.tex}
+\input{beleg-raw-plots.tex}
+
+\clearpage
+\newpage
+\printbibliography
+
+\end{document}

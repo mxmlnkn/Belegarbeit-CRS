@@ -1,0 +1,183 @@
+% I started a table of these symbols in order to get some system in the confusing notations of the lecture
+
+\newglossaryentry{i}{
+    name=\ensuremath{i},
+    description={Index der einen Stoff bezeichnet.},
+    sort=symboli
+}
+\newglossaryentry{j}{
+    name=\ensuremath{j},
+    description={Index der ein Element bezeichnet.},
+    sort=symbolj
+}
+\newglossaryentry{k}{
+    name=\ensuremath{k},
+    description={Index der eine Reaktion bezeichnet.},
+    sort=symbolk
+}
+\newglossaryentry{kstrain}{
+    name=\ensuremath{k},
+    description={Streckungsrate. Beachte, dass \gls{k} die Reaktionsnummer bezeichnet, falls es als Index benutzt wird.},
+    sort=symbolkstrain
+}
+
+\newglossaryentry{x}{
+    name=\ensuremath{x},
+    description={eindimensionale Raumkoordinate},
+    sort=symbolx
+}
+
+\newglossaryentry{N_s}{
+    name=\ensuremath{N_s},
+    description={Anzahl Spezies/Stoffe},
+    sort=symbolN_s
+}
+\newglossaryentry{n_i}{
+    name=\ensuremath{n_i},
+    description={Stoffmenge des Stoffes $i$ in $\SI{}{\mole}$. $i$ z.B. $\mathrm{O}_2$ oder $\mathrm{CH}_4$},
+    sort=symboln_i
+}
+\newglossaryentry{n}{
+    name=\ensuremath{n},
+    description={Gesamtstoffmenge. $n:=\sum\limits_i^{N_s} n_i$},
+    sort=symboln
+}
+\newglossaryentry{X_i}{
+    name=\ensuremath{X_i},
+    description={Molenbruch. $X_i:=\frac{n_i}{n}$},
+    sort=symbolX_i
+}
+\newglossaryentry{m_i}{
+    name=\ensuremath{m_i},
+    description={Masse des Stoffes $i$},
+    sort=symbolm_i
+}
+\newglossaryentry{m}{
+    name=\ensuremath{m},
+    description={Gesamtmasse. $m := \sum\limits_{i\in\text{Stoffe}} \gls{m_i} = \sum\limits_{j\in\text{Elemente}} \gls{m_j}$},
+    sort=symbolm
+}
+\newglossaryentry{Y_i}{
+    name=\ensuremath{Y_i},
+    description={Massenbruch des Stoffes $i$ wie er real vorliegt $Y_i:=\frac{ \gls{m_i} }{ \gls{m} }$, vgl.~\gls{Y_ia}},
+    sort=symbolY_i
+}
+\newglossaryentry{Y_ia}{
+    name=\ensuremath{Y_{i,\text{a}}},
+    description={Massenbruch des Stoffes $i$ wie er bei einer rein hydrodynamischen Simulation ohne jegliche Stoffumwandlung vorliegen würde. Das $\text{a}$ steht hier für Ausgangszustand (vor der Einführung von chemischen Reaktionen)},
+    sort=symbolY_ia
+}
+\newglossaryentry{m_j}{
+    name=\ensuremath{m_j},
+    description={Masse des Elements $j$, z.B. C,H,O,$\ldots$},
+    sort=symbolm_j
+}
+\newglossaryentry{Z_j}{
+    name=\ensuremath{Z_j},
+    description={Massenbruch der in den Stoffen enthaltenen Elemente $j$. $Z_j :=\frac{ \gls{m_j} }{ \gls{m} }$. Es wird nicht mehr \gls{Y} für diesen Massenbruch benutzt, da $Y_\mathrm{C}$ für reinen Kohlenstoff, also Ruß vorgesehen ist, während $Z_\mathrm{C}$ den Kohlenstoff in allen vorkommenden Stoffen wie $\mathrm{CO}_2,\mathrm{CH}_4,\ldots$ umfasst. Nicht zu verwechseln mit \gls{Z}!},
+    sort=symbolZ_j
+}
+\newglossaryentry{M_i}{
+    name=\ensuremath{M_i},
+    description={Molare Masse des Stoffes $i$},
+    sort=symbolM_i
+}
+\newglossaryentry{M_j}{
+    name=\ensuremath{M_j},
+    description={Molare Masse des Elementes $j$},
+    sort=symbolM_j
+}
+\newglossaryentry{M}{
+    name=\ensuremath{M},
+    description={Gesamtmolare Masse $M:=\frac{ \gls{m} }{ \gls{n} } = \sum\limits_{i} \frac{ \gls{M_i} \gls{n_i} }{ \sum\limits_{i} \gls{n_i}} = \sum\limits_{i} \gls{M_i} \gls{X_i} $},
+    sort=symbolM
+}
+\newglossaryentry{c_i}{
+    name=\ensuremath{c_i},
+    description={Stoffmengenkonzentration des Stoffes $i$ in $\SI{}{\mole\per\cubic\meter}$. In der Literatur auch unschöner Weise als $[X_i]$ bezeichnet, obwohl eckige Klammern für das Einheitenzeichen gemäß  EN ISO 80000 vorgesehen sind.},
+    sort=symbolc_i
+}
+
+% Starting now are rather dull symbols
+
+\newglossaryentry{a_ij}{
+    name=\ensuremath{a_{ij}},
+    description={Stoffkonfiguration. Eine Konstante, die die Anzahl an Atomen des Elements $j$ im Stoff $i$ angibt.},
+    sort=symbola_ij
+}
+\newglossaryentry{X}{
+    name=\ensuremath{X},
+    description={Molenbruch. Verhältnis Partialstoffmenge zu Gestamtstoffmenge \gls{n}},
+    sort=symbolX_i
+}
+\newglossaryentry{Y}{
+    name=\ensuremath{Y},
+    description={Massenbruch. Verhältnis Partialmasse zu Gestamtstoffmenge \gls{m}},
+    sort=symbolY
+}
+\newglossaryentry{T}{
+    name=\ensuremath{T},
+    description={Temperatur. In dieser Arbeit häufig ein stationäres räumliches Temperaturfeld},
+    sort=symbolT
+}
+\newglossaryentry{T_max}{
+    name=\ensuremath{T_{\mathrm{max}}},
+    description={Maximaler Wert eines stationären räumlichen Temperaturfeldes},
+    sort=symbolTmax
+}
+\newglossaryentry{chi}{
+    name=\ensuremath{\chi},
+    description={Skalare Dissipationsrate, siehe Kapitel~\ref{sct:chist}},
+    sort=symbolchi
+}
+\newglossaryentry{chi_st}{
+    name=\ensuremath{\chi_{\mathrm{st}}},
+    description={Skalare Dissipationsrate am Ort stöchiometrischer Mischung, siehe Kapitel~\ref{sct:chist}},
+    sort=symbolchi_st
+}
+\newglossaryentry{Z}{
+    name=\ensuremath{Z},
+    description={Mischungsbruch, siehe Kapitel~\ref{sct:mischungsbruch}},
+    sort=symbolZ
+}
+\newglossaryentry{Z_Bilger}{
+    name=\ensuremath{Z_{\mathrm{Bilger}}},
+    description={Bilger-Mischungsbruch, siehe Kapitel~\ref{sct:ZBilger}. Nicht zu verwechseln mit \gls{Z_j}!},
+    sort=symbolZ_Bilger
+}
+\newglossaryentry{Z_ULF}{
+    name=\ensuremath{Z_{\mathrm{ULF}}},
+    description={Der Mischungsbruch wie er von \gls{ULF} berechnet uns ausgeben wird. Dieser sollte für $\mathrm{Le}=1$ mit \gls{Z_Bilger} übereinstimmen.},
+    sort=symbolZ_Bilger
+}
+\newglossaryentry{PV}{
+    name=\ensuremath{\mathrm{PV}},
+    description={Fortschrittsvariable, siehe Kapitel~\ref{sct:PV}},
+    sort=symbolPV
+}
+\newglossaryentry{nu_ik}{
+    name=\ensuremath{\nu_{ik}},
+    description={Stöchiometriefaktor (oder: stöchiometrische Zahl, stöchiometrischer Koeffizient, Stöchiometriezahl) des Stoffes $i$ bezüglich der Reaktion $k$, siehe Kapitel~\ref{sct:chemreact}. Nicht zu verwechseln mit \gls{nu}},
+    sort=symbolnu_ik
+}
+\newglossaryentry{o_min}{
+    name=\ensuremath{o_\text{min}},
+    description={Massenbezogenen Mindestsauerstoffbedarf, siehe auch \gls{nu}},
+    sort=symbolo_min
+}
+\newglossaryentry{nu}{
+    name=\ensuremath{\nu},
+    description={Identisch zu \gls{o_min}},
+    sort=symbolnu
+}
+
+\newglossaryentry{x_st}{
+    name=\ensuremath{x_\text{stöch}},
+    description={Ort, an dem Brennstoff und Oxidator in stöchiometrischem Verhältnis vorliegen.},
+    sort=symbolx_st
+}
+\newglossaryentry{v}{
+    name=\ensuremath{v},
+    description={Einströmgeschwindigkeit der beiden Düsen in der Simulation im Ortsraum. Beide Düsen haben die betragsmäßig gleiche aber entgegengesetzte Einströmgeschwindigkeit.},
+    sort=symbolx_v
+}

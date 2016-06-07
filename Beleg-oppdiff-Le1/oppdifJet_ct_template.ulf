@@ -1,0 +1,433 @@
+runTime
+{
+    startTime		  0.0;
+    endTime			  100.0;
+    writeInterval	  100.0;
+    timePrecision	  1;
+}
+
+solution
+{
+    requiredFields( YV, Grho, FGrho, Z, F, chi );
+    solutionEntries
+    {
+        F
+        {
+            dimensions  1;
+			eqID        F_oppdifJet;
+            eqType      algebraic;
+            minValue    -1.0e4;
+            maxValue    1.0e4;
+            boundaryConditions
+            {
+                FBoundaryUpper
+                {
+                    patchList( upperNozzle );
+                    eqID        F_oppdifJet_bc_upper;
+                    eqType      algebraic;
+                }
+                FBoundaryLower
+                {
+                    patchList( lowerNozzle );
+                    eqID        F_oppdifJet_bc_lower;
+                    eqType      algebraic;
+                }
+            }
+        }
+        G
+        {
+            dimensions  1;
+            eqID        G_oppdifJet;
+            eqType      algebraic;
+            minValue    -1.0e4;
+            maxValue    1.0e4;
+            boundaryConditions
+            {
+                GBoundary
+                {
+                    patchList( lowerNozzle, upperNozzle );
+                    eqID        G_oppdifJet_bc;
+                    eqType      algebraic;
+                }
+            }
+        }
+        pEig
+        {
+            dimensions  1;
+            eqID        pEig_oppdifJet;
+            eqType      algebraic;
+            minValue    -1.0e5;
+            maxValue    1.0e5;
+            boundaryConditions
+            {
+                pEigBoundaryUpper
+                {
+                    patchList( upperNozzle );
+                    eqID        pEig_oppdifJet_bc_upper;
+                    eqType      algebraic;
+                }
+            }
+        }
+        T
+        {
+            eqID        T_oppdifJet;
+            eqType      ode;
+            minValue    280.0;
+            maxValue    3000.0;
+            boundaryConditions
+            {
+                TBoundaryUpper
+                {
+                    patchList( upperNozzle );
+                    eqID "T_oppdifJet_bc_upper";
+					eqType algebraic;
+                }
+                TBoundaryLower
+                {
+                    patchList( lowerNozzle );
+                    eqID "T_oppdifJet_bc_lower";
+					eqType algebraic;
+                }
+            }
+        }
+        Yi
+        {
+            eqID        Yi_oppdifJet;
+            eqType      ode;
+            minValue    0.0;
+            maxValue    1.0;
+            boundaryConditions
+            {
+                YiBoundaryLower
+                {
+                    patchList( lowerNozzle );
+                    eqID    Yi_oppdifJet_bc_lower;
+                    eqType  algebraic;
+                }
+                YiBoundaryUpper
+                {
+                    patchList( upperNozzle );
+                    eqType  algebraic;
+                    eqID    Yi_oppdifJet_bc_upper;
+                }
+            }
+        }
+        Z
+        {
+            dimensions 1;
+            eqID        Z_oppdifJet;
+            eqType      ode;
+            minValue    0.0;
+            maxValue    1.0;
+            boundaryConditions
+            {
+                ZBoundaryLower
+                {
+                    patchList( lowerNozzle );
+                    eqID    fixedValue_newton;
+                    eqType  algebraic;
+                    eqParameters
+                    {
+                        value Z_LOWER;
+                    }
+                }
+                ZBoundaryUpper
+                {
+                    patchList( upperNozzle );
+                    eqType  algebraic;
+                    eqID    fixedValue_newton;
+                    eqParameters
+                    {
+                        value Z_UPPER;
+                    }
+                }
+            }
+        }
+    }
+}
+
+solver
+{
+    solverType ulfNewton;
+	absTol 1e-9;
+	relTol 1e-7;  // some jet velocities converge a bit slower
+	// relTol 1e-6;
+	maxSteps 100000000;
+	maxOrder 5;
+    maxJacStationaryAge 10;
+    maxJacTransientAge 20;
+    nTimeSteps 50;
+    dtMax 1.0e-2;
+    dtMin 1.0e-12;
+    maxDampSteps 6;
+    dampFactor 2.0;
+    logLevel 1;
+}
+
+libs( "libequations.so" );
+
+resultFileBaseName RESULT_BASENAME;
+resultType ASCII;
+
+restart RESTART_OPTION;
+restartFile RESTART_FILE;
+restartType ASCII;
+
+preProcessing
+{
+    eqID        oppdifJet_ct_startprofile;
+	fluidType   cantera;
+    mechanism   MECHANISM;
+    gasId       GASID;
+    reference   MOLE_OR_MASS;
+    pressure    P;
+	width       PLATEAU_WIDTH;
+
+    fuel
+    {
+        T			 T_FUEL;
+		Y1          Y1_FUEL;
+		Y2          Y2_FUEL;
+		Y3          Y3_FUEL;
+		Y4          Y4_FUEL;
+		Y5          Y5_FUEL;
+		Y6          Y6_FUEL;
+    }
+    oxidizer
+    {
+        T			 T_OXID;
+		Y1          Y1_OXID;
+		Y2          Y2_OXID;
+		Y3          Y3_OXID;
+		Y4          Y4_OXID;
+		Y5          Y5_OXID;
+		Y6          Y6_OXID;
+    }
+	upper
+	{
+		Z   Z_UPPER;
+		u   U_UPPER;
+	}
+	lower
+	{
+		Z   Z_LOWER;
+		u   U_LOWER;
+	}
+}
+mesh
+{
+	dimensions 1;
+	constructionFrom cartesianLimits;
+	axisNames( X );
+	axisLength( AXIS_LENGTH );
+	cartesianMin( AXIS_MIN );
+	cartesianMax( AXIS_MAX );
+    //initialMeshAdaption
+    //{
+    //    eqID remeshing;
+    //    X
+    //    {
+    //        weights
+    //        {
+	//			eqID equidistantAxis;
+    //        }
+    //        reMesh
+    //        {
+    //            eqID refine;
+    //        }
+	//	    additionalPoints INIT_ADD_POINTS;
+    //    }
+    //    refinementTarget REFINE_TARGET;
+    //}
+    meshAdaption
+    {
+        eqID remeshing;
+        X
+        {
+            weights
+            {
+                eqID refineWeightReference;
+				referenceField "T";
+            }
+            reMesh
+            {
+                eqID refine;
+            }
+		    additionalPoints REFINE_ADD_POINT;
+			refinementTarget REFINE_TARGET;
+        }
+    }
+    patches
+    {
+        lowerNozzle
+        {
+            patchMin ( AXIS_MIN );
+            patchMax ( AXIS_MIN );
+        }
+        upperNozzle
+        {
+            patchMin ( AXIS_MAX );
+            patchMax ( AXIS_MAX );
+			patchNormal( -1 );
+        }
+    }
+}
+mixture
+{
+    mainMixture gas;
+    gas
+    {
+        mixtureType     CANTERA_MIXTURE;
+        mechanism       MECHANISM;
+        gasId           GASID;
+        transportType   Mix;
+        mixtureEntries
+        {
+            // newly added Le !
+            Le     { updateType constant; }
+            rho    { updateType standard; }
+            lambda { updateType standard; }
+            visc   { updateType standard; }
+            Dmix   { updateType standard; }
+            // must be deactivated if Le is activated !
+            //Dtherm
+            //{
+            //    updateType standard;
+            //}
+            yVdiff
+            {
+                updateType standard;
+            }
+            yVdiffCorr
+            {
+                updateType standard;
+            }
+            cp
+            {
+                updateType standard;
+            }
+            cpMean
+            {
+                updateType standard;
+            }
+            tdot
+            {
+                updateType standard;
+            }
+            reactionRate
+            {
+                updateType standard;
+            }
+            hMean
+            {
+                updateType standard;
+            }
+            X
+            {
+                updateType standard;
+            }
+        }
+    }
+}
+fields
+{
+    // newly added LeiDefault
+    LeiDefault
+    {
+        write YES;  // output all Lewis numbers
+        fixedValue 1.0;
+    }
+    cpMean{ write YES; }   // added to calc D in postprocessing
+    lambda{ write YES; }   // added to calc D in postprocessing
+	default
+	{
+		referenceFrame cellCentered;
+		interpolate YES;
+		frozen NO;
+		write NO;
+		fixedValue 0.0;
+		firstOrder CDS;
+		secondOrder CDS;
+		diffusive CDS;
+	}
+    F
+    {
+		write YES;
+		firstOrder UDS;
+    }
+    G
+    {
+		write YES;
+    }
+    pEig
+    {
+		write YES;
+        fixedValue -200.0;
+    }
+	p
+	{
+        write YES;
+		fixedValue P;
+	}
+    Z
+    {
+		write YES;
+		firstOrder UDS;
+    }
+    YiDefault
+    {
+		fixedValue 0.01;
+		write YES;
+		firstOrder UDS;
+    }
+	XiDefault
+	{
+		write YES;
+		firstOrder UDS;
+	}
+	YV
+	{
+		fixedValue 0.0;
+	}
+    rho
+	{
+        write YES;
+	}
+    hMean
+    {
+        write YES;
+    }
+	chi
+	{
+        //eqID chi_physical;
+		//frozen YES;
+		write YES;
+		fixedValue 0.0;
+	}
+    Y1
+    {
+        fixedValue Y1_OXID;
+    }
+    Y2
+    {
+        fixedValue Y2_OXID;
+    }
+    Y3
+    {
+        fixedValue Y3_OXID;
+    }
+    Y4
+    {
+        fixedValue Y4_OXID;
+    }
+    Y5
+    {
+        fixedValue Y5_OXID;
+    }
+    T
+    {
+		write YES;
+		firstOrder UDS;
+        fixedValue 300;
+    }
+}

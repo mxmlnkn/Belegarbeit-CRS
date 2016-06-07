@@ -1,0 +1,185 @@
+runTime
+{
+	startTime		  0.0;
+	endTime			  END_TIME;
+	writeInterval	  WRITE_INTERVAL;
+	timePrecision	  5;
+}
+
+solution
+{
+	requiredFields ( chi );
+	solutionEntries
+	{
+		T
+		{
+			eqID        T_flameletLe1;
+			minValue    280.0;
+			maxValue    3500.0;
+			boundaryConditions 
+			{
+				bounds
+				{
+					patchList (oxidizer, fuel);
+					eqID dirichlet;
+				}
+			}
+		}
+		Yi
+		{
+			eqID        Yi_flameletLe1;
+			minValue    0.0;
+			maxValue    1.0;
+			boundaryConditions 
+			{
+				bounds
+				{
+					patchList (oxidizer, fuel);
+					eqID dirichlet;
+				}
+			}
+		}
+	}
+}
+
+solver
+{
+	solverType bzzODE;
+	absTol 1e-9;
+	relTol 1e-6;
+	maxSteps 100000;
+	maxOrder 5;
+}
+
+libs( "libequations.so" );
+
+resultFileBaseName RESULT_BASENAME;
+resultType ASCII;
+
+restart RESTART_OPTION;
+restartFile RESTART_FILE;
+restartType ASCII;
+
+mesh
+{
+	dimensions 1;
+	constructionFrom cartesianLimits;
+	axisNames( Z );
+	axisLength( AXIS_LENGTH );
+	cartesianMin( AXIS_MIN );
+	cartesianMax( AXIS_MAX );
+
+	patches
+	{
+		oxidizer
+		{
+			patchMin ( AXIS_MIN );
+			patchMax ( AXIS_MIN );
+		}
+		fuel
+		{
+			patchMin ( AXIS_MAX );
+			patchMax ( AXIS_MAX );
+		}
+	}
+}
+
+mixture
+{
+    mainMixture   theMixture;
+    theMixture
+    {
+        mixtureType       CANTERA_MIXTURE;
+        mechanism       MECHANISM;
+        gasId           GAS_ID;
+        transportType   Mix;
+        mixtureEntries
+        {
+            tdot
+            {
+                updateType standard;
+            }
+            reactionRate
+            {
+                updateType standard;
+            }
+            hMean
+            {
+                updateType standard;
+            }
+        }
+    }
+}
+
+fields
+{
+	default
+	{
+		referenceFrame cellCentered;
+		interpolate YES;
+		frozen NO;
+		write NO;
+		fixedValue 0.0;
+		firstOrder CDS;
+		secondOrder CDS;
+		diffusive CDS;
+	}
+	YiDefault
+	{
+		write YES;
+	}
+	chi
+	{
+        eqID erfc_startProfile;
+        eqParameters
+        {
+            Zst   Z_STOIC;
+            chiSt CHI_STOIC; 
+        }
+		frozen YES;
+		write YES;
+	}
+	T
+	{
+		readFrom START_FILE;
+		readType ASCII;
+		write YES;
+	}
+	p
+	{
+		fixedValue P;
+		write YES;
+	}
+	CH4
+	{
+		readFrom START_FILE;
+		readType ASCII;
+		write YES;
+	}
+	O2
+	{
+		readFrom START_FILE;
+		readType ASCII;
+		write YES;
+	}
+	CO2
+	{
+		readFrom START_FILE;
+		readType ASCII;
+		write YES;
+	}
+	H2O
+	{
+		readFrom START_FILE;
+		readType ASCII;
+		write YES;
+	}
+	N2
+	{
+		readFrom START_FILE;
+		readType ASCII;
+		write YES;
+	}
+	rho   { write YES; }
+	hMean { write YES; }
+}

@@ -1,0 +1,342 @@
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Simulation mittels einer Diffusionsmodellierung von \texorpdfstring{$\mathrm{Le}=1$}{Le=1}}
+\label{sct:oppdiffLe=1}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Durchführung}
+\label{sct:oppdiffLe1-execution}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+Um \gls{ULF} auf dem Cluster des NTFD-Lehrstuhls zu benutzen müssen erst einige Umgebungsvariablen gesetzt werden:
+\begin{lstlisting}[language=bash]
+export ULF_MAIN=/opt/ulf
+export PATH=$PATH:$\gls{ULF}_MAIN
+export ULF_VERSION=1.07-1
+ulf -x   # Beispieldateien in aktuellen Pfad kopieren
+cd oppdifJet
+\end{lstlisting}\vspace{-2\baselineskip}
+Es wurde mit dem Beispielsetup \lstinline!oppdifJet! gearbeitet, was gemäß der Aufgabenstellung angepasst wurde. Einige Anpassungen sind in Listing~\ref{lst:ch4smooke.ulf} im Anhang~\ref{sct:listings} zu sehen. Weiterhin musste \lstinline!oppdiffjet_ct_template.ulf! angepasst werden, damit mit $\mathrm{Le}=1$ gerechnet wird, siehe Listing~\ref{lst:oppdiff}. In dieser Datei wäre es auch möglich Post-Processing direkt in \gls{ULF} zu betreiben. Darauf wurde hier aber verzichtet und stattdessen Python benutzt.\\
+
+Um die Geschwindigkeit zu variieren wurde ein Bash-Skript geschrieben, was automatisch eine \gls{ULF}-Konfigurationsdatei \lstinline!smook-changes! erzeugt, die nur die zu variierenden Geschwindigkeiten enthält und von \lstinline!oppdifJet_ct_CH4Air_smooke.ulf! inkludiert wird.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Auswertung}
+\subsubsection{\texorpdfstring{$T_\mathrm{max}$}{Tmax} über \texorpdfstring{\gls{chi_st}}{chist}}
+\label{sct:oppdiffLe1:Tmax-chist}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+Bei der Auftragung der maximalen Temperatur, also der Brenntemperatur, über die skalare Dissipationsrate, siehe \autoref{fig:s-kurve-ulf} erhält man den oberen Ast der S-Kurve, vgl. \autoref{fig:s-kurve-invk-ulf} und \ref{fig:s-kurve}.
+
+Einige Messpunkte werden ignoriert, weil diese z.B. durch zu hohe Strömungsgeschwindigkeiten nicht gezündet haben oder weil, wegen zu langsamer Strömungsgeschwindigkeit, Reaktionsprodukte in die Düsen diffundiert sind, womit die Randbedingungen der Simulation verletzt werden.
+
+
+\begin{figure}[H]
+    \begin{center}\begin{minipage}{0.49\linewidth}\begin{center}
+        \includegraphics[width=\linewidth]{Beleg-oppdiff-Le1/chist-Tmax}
+    \end{center}\end{minipage}\begin{minipage}{0.49\linewidth}\begin{center}
+        \includegraphics[width=\linewidth]{Beleg-oppdiff-Le1/chist-Tmax-zoom}
+    \end{center}\end{minipage}\end{center}
+    \caption{\textbf{Links:} Der obere Ast der S-Kurve, siehe Kapitel~\ref{sct:skurve}, aber über \gls{chi_st} anstatt über der Streckungsrate aufgetragen. Annotiert sind die Einströmgeschwindigkeiten in \SI{}{\meter\per\second}. \textbf{Rechts:} Zoom unter Auslassung einiger Werte.}
+    \label{fig:s-kurve-ulf}
+\end{figure}
+
+Ein guter Bereich sind Einlassgeschwindigkeiten zwischen \SI{0.1}{\meter\per\second} und \SI{0.5}{\meter\per\second}. In Tabelle~\ref{tbl:v-chist} lässt sich, zumindest im nicht ausgegrauten Bereich, ein linearer Zusammenhang zwischen Einlassgeschwindigkeit \gls{v} und skalarer Dissipationsrate ($\gls{chi_st}(v) = \SI{0.153}{\per\second} + \SI{6.896}{\per\meter} \cdot v,\;\sigma = \SI{0.08}{\per\second}$) und zwischen \gls{v} und Streckungsrate ($\gls{k}(v) = \SI{0.000}{\per\second} + \SI{24.800}{\per\meter} \cdot v,\;\sigma = \SI{2.6e-7}{\per\second} \cdot $, vgl. \autoref{eq:kstrain}) erkennen.
+% from scipy.stats import linregress
+% v = [0.05, 0.1 , 0.15, 0.2 , 0.25, 0.5]
+% linregress( v, [0.4625, 0.8407, 1.1964, 1.5464, 1.9122, 3.5782] )
+%     LinregressResult( slope     = 6.8957508196721307,
+%                       intercept = 0.15278524590163944,
+%                       rvalue    = 0.99972782983062691,
+%                       pvalue    = 1.1110482092432887e-07,
+%                       stderr    = 0.080459159084425788 )
+% linregress( v, [1.24 , 2.48 , 3.72 , 4.96 , 6.20 , 12.40] )
+%     LinregressResult( slope     = 24.800000000000001,
+%                       intercept = 0.0,
+%                       rvalue    = 0.99999999999999978,
+%                       pvalue    = 7.3962371352617921e-32,
+%                       stderr    = 2.6131046076754306e-07)
+% http://docs.scipy.org/doc/scipy-0.14.0/reference/generated/scipy.stats.linregress.html
+\begin{table}[H]
+    \begin{center}\begin{scriptsize}\begin{tabular}{|c|c|c|}
+        \hline
+        v / \SI{}{\meter\per\second} &
+        \gls{chi_st} / \SI{}{\per\second} &
+        \gls{kstrain} / \SI{}{\per\second}
+        \\
+        \hline
+
+        \textcolor{gray}{0.0125} & \textcolor{gray}{ 0.2340 } & \textcolor{gray}{ 0.31 } \\
+        \textcolor{gray}{0.016 } & \textcolor{gray}{ 0.2258 } & \textcolor{gray}{ 0.40 } \\
+        \textcolor{gray}{0.02  } & \textcolor{gray}{ 0.2314 } & \textcolor{gray}{ 0.50 } \\
+        \textcolor{gray}{0.025 } & \textcolor{gray}{ 0.2568 } & \textcolor{gray}{ 0.62 } \\
+        0.05   & 0.4625  & 1.24  \\
+        0.1    & 0.8407  & 2.48  \\
+        0.15   & 1.1964  & 3.72  \\
+        0.2    & 1.5464  & 4.96  \\
+        0.25   & 1.9122  & 6.20  \\
+        0.5    & 3.5782  & 12.40 \\
+        \textcolor{gray}{ 0.75 } & \textcolor{gray}{ 12.174 } & \textcolor{gray}{ 18.60 } \\
+        \textcolor{gray}{ 1.0  } & \textcolor{gray}{ 3.5257 } & \textcolor{gray}{ 24.80 } \\
+        \textcolor{gray}{ 1.5  } & \textcolor{gray}{ 3.3986 } & \textcolor{gray}{ 37.20 } \\
+        \textcolor{gray}{ 2.5  } & \textcolor{gray}{ 16.148 } & \textcolor{gray}{ 62.00 } \\
+        \hline
+    \end{tabular}\end{scriptsize}\end{center}
+    \caption{Umrechnungstabelle zwischen Einlassgeschwindigkeit, skalarer Dissipationsrate bei Stöchiometrie und Streckungsrate. Problematische Wert sind grau hinterlegt und werden später häufig ausgelassen.}
+    \label{tbl:v-chist}
+\end{table}
+%\begin{figure}[H]
+%    \begin{center}
+%        \includegraphics[width=0.5\linewidth]{Beleg-oppdiff-Le1/chist-Tmax-zoom}
+%    \end{center}
+%    \caption{Die obere Ast der S-Kurve, siehe Kapitel~\ref{sct:skurve}, aber über \gls{chi_st} anstatt über der Streckungsrate aufgetragen. Annotiert sind die Einströmgeschwindigkeiten in \SI{}{\meter\per\second}}
+%    \label{fig:s-kurve-ulf}
+%\end{figure}
+
+Zusätzlich zur Aufgabenstellung, um ein Anschluss an die Vorlesung zu finden, wurde versucht die S-Kurve aus \autoref{fig:s-kurve} zu reproduzieren. Dafür wurde die inverse Streckungsrate, welche hier proportional der inversen Einlassgeschwindigkeit ist, berechnet und die maximalen Temperaturen hierüber aufgetragen.
+
+%Vernachlässigt man die sehr kleinen Geschwindigkeiten \SI{0.05}{\meter\per\second} und \SI{0.0125}{\meter\per\second}, so erhält man \autoref{fig:s-kurve-ulf} rechts.
+Seltsamerweise springen die Werte für \SI{1.0}{\meter\per\second} und \SI{1.5}{\meter\per\second} aus der Reihe. Für diese Werte erlischt die Flamme. Aber sowohl für kleinere als auch den höheren Wert bei \SI{2.5}{\meter\per\second} existiert trotzdem eine Flamme. Möglicherweise ist das ein Problem im Modell oder im Programm.
+
+\begin{figure}[H]
+    \begin{center}\begin{minipage}{0.49\linewidth}\begin{center}
+        \includegraphics[width=\linewidth]{Beleg-oppdiff-Le1/k-Tmax}
+    \end{center}\end{minipage}\begin{minipage}{0.49\linewidth}\begin{center}
+        \includegraphics[width=\linewidth]{Beleg-oppdiff-Le1/k-Tmax-zoom}
+    \end{center}\end{minipage}\end{center}
+    \caption{\textbf{Links:} Die S-Kurve, siehe Kapitel~\ref{sct:skurve} \textbf{Rechts:} Fünf ausgewählte Werte, vgl. Tabelle~\ref{tbl:v-chist}. Die Werte sind in der oberen linken Ecke des vollständigen Graphen enthalten. Annotiert sind die Einströmgeschwindigkeiten in \SI{}{\meter\per\second}}
+    \label{fig:s-kurve-invk-ulf}
+\end{figure}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsubsection{\texorpdfstring{\gls{Z_Bilger}}{ZBilger} über \texorpdfstring{\gls{Z_ULF}}{ZULF}}
+\label{sct:oppdiffLe1:ZBilger_Z}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+Stellt man \gls{Z_Bilger} über den Mischungsbruch \gls{Z_ULF} dar, so erkennt man, dass \gls{ULF} mit dem Bilger-Mischungsbruch rechnet. Die Abweichungen die bei der Darstellung der Differenz in \autoref{fig:zbilger-z} zu erkennen sind sehen wie systematische, also wahrscheinlich numerische, Fehler aus, sind aber sehr klein.
+
+\begin{figure}[H]
+    \begin{minipage}{0.33\linewidth}\begin{center}
+        \includegraphics[width=\linewidth]{Beleg-oppdiff-Le1/ZULF-ZBilger-for-5-chist}
+    \end{center}\end{minipage}\begin{minipage}{0.33\linewidth}\begin{center}
+        \includegraphics[width=\linewidth]{Beleg-oppdiff-Le1/ZULF-ZBilger-diff-for-5-chist}
+    \end{center}\end{minipage}\begin{minipage}{0.33\linewidth}\begin{center}
+        \includegraphics[width=\linewidth]{Beleg-oppdiff-Le1/ZULF-ZBilger-relerr-for-5-chist}
+    \end{center}\end{minipage}
+    \caption{
+        \textbf{Links:} Der Bilgermischungsbruch \gls{Z_Bilger} dargestellt über den Mischungsbruch wie ihn \gls{ULF} ausgibt.
+        \textbf{Mitte:} Differenz der Plots links zur Identität
+        \textbf{Rechts:} Relativer Fehler von \gls{Z_Bilger} zu \gls{Z_ULF}
+    }
+    \label{fig:zbilger-z}
+\end{figure}
+
+In der Darstellung des relativen Fehlers sind einige Probleme zu beachten, so strebt der relative Fehler für \gls{Z_ULF} nahe Null gegen Eins. \gls{Z_ULF} geht bis SI{10e-31}{}, wurde aber bei \SI{10e-16}{} gekappt zur besseren Darstellung. Ein zweites Plateau ist ungefähr bei \SI{10e-2}{}. Das erste Plateau bei $1$ scheint aufgrund von Fließkommaprobleme zu sein. Interessant ist die Stelle bei stöchiometrischem Mischungsbruch von $0.0545$. Für $\gls{Z_ULF}\approx 1$ geht der Fehler gegen Null, wie es auch für $\gls{Z_ULF}\approx 0$ der Fall sein sollte, da beide Mischungsbrüche an den Rändern gegen die gleiche Zahlen konvergieren. Sehr kleine \gls{Z_ULF} entsprechen also einer Grenzwertbildung, die bekanntlich schnell an die Grenzen von Fließkommagenauigkeiten stößt.
+
+%Trägt man den Elementemischungsbruch über den Mischungsbruch aus \autoref{eq:defZ} auf, so erhält man die Graphen in \autoref{fig:zbilger-zcalc}. Links sieht man mit dem Auge nur geringe Abweichungen von der winkelhalbierenden Gerade. Trägt man jedoch die Differenz auf, so lässt sich ein anderes Muster als in \autoref{fig:zbilger-z} erkennen.
+%
+%\begin{minipage}{\linewidth}
+%	\captionsetup{type=figure}
+%    \begin{minipage}{0.5\linewidth}\begin{center}
+%        \includegraphics[width=\linewidth]{Beleg-oppdiff-Le1/Z-ZBilger-for-5-chist}
+%    \end{center}\end{minipage}\begin{minipage}{0.5\linewidth}\begin{center}
+%        \includegraphics[width=\linewidth]{Beleg-oppdiff-Le1/Z-ZBilger-diff-for-5-chist}
+%    \end{center}\end{minipage}
+%    \captionof{figure}{Der Elementemischungsbruch dargestellt über den Mischungsbruch wie ihn \gls{ULF} ausgibt. \textbf{Rechts:} Dargestellt ist die Differenz der Plots links zur winkelhalbierenden Geraden.}
+%    \label{fig:zbilger-zcalc}
+%\end{minipage}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsubsection{Speziesprofile}
+\label{sct:oppdiffLe1-yi-z}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+In \autoref{fig:yi-x} sind die Profile der Massenbrüche für verschiedene Anströmgeschwindigkeiten $v$ dargestellt. Da nur die Profile von Reaktionsprodukten und Zwischenprodukten dargestellt sind, entspricht die Darstellung dem Ort der Flamme. Das heißt für höhere Geschwindigkeiten wird die Flamme immer dünner und die Temperaturgradienten werden zugleich mit größer, wodurch der Wärmefluss steigt, bzw. die Reaktionszeit abnimmt, und die Flamme abkühlt.
+
+Für $v<\SI{0.05}{\meter\per\second}$ geht die Flamme bis zu den Düsen, was die Simulation aber über die Randbedingungen ausschließt, und damit die Simulation verfälscht.
+Für die beiden Bilder unten rechts in \autoref{fig:yi-x} sind alle Massenbrüche im Rahmen der Floating-Point-Genauigkeit $0$ und alle Temperaturen \SI{300}{\kelvin}. In diesen Fällen konnte die Flamme also aufgrund der zu hohen Einströmgeschwindigkeiten nicht zünden.
+Aus diesen Gründen werden die zwei größten und zwei kleinsten Geschwindigkeiten in \autoref{fig:yi-x} ab jetzt ignoriert und mit den fünf restlichen weiter diskutiert.
+
+\begin{figure}[H]
+    \begin{center}
+    \begin{minipage}{0.33\linewidth}\begin{center}
+        % fucking three braces, because there are dots in the filenames -.-... see http://tex.stackexchange.com/questions/10574/includegraphics-dots-in-filename
+        \includegraphics[width=\linewidth]{{{Beleg-oppdiff-Le1/Yi-over-x-v-0.0125}}}
+    \end{center}\end{minipage}\begin{minipage}{0.33\linewidth}\begin{center}
+        \includegraphics[width=\linewidth]{{{Beleg-oppdiff-Le1/Yi-over-x-v-0.025}}}
+    \end{center}\end{minipage}\begin{minipage}{0.33\linewidth}\begin{center}
+        \includegraphics[width=\linewidth]{{{Beleg-oppdiff-Le1/Yi-over-x-v-0.05}}}
+    \end{center}\end{minipage}\\
+    \begin{minipage}{0.33\linewidth}\begin{center}
+        \includegraphics[width=\linewidth]{{{Beleg-oppdiff-Le1/Yi-over-x-v-0.1}}}
+    \end{center}\end{minipage}\begin{minipage}{0.33\linewidth}\begin{center}
+        \includegraphics[width=\linewidth]{{{Beleg-oppdiff-Le1/Yi-over-x-v-0.2}}}
+    \end{center}\end{minipage}\begin{minipage}{0.33\linewidth}\begin{center}
+        \includegraphics[width=\linewidth]{{{Beleg-oppdiff-Le1/Yi-over-x-v-0.25}}}
+    \end{center}\end{minipage}\\
+    \begin{minipage}{0.33\linewidth}\begin{center}
+        \includegraphics[width=\linewidth]{{{Beleg-oppdiff-Le1/Yi-over-x-v-0.5}}}
+    \end{center}\end{minipage}\begin{minipage}{0.33\linewidth}\begin{center}
+        \includegraphics[width=\linewidth]{{{Beleg-oppdiff-Le1/Yi-over-x-v-1.0}}}
+    \end{center}\end{minipage}\begin{minipage}{0.33\linewidth}\begin{center}
+        \includegraphics[width=\linewidth]{{{Beleg-oppdiff-Le1/Yi-over-x-v-1.5}}}
+    \end{center}\end{minipage}
+    \caption{Plot ausgewählter Massenbruchverteilungen über den Ort aufgetragen. Bei $x=\SI{0}{\centi\meter}$ ist die Methandüse, bei $x=\SI{2}{\centi\meter}$ die Luftdüse.}
+    \label{fig:yi-x}
+    \end{center}
+\end{figure}
+
+Bei den Speziesprofilen über \gls{Z_ULF}, vgl. \autoref{fig:yi-z}, kann man keine Aussagen mehr über Flammendicke machen, dafür lassen sich diese Profile aber besser mit dem Flameletansatz vergleichen. Interessant ist die häufig fast perfekte Dreiecksform aller Spezienprofile in dieser Darstellung.
+
+%%%%
+
+Bei der Auftragung über den Mischungsbruch \gls{Z_ULF} in \autoref{fig:yi-z} kann man besser ausmachen, dass für größere Einlassgeschwindigkeiten und damit auch größere skalare Dissipationsraten das $\mathrm{CO}_2$-Profil sinkt, das $\mathrm{CO}$-Profil zunimmt und das Temperaturprofil abnimmt. Auch die Profile von $\mathrm{OH}$ und $\mathrm{H}_2$ nehmen leicht zu. Alles deutet darauf hin, dass bei hohen skalaren Dissipationsraten es zu einer vermehrt unvollständigen Verbrennung kommt.
+
+\begin{figure}[H]
+    \begin{center}
+    \begin{minipage}{0.33\linewidth}\begin{center}
+        % fucking three braces, because there are dots in the filenames -.-... see http://tex.stackexchange.com/questions/10574/includegraphics-dots-in-filename
+        \includegraphics[width=\linewidth]{{{Beleg-oppdiff-Le1/Yi-over-Z-v-0.05}}}
+    \end{center}\end{minipage}\begin{minipage}{0.33\linewidth}\begin{center}
+        \includegraphics[width=\linewidth]{{{Beleg-oppdiff-Le1/Yi-over-Z-v-0.1}}}
+    \end{center}\end{minipage}\begin{minipage}{0.33\linewidth}\begin{center}
+        \includegraphics[width=\linewidth]{{{Beleg-oppdiff-Le1/Yi-over-Z-v-0.15}}}
+    \end{center}\end{minipage}\\\begin{minipage}{0.33\linewidth}\begin{center}
+        \includegraphics[width=\linewidth]{{{Beleg-oppdiff-Le1/Yi-over-Z-v-0.2}}}
+    \end{center}\end{minipage}\begin{minipage}{0.33\linewidth}\begin{center}
+        \includegraphics[width=\linewidth]{{{Beleg-oppdiff-Le1/Yi-over-Z-v-0.25}}}
+    \end{center}\end{minipage}\begin{minipage}{0.33\linewidth}\begin{center}
+        \includegraphics[width=\linewidth]{{{Beleg-oppdiff-Le1/Yi-over-Z-v-0.5}}}
+    \end{center}\end{minipage}
+    \caption{Plot ausgewählter Massenbruchverteilungen über den Mischungsbruch \gls{Z_ULF} aufgetragen. Bei $\gls{Z_ULF}=1$ ist die Methandüse, bei $\gls{Z_ULF}=0$ die Luftdüse}
+    \label{fig:yi-z}
+    \end{center}
+\end{figure}
+
+Interessant zu bemerken ist auch, dass für kleine Einströmgeschwindigkeiten die größte Temperatur nahe am stöchiometrischen Gleichgewicht liegt. Für schnellere Einströmgeschwindigkeiten verlagert sich jedoch der heißeste Punkt weiter Richtung Methandüse.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsubsection{Vergleich der skalaren Dissipationsrate mit der analytischen Lösung}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{align}
+    \label{eq:chianal}
+    \chi_\mathrm{anal.} := \chi_\mathrm{st} \exp\left[  2\cdot\left(
+        \left[ \mathrm{erfc}^{-1} \left( 2 Z_\mathrm{st} \right) \right]^2 -
+        \left[ \mathrm{erfc}^{-1} \left( 2 Z             \right) \right]^2
+    \right)\right]
+\end{align}
+
+Im Vergleich in \autoref{fig:chianal} liegen die analytisch berechneten Werte weit unter den numerischen Werten. Ein Faktor von $1.2$ lässt für alle \gls{chi_st} die Kurven sehr gut mit den numerischen übereinstimmen. Aus diesem Grund ist es nicht auszuschließen dass die Berechnung um einen konstanten Faktor fehlerhaft ist. Dies könnte durch ein fehlerhaftes \gls{chi_st} oder ein fehlerhaftes $Z_\mathrm{st}$ zustande kommen, da beide in Form von Proportionalitätskonstanten eingehen.
+
+\begin{figure}[H]\begin{center}
+    \begin{minipage}{0.49\linewidth}\begin{center}
+        \includegraphics[width=\linewidth]{Beleg-oppdiff-Le1/chianal}
+    \end{center}\end{minipage}\begin{minipage}{0.49\linewidth}\begin{center}
+        \includegraphics[width=\linewidth]{{{Beleg-oppdiff-Le1/chianal1.2}}}
+    \end{center}\end{minipage}
+    \caption{Plot der simulierten skalaren Dissipationsraten \gls{chi} (Punkte) über den Mischungsbruch aus der Simulation \gls{Z_ULF} und Vergleich zum analytischen Verhalten aus \autoref{eq:chianal} (gestrichelt). Gleiche Farben gehören zur gleichen Konfiguration. \textbf{Rechts:} Ibid, aber mit einem Faktor $1.2$ auf die analytische Lösung.}
+    \label{fig:chianal}
+\end{center}\end{figure}
+
+Die bisherige Berechnung von \gls{chi_st} sucht die Zelle die am nächsten an $Z_\mathrm{st}$ liegt und liest \gls{chi} aus derselben Zelle aus. Schaut man sich aber die umliegenden Zellen an, ergibt sich folgendes Bild:
+\begin{lstlisting}
+Chi around >chi_st<:  1.65000  > 1.5692 <  1.5181
+Z   around >Z_st<  :  0.05677  > 0.0551 <  0.0535
+Chi around >chi_st<:  1.94433  > 1.8901 <  1.8368
+Z   around >Z_st<  :  0.05504  > 0.0541 <  0.0532
+Chi around >chi_st<:  3.74528  > 3.6022 <  3.4631
+Z   around >Z_st<  :  0.05598  > 0.0547 <  0.0535
+\end{lstlisting}\vspace{-2\baselineskip}
+Das heißt der Fehler auf \gls{chi_st} durch ein Nearest-Neighbor-Verfahren beträgt ungefähr $\pm 4\%$. Anstatt also wie bisher die Spalte zu suchen, die am nächsten ist:
+\begin{lstlisting}[language=Python, label={lst:chist-naiv}, caption={Nächste-Nachbar-Interpolation für \gls{chi_st}}]
+chist = calcChi(data,hdict)[ abs( data[:,hdict["Z"]] - 0.0545 ).argmin() ]
+\end{lstlisting}
+soll eine Lagrange-Interpolation aus den nächsten Nachbarn benutzt werden:
+\begin{lstlisting}[language=Python]
+Zl = data[:,hdict["Z"]][ist-1]
+Zc = data[:,hdict["Z"]][ist]
+Zr = data[:,hdict["Z"]][ist+1]
+Zstanal = 0.0545
+chist_intp = \
+  chi[ist-1] * (Zc-Zstanal)*(Zr-Zstanal)/( (Zc-Zl)*(Zr-Zl) ) + \
+  chi[ist  ] * (Zl-Zstanal)*(Zr-Zstanal)/( (Zl-Zc)*(Zr-Zc) ) + \
+  chi[ist+1] * (Zl-Zstanal)*(Zc-Zstanal)/( (Zl-Zr)*(Zc-Zr) )
+\end{lstlisting}\vspace{-2\baselineskip}
+Damit lässt sich der Fehler auf \gls{chi_st} aber nur verringern, siehe auch den Fall für Flamelets auf S.\pageref{pg:chistproblem}. Der Vergleich mit dem so interpolierten \gls{chi_st} ist in \autoref{fig:chianal-intp} zu sehen. Die Veränderung ist nur minimal. Die Berechnung von \gls{chi_st} durch fehlende Interpolation scheint also hier weniger ein Problem zu sein als bei Flamelets, vgl. Kapitel~\ref{sct:flameletLe1-chist-anal}. So verändert sich hier \gls{chi_st} nur von $\SI{3.62}{\per\second}$ auf $\SI{3.53}{\per\second}$. Bei der Berechnung mit Flamelets hingegen ergibt sich ohne Interpolation $\gls{chi_st}=\SI{3.4892}{\per\second}$ und mit Interpolation $\SI{3.7315}{\per\second}$ falls in der Setupkonfiguration $\gls{chi_st}=\SI{3.7859}{\per\second}$ eingestellt wurde! Die Verbesserung ist also merklich größer als für \lstinline!oppdiffJet!.
+
+\begin{figure}[H]\begin{center}
+    \begin{minipage}{0.49\linewidth}\begin{center}
+        \includegraphics[width=\linewidth]{Beleg-oppdiff-Le1/chianal-intp}
+    \end{center}\end{minipage}
+    \caption{Wie \autoref{fig:chianal}, aber zur Berechnung von \gls{chi_st} wurde im Gegensatz zu \autoref{fig:chianal} eine Lagrange-Interpolation über 3 Punkte angewandt.}
+    \label{fig:chianal-intp}
+\end{center}\end{figure}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsubsection{\texorpdfstring{$T_\mathrm{max}$}{Tmax} über die Fortschrittsvariable}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+In \autoref{fig:tmax-pv} kann man einen linearen Zusammenhang zwischen der maximalen Temperatur und der Summe der Massenbrüche der Kohlenstoffoxide erkennen. Dies wird daran liegen, dass je mehr Kohlenstoff pro Sekunde verbrannt wird, desto mehr Energie pro Sekunde wird auch freigesetzt und desto höher wird die lokale Temperatur sein. Und je schneller das einströmende Gas ist, desto schneller wird die produzierte Wärme und auch die produzierten Kohlenstoffoxide durch Konvektion abgeführt, was die maximale lokale Temperatur und $Y_\mathrm{CO}$ und $Y_{\mathrm{CO}_2}$ absenkt.
+
+\begin{figure}[H]
+	\captionsetup{type=figure}
+    \begin{center}\begin{minipage}{0.49\linewidth}
+        \includegraphics[width=\linewidth]{Beleg-oppdiff-Le1/PV-Tmax-zoom}
+    \end{minipage}\end{center}
+    \captionof{figure}{Plot der maximalen Temperatur \gls{T_max} über die Fortschrittsvariable \gls{PV} am Ort stöchiometrischer Mischung. Die Annotationen sind die Einlassgeschwindigkeiten in \SI{}{\meter\per\second}.}
+    \label{fig:tmax-pv}
+\end{figure}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsubsection{Massenbrüche über die Fortschrittsvariable}
+\label{sct:oppdiff-Le1:yi-pv}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+Bei der Darstellung der Massenbrüche über \gls{PV}, also der Summe der Kohlenstoffoxide, erhält man nicht bijektive geschlossene Kurven mit einem charakteristischen Öffnungs- und Steigungswinkel. Der Punkt am weitesten rechts, also höchster Fortschrittsvariable \gls{PV}, ist hierbei ungefähr als das Zentrum der Flamme auszumachen, vgl. \autoref{fig:yi-z}.
+
+Durch den Öffnungswinkel sind räumliche Asymmetrien in der Flamme sehr gut sichtbar. Das betrifft $\mathrm{CO}$ und $\mathrm{CO}_2$, während $\mathrm{H}_2$, $\mathrm{H}_2\mathrm{O}$ und $\mathrm{OH}$ annähernd symmetrisch sind.
+%Das könnte aber auch einfach nur an der Definition von PV = Y_CO + Y_CO2 liegen. Möglichereise hätte man umgekehrte Assymetrien bei PV = Y_H20 + Y_H2 + Y_OH
+Die Geraden Teile der Kurven kommen von $x=0$, also auf Seite der Methandüse. Die gebogenen Teile der Kurve hingegen sind auf Seiten der Luftdüse. Diese Information kriegt man, wenn man nur die erste Hälfte der Punkte plottet, vgl. \autoref{fig:yi-pv-half}.
+
+Man kann also ablesen, dass die Asymmetrie zwischen $\mathrm{CO}$ und $\mathrm{CO}_2$ auf Seiten der Methandüse kleiner sind als auf der Luftstromseite. Richtung Luftstrom ist der $\mathrm{CO}_2$-Anteil sehr viel höher als der $\mathrm{CO}$-Anteil. Das heißt, bei fetter Verbrennung, also bei Brennstoffüberschuss, kommt es zur unvollständigen Verbrennung, während bei einem dünnen Gemisch es mehr und mehr vollständig verbrennt.
+
+\begin{figure}[H]
+    \begin{minipage}{0.33\linewidth}\begin{center}
+        % fucking three braces, because there are dots in the filenames -.-... see http://tex.stackexchange.com/questions/10574/includegraphics-dots-in-filename
+        \includegraphics[width=\linewidth]{{{Beleg-oppdiff-Le1/Yi-over-PV-v-0.05}}}
+    \end{center}\end{minipage}\begin{minipage}{0.33\linewidth}\begin{center}
+        \includegraphics[width=\linewidth]{{{Beleg-oppdiff-Le1/Yi-over-PV-v-0.1}}}
+    \end{center}\end{minipage}\begin{minipage}{0.33\linewidth}\begin{center}
+        \includegraphics[width=\linewidth]{{{Beleg-oppdiff-Le1/Yi-over-PV-v-0.15}}}
+    \end{center}\end{minipage}\\
+    \begin{minipage}{0.33\linewidth}\begin{center}
+        \includegraphics[width=\linewidth]{{{Beleg-oppdiff-Le1/Yi-over-PV-v-0.2}}}
+    \end{center}\end{minipage}\begin{minipage}{0.33\linewidth}\begin{center}
+        \includegraphics[width=\linewidth]{{{Beleg-oppdiff-Le1/Yi-over-PV-v-0.25}}}
+    \end{center}\end{minipage}\begin{minipage}{0.33\linewidth}\begin{center}
+        \includegraphics[width=\linewidth]{{{Beleg-oppdiff-Le1/Yi-over-PV-v-0.5}}}
+    \end{center}\end{minipage}
+    \caption{Plot ausgewählter Massenbruchverteilungen \gls{Y_i} über die Fortschrittsvariable \gls{PV}. $\mathrm{PV}_\mathrm{stoch}$ ist der Wert der Fortschrittsvariablen am Punkt stöchiometrischer Mischung. Analog ist $\mathrm{PV}_{T_\mathrm{stoch}}$ der Wert am Ort der maximalen Temperatur.}
+    \label{fig:yi-pv}
+\end{figure}
+
+
+Durch den Steigungswinkel der Kurven kann man leicht den Anteil von Stoffen an der Reaktion ablesen. Die $\mathrm{H}_2\mathrm{O}$- und die $\mathrm{OH}$-Kurve verändern sich kaum unter Variation von \gls{chi_st}.
+Durch diese Fixpunkte lässt sich leicht erkennen, dass für hohe Geschwindigkeiten der $\mathrm{CO}_2$-Anteil ab- und der $\mathrm{CO}$-Massenbruch zunimmt.
+D.h. durch den schnellen konvektiven Stofftransport kommt es vermehrt zur unvollständigen Verbrennung der Kohlenstoffatome im Methan. Womöglich wird dies durch die niedrigere Flammentemperatur, vgl. \autoref{fig:tmax-pv}, verursacht.
+Die Wasserstoffatome hingegen werden auch bei hohen Streckraten vollständig verbrannt. Die Ursache dafür ist in der leichteren Brennbarkeit zu vermuten.
+
+\begin{figure}[H]
+    \begin{center}\begin{minipage}{0.5\linewidth}
+        \includegraphics[width=\linewidth]{{{Beleg-oppdiff-Le1/Yi-over-PV-v-0.25-half}}}
+    \end{minipage}\end{center}
+    \caption{Wie \autoref{fig:yi-pv}, aber nur die erste Hälfte der Punkte, beginnend bei $\gls{x}=0$ bzw. $\gls{Z}=1$, also beginnend bei der Methandüse, sind geplottet.}
+    \label{fig:yi-pv-half}
+\end{figure}
+
+Wie auch schon zu \autoref{fig:yi-z} angemerkt, aber hier noch besser zu beobachten, muss die Flamme nicht zwingend am stöchiometrischen Gleichgewicht am intensivsten sein. Stattdessen liegt in \autoref{fig:yi-pv} der Punkt der meisten Reaktionsprodukte, also höchster Fortschrittsvariable, ungefähr am Temperaturmaximum. Für höhere Einströmgeschwindigkeiten gehen beide aber auch leicht auseinander. Interesanterweise ist aber ungefähr das Maximum von $Y_{\mathrm{CO}_2}$ am Ort stöchiometrischer Mischung, das heißt dort ist die Verbrennung am energieeffizientesten, wenn auch nicht am heißesten.

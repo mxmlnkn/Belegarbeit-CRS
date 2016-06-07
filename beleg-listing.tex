@@ -1,0 +1,187 @@
+\section{Quellcode und Konfigurationsdateien}
+\label{sct:listings}
+
+\begin{lstlisting}[language=C++,label=lst:ch4smooke.ulf,caption={Auszug aus \lstinline!oppdifJet_ct_CH4_Air_smooke.ulf!}]
+// velocities (commented because it needs to be varied and therefore is included in an extra file smooke-changes.ulf (see bottom)
+//#define U_LOWER  0.2; // m/s
+//#define U_UPPER -0.2; // m/s
+
+// temperatures
+#define T_OXID    300.0;
+#define T_FUEL    300.0;
+#define T_MIDDLE  2200.0;
+
+// pressure
+#define P   101325.0;
+
+// mechanism && fuel species
+#define MECHANISM     ch4_smooke.xml;
+#define GASID         gas;
+#define MOLE_OR_MASS  massFrac; // specifies wether "Y1",... should be interpreted as the mass fraction or mole fraction
+
+// specify what species each Y corresponds to
+#define Y1   CH4;
+#define Y2   O2;
+#define Y3   N2;
+#define Y4   CO2;
+#define Y5   H2O;
+#define Y6   H2;
+
+// species
+#define Y1_FUEL    1.0;   // CH4 (see above)
+#define Y2_FUEL    0.0;   // O2
+#define Y3_FUEL    0.0;   // N2
+#define Y4_FUEL    0.0;   // CO2
+#define Y5_FUEL    0.0;   // H2O
+#define Y6_FUEL    0.0;   // H2
+
+#define Y1_OXID    0.0;   // CH4
+#define Y2_OXID    0.23;  // O2
+#define Y3_OXID    0.77;  // N2
+#define Y4_OXID    0.0;   // CO2
+#define Y5_OXID    0.0;   // H2O
+#define Y6_OXID    0.0;   // H2
+[...]
+// mesh and remesh options
+#define AXIS_LENGTH     28;
+#define AXIS_MIN        0.0;  # Position linke Duese in Meter
+#define AXIS_MAX        0.02; # Position rechte Duese in Meter
+[...]
+#include oppdifJet_ct_template.ulf;
+#include smooke-changes.ulf;
+\end{lstlisting}
+
+\begin{lstlisting}[language=C++,label=lst:oppdiff,caption={Auszug aus \lstinline!oppdiffjet_ct_template.ulf!}]
+solver
+{
+    solverType ulfNewton;
+	absTol 1e-9;
+	relTol 1e-7;  // some jet velocities converge a bit slower
+	// relTol 1e-6;
+	maxSteps 100000000;
+	maxOrder 5;
+    maxJacStationaryAge 10;
+    maxJacTransientAge 20;
+    nTimeSteps 50;
+    dtMax 1.0e-2;
+    dtMin 1.0e-12;
+    maxDampSteps 6;
+    dampFactor 2.0;
+    logLevel 1;
+}
+[...]
+mixture
+{
+    mainMixture gas;
+    gas
+    {
+        mixtureType     CANTERA_MIXTURE;
+        mechanism       MECHANISM;
+        gasId           GASID;
+        transportType   Mix;
+        mixtureEntries
+        {
+            // newly added Le !
+            Le     { updateType constant; }
+            rho    { updateType standard; }
+            lambda { updateType standard; }
+            visc   { updateType standard; }
+            Dmix   { updateType standard; }
+            // must be deactivated if Le is activated !
+            //Dtherm
+            //{
+            //    updateType standard;
+            //}
+[...]
+fields
+{
+    // newly added LeiDefault
+    LeiDefault
+    {
+        write YES;  // output all Lewis numbers
+        fixedValue 1.0;
+    }
+    cpMean{ write YES; }   // added to calc D in postprocessing
+    lambda{ write YES; }   // added to calc D in postprocessing
+	default
+	{
+		referenceFrame cellCentered;
+		interpolate YES;
+		frozen NO;
+		write NO;
+		fixedValue 0.0;
+		firstOrder CDS;
+		secondOrder CDS;
+		diffusive CDS;
+	}
+    F
+    {
+		write YES;
+		firstOrder UDS;
+    }
+    G
+    {
+		write YES;
+    }
+\end{lstlisting}
+
+\lstinputlisting[language=Bash,label=lst:run.sh,caption={Bash-Skript zur Variation der Einlassgeschwindigkeiten}]{Beleg-oppdiff-Le1/run.sh}
+
+
+\begin{lstlisting}[language=diff, label=lst:flameletLeVar, caption=Ausgabe von \lstinline!git diff Beleg-flamelet-Levar/flameletLe1_template.ulf Beleg-flamelet-Levar/flameletLe1_template.ulf!]
+diff --git a/Beleg-flamelet-Le1/flameletLe1_template.ulf b/Beleg-flamelet-Levar/flameletLe1_template.ulf
+index 7d1de15..6abc7f1 100755
+--- a/Beleg-flamelet-Le1/flameletLe1_template.ulf
++++ b/Beleg-flamelet-Levar/flameletLe1_template.ulf
+@@ -8,12 +8,12 @@ runTime
+
+ solution
+ {
+-       requiredFields ( chi );
++       requiredFields ( chi, rhoChi, lamCpLeZ, YeqM);
+        solutionEntries
+        {
+                T
+                {
+-                       eqID        T_flameletLe1;
++                       eqID        T_flameletLeVar;
+                        minValue    280.0;
+                        maxValue    3500.0;
+                        boundaryConditions
+@@ -27,7 +27,7 @@ solution
+                }
+                Yi
+                {
+-                       eqID        Yi_flameletLe1;
++                       eqID        Yi_flameletLeVar;
+                        minValue    0.0;
+                        maxValue    1.0;
+                        boundaryConditions
+@@ -107,6 +107,14 @@ mixture
+             {
+                 updateType standard;
+             }
++            LeRatio
++            {
++                updateType standard;
++            }
++            LeZ
++            {
++                updateType standard;
++            }
+         }
+     }
+ }
+@@ -150,6 +158,11 @@ fields
+                fixedValue P;
+                write YES;
+        }
++    LeZ
++    {
++        fixedValue 1.0;
++        write YES;
++    }
+        CH4
+        {
+                readFrom START_FILE;
+\end{lstlisting}

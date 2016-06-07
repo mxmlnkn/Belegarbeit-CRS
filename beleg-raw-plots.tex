@@ -1,0 +1,144 @@
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Simulation mittels einer Diffusionsmodellierung von \texorpdfstring{$\mathrm{Le}\neq 1$}{Le!=1}}
+\label{appendix:oppdiffLeVar}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Speziesprofile}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{figure}[H]\begin{center}
+    \begin{minipage}{0.33\linewidth}\begin{center}
+        % fucking three braces, because there are dots in the filenames -.-... see http://tex.stackexchange.com/questions/10574/includegraphics-dots-in-filename
+        \includegraphics[width=\linewidth]{{{Beleg-oppdiff-Levar/Yi-over-x-v-0.05}}}
+    \end{center}\end{minipage}\begin{minipage}{0.33\linewidth}\begin{center}
+        \includegraphics[width=\linewidth]{{{Beleg-oppdiff-Levar/Yi-over-x-v-0.1}}}
+    \end{center}\end{minipage}\begin{minipage}{0.33\linewidth}\begin{center}
+        \includegraphics[width=\linewidth]{{{Beleg-oppdiff-Levar/Yi-over-x-v-0.15}}}
+    \end{center}\end{minipage}\\
+    \begin{minipage}{0.33\linewidth}\begin{center}
+        \includegraphics[width=\linewidth]{{{Beleg-oppdiff-Levar/Yi-over-x-v-0.2}}}
+    \end{center}\end{minipage}\begin{minipage}{0.33\linewidth}\begin{center}
+        \includegraphics[width=\linewidth]{{{Beleg-oppdiff-Levar/Yi-over-x-v-0.25}}}
+    \end{center}\end{minipage}\begin{minipage}{0.33\linewidth}\begin{center}
+        \includegraphics[width=\linewidth]{{{Beleg-oppdiff-Levar/Yi-over-x-v-0.5}}}
+    \end{center}\end{minipage}
+    \caption{Plot ausgewählter Massenbruchverteilungen über den Ort aufgetragen. Bei $x=0$ ist die Methandüse, bei $x=\SI{2}{\centi\meter}$ die Luftdüse}
+    \label{fig:opplevar:yi-x}
+\end{center}\end{figure}
+
+\begin{figure}[H]\begin{center}
+    \begin{minipage}{0.33\linewidth}\begin{center}
+        % fucking three braces, because there are dots in the filenames -.-... see http://tex.stackexchange.com/questions/10574/includegraphics-dots-in-filename
+        \includegraphics[width=\linewidth]{{{Beleg-oppdiff-Levar/Yi-over-Z-v-0.05}}}
+    \end{center}\end{minipage}\begin{minipage}{0.33\linewidth}\begin{center}
+        \includegraphics[width=\linewidth]{{{Beleg-oppdiff-Levar/Yi-over-Z-v-0.1}}}
+    \end{center}\end{minipage}\begin{minipage}{0.33\linewidth}\begin{center}
+        \includegraphics[width=\linewidth]{{{Beleg-oppdiff-Levar/Yi-over-Z-v-0.15}}}
+    \end{center}\end{minipage}\\
+    \begin{minipage}{0.33\linewidth}\begin{center}
+        \includegraphics[width=\linewidth]{{{Beleg-oppdiff-Levar/Yi-over-Z-v-0.2}}}
+    \end{center}\end{minipage}\begin{minipage}{0.33\linewidth}\begin{center}
+        \includegraphics[width=\linewidth]{{{Beleg-oppdiff-Levar/Yi-over-Z-v-0.25}}}
+    \end{center}\end{minipage}\begin{minipage}{0.33\linewidth}\begin{center}
+        \includegraphics[width=\linewidth]{{{Beleg-oppdiff-Levar/Yi-over-Z-v-0.5}}}
+    \end{center}\end{minipage}
+    \caption{Plot ausgewählter Massenbruchverteilungen über den Mischungsbruch aufgetragen. Bei $\gls{Z_ULF}=1$ ist die Methandüse, bei $\gls{Z_ULF}=0$ die Luftdüse}
+    \label{fig:opplevar:yi-z}
+\end{center}\end{figure}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Vergleich der skalaren Dissipationsrate mit der analytischen Lösung}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{figure}[H]\begin{center}
+    \begin{minipage}{0.7\linewidth}\begin{center}
+        \includegraphics[width=\linewidth]{Beleg-oppdiff-Levar/chianal}
+    \end{center}\end{minipage}
+    \caption{Plot der skalaren Dissipationsraten über den Mischungsbruch aus der Simulation (Punkte) und Vergleich zum analytischen Verhalten aus \autoref{eq:chianal}. Gleiche Farben gehören zur gleichen Konfiguration}
+    \label{fig:opplevar:chianal}
+\end{center}\end{figure}
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Simulation mittels Flamelets für \texorpdfstring{$\mathrm{Le}=1$}{Le=1}}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsubsection{Speziesprofile}
+\label{appendix:flameletLe1:yi-z}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{figure}[H]\begin{center}
+    \begin{minipage}{0.33\linewidth}\begin{center}
+        \includegraphics[width=\linewidth]{{{Beleg-flamelet-Le1/Yi-over-Z-chist-0.4918}}}
+    \end{center}\end{minipage}\begin{minipage}{0.33\linewidth}\begin{center}
+        \includegraphics[width=\linewidth]{{{Beleg-flamelet-Le1/Yi-over-Z-chist-0.8800}}}
+    \end{center}\end{minipage}\begin{minipage}{0.33\linewidth}\begin{center}
+        \includegraphics[width=\linewidth]{{{Beleg-flamelet-Le1/Yi-over-Z-chist-1.2686}}}
+    \end{center}\end{minipage}\\
+    \begin{minipage}{0.33\linewidth}\begin{center}
+        \includegraphics[width=\linewidth]{{{Beleg-flamelet-Le1/Yi-over-Z-chist-1.6383}}}
+    \end{center}\end{minipage}\begin{minipage}{0.33\linewidth}\begin{center}
+        \includegraphics[width=\linewidth]{{{Beleg-flamelet-Le1/Yi-over-Z-chist-1.9816}}}
+    \end{center}\end{minipage}\begin{minipage}{0.33\linewidth}\begin{center}
+        \includegraphics[width=\linewidth]{{{Beleg-flamelet-Le1/Yi-over-Z-chist-3.7859}}}
+    \end{center}\end{minipage}
+    \caption{Plot ausgewählter Massenbruchverteilungen über den Mischungsbruch aufgetragen. Bei $\gls{Z_ULF}=1$ ist die Methandüse, bei $\gls{Z_ULF}=0$ die Luftdüse. Für $\gls{chi_st}=\SI{3.7859}{\per\second}$ ist die Simulation fehlgeschlagen.}
+    \label{fig:flameletLe1:yi-z}
+\end{center}\end{figure}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Simulation mittels Flamelets für \texorpdfstring{$\mathrm{Le}\neq 1$}{Le!=1}}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Speziesprofile}
+\label{appendix:flameletLeVar:yi-z}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{figure}[H]\begin{center}
+    \begin{minipage}{0.33\linewidth}\begin{center}
+        % fucking three braces, because there are dots in the filenames -.-... see http://tex.stackexchange.com/questions/10574/includegraphics-dots-in-filename
+        \includegraphics[width=\linewidth]{{{Beleg-flamelet-Levar/Yi-over-Z-chist-0.4918}}}
+    \end{center}\end{minipage}\begin{minipage}{0.33\linewidth}\begin{center}
+        \includegraphics[width=\linewidth]{{{Beleg-flamelet-Levar/Yi-over-Z-chist-0.8800}}}
+    \end{center}\end{minipage}\begin{minipage}{0.33\linewidth}\begin{center}
+        \includegraphics[width=\linewidth]{{{Beleg-flamelet-Levar/Yi-over-Z-chist-1.2686}}}
+    \end{center}\end{minipage}\\
+    \begin{minipage}{0.33\linewidth}\begin{center}
+        \includegraphics[width=\linewidth]{{{Beleg-flamelet-Levar/Yi-over-Z-chist-1.6383}}}
+    \end{center}\end{minipage}\begin{minipage}{0.33\linewidth}\begin{center}
+        \includegraphics[width=\linewidth]{{{Beleg-flamelet-Levar/Yi-over-Z-chist-1.9816}}}
+    \end{center}\end{minipage}\begin{minipage}{0.33\linewidth}\begin{center}
+        \includegraphics[width=\linewidth]{{{Beleg-flamelet-Levar/Yi-over-Z-chist-3.7859}}}
+    \end{center}\end{minipage}
+    \caption{Plot ausgewählter Massenbruchverteilungen über den Mischungsbruch aufgetragen. Bei $\gls{Z_ULF}=1$ ist die Methandüse, bei $\gls{Z_ULF}=0$ die Luftdüse. Die Simulation unten rechts hat nicht gezündet, sodass alle Massenbrüche $0$ sind und alle Temperaturen bei $T=\SI{300}{\kelvin}$ liegen.}
+    \label{fig:flameletLevar:yi-z}
+\end{center}\end{figure}
+
+\begin{figure}[H]\begin{center}\begin{minipage}{0.33\linewidth}\begin{center}
+        \includegraphics[width=\linewidth]{{{Beleg-flamelet-Le1/Yi-over-Z-chist-1.98-comp-T}}}
+    \end{center}\end{minipage}\begin{minipage}{0.33\linewidth}\begin{center}
+        % fucking three braces, because there are dots in the filenames -.-... see http://tex.stackexchange.com/questions/10574/includegraphics-dots-in-filename
+        \includegraphics[width=\linewidth]{{{Beleg-flamelet-Le1/Yi-over-Z-chist-1.98-comp-CH4}}}
+    \end{center}\end{minipage}\begin{minipage}{0.33\linewidth}\begin{center}
+        \includegraphics[width=\linewidth]{{{Beleg-flamelet-Le1/Yi-over-Z-chist-1.98-comp-O2}}}
+    \end{center}\end{minipage}\\\begin{minipage}{0.33\linewidth}\begin{center}
+        \includegraphics[width=\linewidth]{{{Beleg-flamelet-Le1/Yi-over-Z-chist-1.98-comp-H2}}}
+    \end{center}\end{minipage}\begin{minipage}{0.33\linewidth}\begin{center}
+        \includegraphics[width=\linewidth]{{{Beleg-flamelet-Le1/Yi-over-Z-chist-1.98-comp-OH}}}
+    \end{center}\end{minipage}\begin{minipage}{0.33\linewidth}\begin{center}
+        \includegraphics[width=\linewidth]{{{Beleg-flamelet-Le1/Yi-over-Z-chist-1.98-comp-H2O}}}
+    \end{center}\end{minipage}\\\begin{minipage}{0.33\linewidth}\begin{center}
+        \includegraphics[width=\linewidth]{{{Beleg-flamelet-Le1/Yi-over-Z-chist-1.98-comp-CO}}}
+    \end{center}\end{minipage}
+    \begin{minipage}{0.33\linewidth}\begin{center}
+        \includegraphics[width=\linewidth]{{{Beleg-flamelet-Le1/Yi-over-Z-chist-1.98-comp-CO2}}}
+    \end{center}\end{minipage}
+    \caption{Plot ausgewählter Massenbruchverteilungen über den Mischungsbruch aufgetragen. Bei $\gls{Z_ULF}=1$ ist die Methandüse, bei $\gls{Z_ULF}=0$ die Luftdüse.}
+    \label{fig:yi-z-species-comp}
+\end{center}\end{figure}
