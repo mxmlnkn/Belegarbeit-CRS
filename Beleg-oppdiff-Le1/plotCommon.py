@@ -1,3 +1,5 @@
+#!/usr/bin/python
+# -*- coding: utf-8 -*-
 
 Zstanal   = 0.0545
 vSelected = [ 0.05, 0.1, 0.15, 0.2, 0.25, 0.5 ]
@@ -7,17 +9,57 @@ figSmall  = [5,3]   # plots which are 2 per line in pdf or which just don't have
 #figNormal = [6,4]   # for 1 per line plot
 #figLarge  = [8,5]   # One per line with many details
 
-def p(x0,y0,x):
-    assert( len(x0) == len(y0) )
-    n = len(x0)
-    res = 0
-    for k in range(n):
-        prod = y0[k]
-        for j in range(n):
-            if j != k:
-                prod *= (x0[j]-x)/(x0[j]-x0[k])
-        res += prod
-    return res
+def bisectionExtrema( f,a,b,nIterations=16,debug=False ):
+    """
+    " finds the extremum of f(x) in the interval (a,b)
+    " assumes that b > a and that only one extremum exists in [a,b]
+    """
+    """
+    " ^
+    " |           .´
+    " |  .'',   .'
+    " |.'    ´'`
+    " +--------------------
+    "  a  c  b
+    """
+    extremaWasInside = True
+    for i in range(nIterations):
+        assert( b > a )
+        c  = 0.5 *(a+b)
+        # everything smaller than interval width / 6 should basically be enough
+        # if the factor is too small it may result in problems like the
+        # bisection quitting too early, thereby giving back wrong maxima!
+        dx = 1e-2*(b-a)
+        # if floating point precision exhausted then these differences will be 0
+        # for a and b do only onesided, because else we would leave the given interval!
+        left   = f(a+dx) > f(a   )
+        middle = f(c+dx) > f(c-dx)
+        right  = f(b   ) > f(b-dx)
+        if left == middle and middle == right and i == 0:
+            extremaWasInside = False
+
+        if debug:
+            print "f at x=",a,"going up?",left  ," ( f(x+dx)=",f(a+dx),", f(x   =",f(a   )
+            print "f at x=",c,"going up?",middle," ( f(x+dx)=",f(c+dx),", f(x-dx)=",f(c-dx)
+            print "f at x=",b,"going up?",right ," ( f(x   )=",f(b   ),", f(x-dx)=",f(b-dx)
+
+        # If the sign of the derivative is the same for all, then
+        # the maximum is not inside the specified interval!
+        if ( left == middle and middle == right ):
+            if extremaWasInside:
+                break   # this can also happen if dx is too small to resolve, so we break the search
+            else:
+                return None, None, None # unreasonable result, therefore error code
+        elif left == middle:
+            a = c
+        elif middle == right:
+            b = c
+        else:
+            # This happens if there are two extrema inside interval
+            return None, None, None
+
+    c = 0.5*(a+b)
+    return f(c), c, 0.5*(b-a)
 
 def axisIsLog( ax, axis ):
     if axis == 'x':
@@ -413,13 +455,13 @@ def precalcFlameletValues( basedir ):
         chist_calc_list.append( chist_calc )
         Tst_list.append( T[ist] )
 
-        Zl = data[:,hdict["Z"]][ist-1]
-        Zc = data[:,hdict["Z"]][ist]
-        Zr = data[:,hdict["Z"]][ist+1]
+        Zl = ZUlf[ist-1]
+        Zc = ZUlf[ist]
+        Zr = ZUlf[ist+1]
         chist_intp = chi[ist-1] * (Zc-Zstanal)*(Zr-Zstanal)/( (Zc-Zl)*(Zr-Zl) ) + \
                      chi[ist  ] * (Zl-Zstanal)*(Zr-Zstanal)/( (Zl-Zc)*(Zr-Zc) ) + \
                      chi[ist+1] * (Zl-Zstanal)*(Zc-Zstanal)/( (Zl-Zr)*(Zc-Zr) )
-        print "Test lagrange: ",chist_intp," ?= ",p( data[ist-1:ist+1,hdict["Z"]], chi[ist-1:ist+1], Zstanal )
+        print "Test lagrange: ",chist_intp," ?= ",p( data[ist-1:ist+2,hdict["Z"]], chi[ist-1:ist+2], Zstanal )
         chist_intp2 = p( data[ist-2:ist+2,hdict["Z"]], chi[ist-2:ist+2], Zstanal )
 
         chist_intp_list.append( chist_intp )
@@ -429,8 +471,24 @@ def precalcFlameletValues( basedir ):
         print "Chist interpolated (3 points) : ",chist_intp
         print "Chist interpolated (5 points) : ",chist_intp2
         print "Chist def p                   : ",p( ZUlf[ ist-1:ist+2 ], chi[ ist-1:ist+2 ], Zstanal )
-        print "Tmax def p                    : ",p( ZUlf[ ist-1:ist+2 ], chi[ ist-1:ist+2 ], Zstanal )
-        print "Tst def p                     : ",p( ZUlf[ ist-1:ist+2 ], chi[ ist-1:ist+2 ], Zstanal )
+        print "x: ZUlf = ", ZUlf[ ist-1:ist+2 ]
+        print "y: T    = ", T   [ ist-1:ist+2 ]
+        Tintp = lambda Z: p( ZUlf[ ist-1:ist+2 ], T[ ist-1:ist+2 ], Z )
+        print "polynomial : ",Tintp( ZUlf[ist-1] ), Tintp( ZUlf[ist+1] )
+        Tmax, Zmax, dZ = bisectionExtrema( Tintp , ZUlf[ist-2], ZUlf[ist+2], debug=True )
+        print "Z borders                     : ",ZUlf[ist-2], ZUlf[ist+12]
+        print "Zmax def p                    : ",Zmax," +- ",dZ
+        print "Tmax def p                    : ",Tmax
+        print "Tst def p                     : ",p( ZUlf[ ist-1:ist+2 ], T[ ist-1:ist+2 ], Zstanal )
+
+        from matplotlib.pyplot import figure, plot, show
+        from numpy import linspace
+        figure()
+        Z = linspace( ZUlf[ist-2], ZUlf[ist+2], 100, endpoint=True )
+        plot( Z, Tintp(Z) )
+        plot( ZUlf[ ist-2:ist+3 ], T[ ist-2:ist+3 ], 'ro' )
+        show()
+
         exit()
 
         # Fortschrittsvariable
