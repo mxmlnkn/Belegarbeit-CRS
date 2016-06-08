@@ -27,7 +27,7 @@
 %\end{table}
 Während Größen wie die Masse \gls{m} und die Stoffmenge \gls{n} nur für ein zu betrachtendes endliches Volumen Sinn machen, ist das für den Molenbruch \gls{X} und den Massenbruch \gls{Y} nicht der Fall, da sich das Volumen bei ihnen rauskürzt. Damit kann z.B. \gls{Y} auch als Dichtebruch angesehen werden, d.h. das Verhältnis der Partialdichte zur Gesamtdichte. Weiterhin sind die Brüche dimensionslos. Aus diesen beiden Gründen ist es praktisch nur mit \gls{X} und \gls{Y} zu rechnen.
 
-Der Elementmassenbruch kann aus den Stoffmassenbrüchen, den molaren Massen sowie den Stoffkonfigurationen \gls{a_ij} gewonnen werden. Die Konfiguration des Stoffes \gls{i}, falls alle Stoffe aus den Elementen C,H und O bestehen, kann angegeben werden als:
+Der Elementmassenbruch \gls{Z_j} für das Element \gls{j} kann aus den Stoffmassenbrüchen, den molaren Massen sowie den Stoffkonfigurationen \gls{a_ij} berechnet werden. Die Konfiguration des Stoffes \gls{i}, falls alle Stoffe aus den Elementen C,H und O bestehen, kann angegeben werden als:
 \begin{align}
     \label{eq:defaij}
     \mathrm{C}_{a_{i,\mathrm{C}}} \mathrm{H}_{a_{i,\mathrm{H}}} \mathrm{O}_{a_{i,\mathrm{O}}}
@@ -179,7 +179,7 @@ Der Massenbruch von Sauerstoff im Oxidatorstrom (Luft) sei $Y_{\mathrm{O}_2,\tex
     $\mathrm{Ar}  $  &  $ 0.934\%$  &  $\SI{39.948 }{\gram\per\mole}$  &  $ 1.289\%$    \\
     $\mathrm{CO}_2$  &  $ 0.036\%$  &  $\SI{44.0095}{\gram\per\mole}$  &  $ 0.055\%$    \\
     \end{tabular}\end{center}
-    \caption{Zusammensetzung der Luft zum Vergleich der vom Betreuer vorgegebenen Werte. Man beachte, dass durch Rundung der Voumenanteile auf drei Nachkommastellen und Auslassen weiterer Luftbestandteile wie z.B. Neon und Helium die Summe nicht exakt $100.000\%$ ergeben wird. Durch Zufall heben sich die Rundungs- und Auslassungsfehler für die Volumenanteil auf (gesamt: $100.000\%$). Die Massenanteile wurde über $\frac{\gls{m_i}}{\gls{m}} = \frac{ \frac{V_i}{V} \gls{M_i} }{ \sum\limits_n \frac{V_n}{V} M_n }$ aus den gerundeten in der Tabelle stehenden Werte berechnet. Die Summe der Massenanteil ist aufgrund von Rundungsfehler auf die dritte Nachkommastelle $100.002\%$.}
+    \caption{Übersicht der Zusammensetzung der Luft, um die vorgegebenen Werte zu verifizieren. Man beachte, dass durch Rundung der Volumenanteile auf drei Nachkommastellen und durch Auslassen weiterer Luftbestandteile wie z.B. Neon und Helium die Summe nicht exakt $100.000\%$ ergeben wird. Durch Zufall heben sich die Rundungs- und Auslassungsfehler für die Volumenanteil auf ($100.000\%$). Die Massenanteile wurde über $\frac{\gls{m_i}}{\gls{m}} = \frac{ \frac{V_i}{V} \gls{M_i} }{ \sum\limits_n \frac{V_n}{V} M_n }$ aus den gerundeten in der Tabelle stehenden Werte berechnet. Die Summe der Massenanteil ist aufgrund von Rundungsfehler auf die dritte Nachkommastelle $100.002\%$.}
     \label{tbl:luft}
     %#!/usr/bin/python
     %from numpy import *
@@ -448,16 +448,22 @@ Aus der Darstellung kann bewiesen werden, dass gilt:
 Nun, da schon zwei verschiedene Mischungsbrüche eingeführt wurden, stellt sich die Frage, welcher von \gls{ULF} ausgegeben wird. Hierfür wurden alle drei Mischungsbrüche und deren Differenzen zueinander in \autoref{fig:zcomparison} geplottet.
 
 \begin{figure}[H]
-    \begin{center}\begin{minipage}{0.5\linewidth}
+    \begin{center}\begin{minipage}{0.5\linewidth}\begin{center}
         \includegraphics[width=\linewidth]{Beleg-oppdiff-Le1/Mischungsbruchvergleich}
-    \end{minipage}\begin{minipage}{0.5\linewidth}
+        \\oppdiffJet $\mathrm{Le}=1$
+    \end{center}\end{minipage}\begin{minipage}{0.5\linewidth}\begin{center}
         \includegraphics[width=\linewidth]{Beleg-oppdiff-Levar/Mischungsbruchvergleich}
-    \end{minipage}\end{center}
-    \caption{Hier wird der Mischungsbruch \gls{Z_ULF} wie er von \gls{ULF} intern berechnet zum einen verglichen mit \gls{Z} aus \autoref{eq:zreaktiv} und zum zweiten mit \gls{Z_Bilger}. \gls{Z} wird aus den von \gls{ULF} ausgegebenen Massenbrüchen errechnet. Zum Vergleich ist eine horizontale Linie bei stöchiometrischer Mischung sowie eine vertikale für \gls{x_st} ( $\gls{Z_ULF}( \gls{x_st} ) \overset{!}{=} Z_\mathrm{st}$ ) eingezeichnet. Die Daten sind aus der physikalischen Simulation für eine Einströmgeschwindigkeit $\gls{v}=\SI{0.5}{\meter\per\second}$ und für den Fall \textbf{Links:} $\mathrm{Le}=1$ und \textbf{Rechts:} $\mathrm{Le}\neq 1$. Vergleiche auch Kapitel~\ref{sct:oppdiffLe=1} und \ref{sct:oppdiffLevar}}
+        \\oppdiffJet $\mathrm{Le}\neq 1$
+    \end{center}\end{minipage}\end{center}
+    \caption{Hier wird der Mischungsbruch \gls{Z_ULF}, wie er von \gls{ULF} intern berechnet wird, zum einen verglichen mit \gls{Z} aus \autoref{eq:zreaktiv} und zum zweiten mit \gls{Z_Bilger}. \gls{Z} wird aus den von \gls{ULF} ausgegebenen Massenbrüchen errechnet. Zum Vergleich ist eine horizontale Linie bei stöchiometrischer Mischung sowie eine vertikale Linie für \gls{x_st} ( $\gls{Z_ULF}( \gls{x_st} ) \overset{!}{=} Z_\mathrm{st}$ ) eingezeichnet.
+    Die Daten sind aus der physikalischen Simulation für eine Einströmgeschwindigkeit $\gls{v}=\SI{0.5}{\meter\per\second}$ für
+    \textbf{Links:} $\mathrm{Le}=1$ und
+    \textbf{Rechts:} $\mathrm{Le}\neq 1$ entommen.
+    Vergleiche auch Kapitel~\ref{sct:oppdiffLe=1} und \ref{sct:oppdiffLevar}}
     \label{fig:zcomparison}
 \end{figure}
 
-Für $\mathrm{Le}=1$ sollte $\gls{Z_ULF} = \gls{Z_Bilger}$ sein. In \autoref{fig:zcomparison} links, wo $\mathrm{Le}=1$ ist, ist zu erkennen, dass \gls{Z_Bilger} besser auf \gls{Z_ULF} passt, als \gls{Z} bzw. als in \autoref{fig:zcomparison} rechts. Systematische Abweichungen sind dennoch in den 50-fach vergrößerten Abweichungsplots zu erkennen. Die maximalen relativen Fehler sind $25\%$ für \gls{Z_ULF} vs. \gls{Z} und $1\%$ für \gls{Z_ULF} vs. \gls{Z_Bilger}.
+Für $\mathrm{Le}=1$ sollte $\gls{Z_ULF} = \gls{Z_Bilger}$ sein, vergleiche auch \autoref{sct:opplevar:ZBilger-ZUlf}. In \autoref{fig:zcomparison} links, wo $\mathrm{Le}=1$ ist, ist zu erkennen, dass \gls{Z_Bilger} besser auf \gls{Z_ULF} passt, als \gls{Z} bzw. als in \autoref{fig:zcomparison} rechts. Systematische Abweichungen sind dennoch in den 50-fach vergrößerten Abweichungsplots zu erkennen. Die maximalen relativen Fehler sind $25\%$ für \gls{Z_ULF} vs. \gls{Z} und $1\%$ für \gls{Z_ULF} vs. \gls{Z_Bilger}.
 
 Der $1\%$-Fehler lässt sich womöglich mit numerischen Ungenauigkeiten erklären, also durch zu geringe örtliche Diskretisierung oder womöglich sogar Fehler in der Diskretisierung der Ableitungen. Maschinengenauigkeitsfehler scheinen keine Ursache zu sein, da diese bei einfacher Genauigkeit im Bereich $10^{-7}$ relativen Fehlers wären.
 
@@ -472,7 +478,7 @@ Die Differenz $\gls{Z_ULF} - \gls{Z}$ ist vor allem im Verbrennungsbereich groß
 
 % 08_FlameletModell_Diffusion
 % http://www.itv.rwth-aachen.de/fileadmin/LehreSeminar/TechnischeVerbrennung/VL_TV_Folien/14_TechVerbr_Kap7_Teil2von2.pdf
-Führt man eine Koordinatentransformation von \gls{x} auf den Mischungsbruch \gls{Z}, durch, dann erhält man die Flamelet-Gleichungen\cite[16]{hasse-pdf08}\cite[94]{poinsot2005theoretical}.
+Führt man eine Koordinatentransformation von \gls{x} auf den Mischungsbruch \gls{Z}, durch, dann erhält man, bei Vernachlässigung von Termen höherer Ordnung, die Flamelet-Gleichungen\cite[16]{hasse-pdf08}\cite[94]{poinsot2005theoretical}.
 \begin{align}
     \varrho \fpart{ \gls{Y_i} }{t} -
     \varrho D \left( \nabla\gls{Z} \right)^2
@@ -524,7 +530,7 @@ Für \gls{Z} wurden die aus ULF ausgegebenen Werte genommen, die sich von den ei
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 % 08_FlameletModell_Premix.pdf
-Die Fortschrittsvariable $Y_c$ wird als Ersatz für den bei Vormischflammen konstanten Mischungsbruch eingeführt. Er ist in der Aufgabenstellung definiert als:
+Die Fortschrittsvariable $Y_c$ wird als Ersatz für den bei Vormischflammen konstanten Mischungsbruch eingeführt. Sie sei hier definiert als:
 \begin{align}
     \label{eq:pv}
     Y_c(x,\alpha) := Y_\mathrm{CO} (x) + Y_{\mathrm{CO}_2} (x)

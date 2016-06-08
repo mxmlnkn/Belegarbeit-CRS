@@ -89,7 +89,7 @@ Das Ausschreiben von \lstinline!cpMean! und \lstinline!lambda! ist nicht mehr n�
 
 Die S-Kurve, ermittelt durch Lösen der Flameletgleichungen, vgl. \autoref{fig:flameletLe1:s-kurve-ulf} links, unterscheidet sich kaum von der Simulation im Ortsraum, siehe \autoref{fig:s-kurve-ulf}. In \autoref{fig:flameletLe1:s-kurve-ulf} rechts sind beide zum Vergleich, unter Auslassung von Ausreißern, eingezeichnet. Es fällt auf, dass die Flamelet-Lösung allgemein leicht heißer ist, als die Lösung im Ortsraum. Dies könnte daran liegen, dass die berechneten \gls{chi_st} im Ortsraum (\lstinline!oppdiffJet!) systematisch zu klein sind. Bemerkenswert ist, dass die Lösung im Flameletraum auch für sehr kleine \gls{chi_st} konvergiert, weil es hier nicht das Problem gibt, dass Reaktionsprodukte in die Düsen diffundieren, weil es im Flameletraum gar keine solchen gibt. Oder anders interpretiert werden im Flameletraum die Düsenabstände automatisch weit genug gewählt, dass nichts hinein diffundieren kann und die Randbedingungen gewahrt werden.
 
-Die Konfiguration mit $\gls{chi_st}=\SI{3.79}{\per\second}$ wurde exkludiert, weil es dort zu keiner Verbrennung kam, wie man an der Temperatur in \autoref{fig:flameletLe1:s-kuve-ulf} links ablesen kann. Dies ist seltsam, da bei der Lösung im Ortsraum höhere Werte noch zündeten, mit Ausnahme von zwei Ausreißern.
+Die Konfiguration mit $\gls{chi_st}=\SI{3.79}{\per\second}$ wurde exkludiert, weil es dort zu keiner Verbrennung kam, wie man an der Temperatur in \autoref{fig:flameletLe1:s-kurve-ulf} links ablesen kann. Dies ist seltsam, da bei der Lösung im Ortsraum höhere Werte noch zündeten, mit Ausnahme von zwei Ausreißern.
 Der Wert $\gls{chi_st}=\SI{0.01}{\per\second}$ hingegen wurde rausgenommen, da dieser Wert in \autoref{fig:flameletLe1:tmax-pv} den linearen Zusammenhang zwischen \gls{T_max} und $\gls{PV}_\mathrm{st}$ bricht, sodass er als Ausreißer erscheint. Möglicherweise deutet dieser Bruch auf ein unbekanntes Problem in der Simulation hin. Eine genauere Untersuchung für $\gls{chi_st} \in [0.01,0.1]\SI{}{\per\second}$ wäre aber notwendig, um zu entscheiden, ob der Bruch des linearen Zusammenhangs physikalisch oder numerisch ist.
 
 Für höhere Dissipationsraten sinkt die Flammentemperatur, bis die Flamme für genügend hohe \gls{chi_st} erlischt. Im Vergleich zu den Ergebnissen aus Kapitel~\ref{sct:oppdiffLe1:Tmax-chist} sind die Lösungen mittels Flamelets entweder leicht kälter, oder aber die Dissipationsraten \gls{chi_st} unterscheiden sich systematisch.
@@ -109,8 +109,8 @@ Für höhere Dissipationsraten sinkt die Flammentemperatur, bis die Flamme für 
 \subsubsection{Speziesprofile}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-In \autoref{fig:Le1:yi-z:cmp:oppLe} sind keine großen Unterschiede der Speziesprofile der Flameletlösung und der der Lösung im Ortsraum in. Vergleiche auch die vollständigen Ergebnisse in \autoref{fig:flameletLe1:yi-z} in Anhang~\ref{appendix:flameletLe1:yi-z} und \autoref{fig:yi-z}. Für eine genauere Auswertung also Kapitel~\ref{sct:oppdiffLe1-yi-z}.
-Die Ähnlichkeit der Ergebnisse zeigt empirisch, zusätzlich zur mathematischen Herleitung, dass man die jeweilige numerisch einfachere Differentialgleichung lösen kann und damit auch die Lösung der anderen äquivalenten hat.
+In \autoref{fig:Le1:yi-z:cmp:oppLe} sind keine großen Unterschiede zwischen den Speziesprofilen der Flameletlösung und der der Lösung im Ortsraum zu sehen. Vergleiche auch die vollständigen Ergebnisse in \autoref{fig:flameletLe1:yi-z} in Anhang~\ref{appendix:flameletLe1:yi-z} und \autoref{fig:yi-z}. Für eine genauere Auswertung siehe also Kapitel~\ref{sct:oppdiffLe1-yi-z}.
+Es gibt zwar kleine Unterschiede, die in dieser Darstellung nicht sichtbar sind, vgl. auch \autoref{fig:flameletLe1:yi-pv}, aber dennoch zeigt die Ähnlichkeit der Ergebnisse empirisch, zusätzlich zur mathematischen Herleitung, dass man die jeweilige numerisch einfachere Differentialgleichung lösen kann und damit auch die Lösung der anderen äquivalenten Differentialgleichung hat.
 
 \begin{figure}[H]\begin{center}
     \begin{minipage}{0.5\linewidth}\begin{center}
@@ -128,10 +128,14 @@ Die Ähnlichkeit der Ergebnisse zeigt empirisch, zusätzlich zur mathematischen 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \begin{figure}[H]\begin{center}
-    \begin{minipage}{0.5\linewidth}\begin{center}
+    \begin{minipage}{0.33\linewidth}\begin{center}
         \includegraphics[width=\linewidth]{Beleg-flamelet-Le1/chianal}
-    \end{center}\end{minipage}\begin{minipage}{0.5\linewidth}\begin{center}
+        \\\lstinline!CHI_STOIC!
+    \end{center}\end{minipage}\begin{minipage}{0.33\linewidth}\begin{center}
         \includegraphics[width=\linewidth]{Beleg-flamelet-Le1/chianal-calc}
+        \\$\chi_\mathrm{st}$ nächster Nachbar
+    \end{center}\end{minipage}\begin{minipage}{0.33\linewidth}\begin{center}
+        \includegraphics[width=\linewidth]{Beleg-flamelet-Le1/chianal-zoom}
     \end{center}\end{minipage}
     \caption{Plot der skalaren Dissipationsraten über den Mischungsbruch aus der Simulation (Punkte) und Vergleich zum analytischen Verhalten (gestrichelte Linie) aus \autoref{eq:chianal}. Gleiche Farben gehören zur gleichen Konfiguration. \textbf{Links:} $\chi_\mathrm{st}$ wie mit \lstinline!CHI_STOIC! festgelegt. Damit die Punkte aus der Simulation von der analytischen Kurve zu unterscheiden sind, wurde nur jeder vierte Punkt geplottet. \textbf{Rechts:} $\chi_\mathrm{st}$ naiv errechnet, vgl. Listing~\ref{lst:chist-naiv}.}
     \label{fig:flameletLe1:chianal}
@@ -199,7 +203,7 @@ Erst unter Einbezug von zwei Nachbarn, also fünf Werten, wird die Genauigkeit v
 \subsubsection{\texorpdfstring{$T_\mathrm{max}$}{Tmax} über die Fortschrittsvariable}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-In \autoref{fig:flameletLe1:tmax-pv} kann man viel besser als in \autoref{fig:tmax-pv} einen linearen Zusammenhang zwischen Fortschrittsvariable und maximaler Temperatur erkennen. Die Konfiguration mit $\gls{chi_st}=\SI{0.01}{\per\second}$ weicht als einzige aus unbekannten Gründen von diesem linearen Verhalten ab. Wahrscheinlich gibt es Probleme in der Konvergenz der Lösung oder aber es ist ein reales physikalisches Verhalten im Grenzfall für strömungslose Flammen. Dieser Wert von einigen Betrachtungen ausgenommen.
+In \autoref{fig:flameletLe1:tmax-pv} kann man wie in \autoref{fig:tmax-pv} einen linearen Zusammenhang zwischen Fortschrittsvariable und maximaler Temperatur erkennen. Die Konfiguration mit $\gls{chi_st}=\SI{0.01}{\per\second}$ weicht als einzige aus unbekannten Gründen von diesem linearen Verhalten ab. Wahrscheinlich gibt es Probleme in der Konvergenz der Lösung oder aber es ist ein reales physikalisches Verhalten im Grenzfall für strömungslose Flammen. Dieser Wert wurde daher von einigen Betrachtungen ausgenommen.
 
 \begin{figure}[H]
     \begin{minipage}{0.5\linewidth}\begin{center}
@@ -207,11 +211,14 @@ In \autoref{fig:flameletLe1:tmax-pv} kann man viel besser als in \autoref{fig:tm
     \end{center}\end{minipage}\begin{minipage}{0.5\linewidth}\begin{center}
         \includegraphics[width=\linewidth]{Beleg-flamelet-Le1/PV-Tmax-zoom}
     \end{center}\end{minipage}
-    \caption{Plot der maximalen Temperatur über die Fortschrittsvariable am Ort stöchiometrischer Mischung. Die Annotationen sind die jeweiligen \gls{chi_st} in \SI{}{\per\second}. \textbf{Rechts:} Zoom unter Auslassung der Werte für $v=\SI{1.0}{\meter\per\second}$ und $v=\SI{1.5}{\meter\per\second}$}
+    \caption{
+        Plot der maximalen Temperatur über die Fortschrittsvariable am Ort stöchiometrischer Mischung. Die Annotationen sind die jeweiligen \gls{chi_st} in \SI{}{\per\second}.
+        %\textbf{Rechts:} Zoom unter Auslassung der Werte für $v=\SI{1.0}{\meter\per\second}$ und $v=\SI{1.5}{\meter\per\second}$
+    }
     \label{fig:flameletLe1:tmax-pv}
 \end{figure}
 
-Im Vergleich zu \lstinline!oppdiffJet! in \autoref{fig:tmax-pv} rechts stellt sich heraus, dass für gleiche \gls{chi_st} die maximalen Temperaturen zwar ungefähr gleich sind, aber die Fortschrittsvariable in dieser Darstellung doch sehr zwischen den beiden Lösungsverfahren unterscheidet. Die Unterschiede sind aber in der dritten Nachkommastelle, sodass dies nur schwer im Vergleich der Speziesprofilen auffallen würde. Da die Kurve von \lstinline!oppdiffJet! chaotischer aussieht, sind Probleme in der Stabilität der Lösung im Ortsraum als Ursache zu vermuten.
+Im Vergleich zu \lstinline!oppdiffJet! in \autoref{fig:tmax-pv} rechts stellt sich heraus, dass für gleiche \gls{chi_st} sich die maximalen Temperaturen und die Fortschrittsvariable in dieser Darstellung sich leicht zwischen den beiden Lösungsverfahren unterscheiden. Die Unterschiede sind aber im Promillebereich, sodass dies nur schwer im Vergleich der Speziesprofilen auffallen würde.
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

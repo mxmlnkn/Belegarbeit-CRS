@@ -84,23 +84,23 @@ def plotSCurves():
         #if chist_list[i] >= 0.4:
         #    ax[0].annotate( labels[i], xycoords='data', textcoords='offset points',
         #        size=9, xytext=(-8,5), xy=( chist_list[i], Tmax_list[i] ) )
-        ax[2].annotate( format(chist_list[i],'.2f'), xycoords='data', textcoords='offset points', size=9, xytext=(5,-3), xy=( PVst_list[i] , Tmax_list[i] ) )
+        ax[2].annotate( format(chist_list[i],'.2f'), xycoords='data', textcoords='offset points', size=9, xytext=(6,-3), xy=( PVst_list[i] , Tmax_list[i] ) )
 
     for i in iSelected:
         #ax[1].annotate( labels[i], xycoords='data', textcoords='offset points',
         #    size=9, xytext=(5,0), xy=( chist_list[i], Tmax_list[i] ) )
-        ax[3].annotate( format(chist_list[i],'.2f'), xycoords='data', textcoords='offset points', size=9, xytext=(5,-3), xy=( PVst_list[i] , Tmax_list[i] ) )
-        ax[5].annotate( format(chist_list[i],'.2f'), xycoords='data', textcoords='offset points', size=9, xytext=(-26,-3), xy=( PVst_list[i] , Tmax_list[i] ) )
+        ax[3].annotate( format(chist_list[i],'.2f'), xycoords='data', textcoords='offset points', size=9, xytext=(-27,-3), xy=( PVst_list[i] , Tmax_list[i] ) )
+        ax[5].annotate( format(chist_list[i],'.2f'), xycoords='data', textcoords='offset points', size=9, xytext=(-27,-3), xy=( PVst_list[i] , Tmax_list[i] ) )
 
     for i in opp_iSelected:
-        ax[3].annotate( format(opp_chist_list[i],'.2f'), xycoords='data', textcoords='offset points',size=9, xytext=(5,-3), xy=( opp_PVst_list[i] , opp_Tmax_list[i] ) )
-        ax[5].annotate( format(opp_chist_list[i],'.2f'), xycoords='data', textcoords='offset points', size=9, xytext=(5,-3), xy=( opp_PVst_list[i] , opp_Tmax_list[i] ) )
+        ax[3].annotate( format(opp_chist_list[i],'.2f'), xycoords='data', textcoords='offset points', size=9, xytext=(6,-3), xy=( opp_PVst_list[i] , opp_Tmax_list[i] ) )
+        ax[5].annotate( format(opp_chist_list[i],'.2f'), xycoords='data', textcoords='offset points', size=9, xytext=(6,-3), xy=( opp_PVst_list[i] , opp_Tmax_list[i] ) )
 
     for i in flameletLeVar_iSelected:
         ax[5].annotate( format(flameletLeVar_chist_list[i],'.2f'), xycoords='data', textcoords='offset points', size=9, xytext=(5,-3), xy=( flameletLeVar_PVst_list[i] , flameletLeVar_Tmax_list[i] ) )
 
     for i in oppLeVar_iSelected:
-        ax[5].annotate( format(oppLeVar_chist_list[i],'.2f'), xycoords='data', textcoords='offset points', size=9, xytext=(-26,-3), xy=( oppLeVar_PVst_list[i] , oppLeVar_Tmax_list[i] ) )
+        ax[5].annotate( format(oppLeVar_chist_list[i],'.2f'), xycoords='data', textcoords='offset points', size=9, xytext=(-27,-3), xy=( oppLeVar_PVst_list[i] , oppLeVar_Tmax_list[i] ) )
 
     fnames = [
         "chist-Tmax"           ,  # 0
@@ -119,8 +119,8 @@ def plotErfcProfiles():
     # needs: chist_list Zstanal ZUlf chist_intp_list
     from scipy.special import erfcinv
     fig, ax = [], []
-    for i in range(2):
-        fig.append( plt.figure( figsize=figSmall ) )
+    for i in range(3):
+        fig.append( plt.figure( figsize=figTiny ) )
         ax.append( fig[-1].add_subplot( 111,
             xlabel = r"Mischungsbruch $Z_\mathrm{ULF}$",
             ylabel = r"Skalare Dissipationsrate $\chi / s^{-1}$",
@@ -128,6 +128,10 @@ def plotErfcProfiles():
         ) )
     ax[0].plot( [0,0], 'k--', label=r'analytisch' )
     ax[1].plot( [0,0], 'k--', label=r'analytisch' )
+    ax[2].plot( [0,0], 'r-' , label=r'CHI_STOIC' )
+    ax[2].plot( [0,0], 'b-' , label=r'$\chi_\mathrm{st}^\mathrm{naiv}$' )
+    iComp = abs( chist_list - 1.5 ).argmin()
+
     counter = -1
     for i in iSelected:
         counter += 1
@@ -136,6 +140,8 @@ def plotErfcProfiles():
 
         # simulated / experimental chi
         for j in range(len(ax)):
+            if j==2:
+                continue
             ax[j].plot( ZUlf[::4], calcChi(data,hdict)[::4], '.',
                         color=colors[counter], label=chist_sr[i] )
         # chi-erfc-profile
@@ -145,7 +151,32 @@ def plotErfcProfiles():
         # chi_interpolated-erfc-profile
         ax[1].plot( ZUlf, chianal / chist_list[i] * chist_calc_list[i], '--', color=colors[counter] ) #chist_intp_list[i]
         #chianal = strainrate_list[i]/np.pi*np.exp(-2.*erfcinv(2.*ZUlf)**2)
-    filenames = [ "chianal", "chianal-calc" ]
+
+    for i in [iComp]:
+        counter += 1
+        data, hdict = readUlfFile( 'results/chist_'+str(chist_list[i]) )
+        ZUlf = data[:,hdict["Z"]]
+        # chi-erfc-profile
+        chianal = chist_list[i]*np.exp(2.*( erfcinv(2.*Zstanal)**2 -
+                                            erfcinv(2.*ZUlf   )**2 ))
+
+        ax[2].plot( ZUlf, chianal, 'r-' )
+        ax[2].plot( ZUlf, chianal / chist_list[i] * chist_calc_list[i], 'b-' )
+
+        # simulated / experimental chi
+        ax[2].plot( ZUlf, calcChi(data,hdict), 'k.', markersize=4.0,
+                    label=chist_sr[i] )
+
+    #ax[3].set_title( chist_sr[iComp] )
+    ax[2].set_xlim([0,0.1]) # roughly 2*Zstanal as upper limit
+    ax[2].set_ylim( [0,5] )
+    ax[2].plot( [Zstanal,Zstanal], ax[2].get_ylim(), 'k--' , label=r"$Z_\mathrm{stoch}$" )
+
+    filenames = [
+        "chianal"     , # 0
+        "chianal-calc", # 1
+        "chianal-zoom", # 2
+    ]
     for i in range(len(fig)):
         finishPlot( fig[i], ax[i], filenames[i] )
 
@@ -291,7 +322,7 @@ for i in range(len(chist_list)):
     axL = fig.add_subplot( 111,
         title  = chist_sr[i],
         xlabel = r"Mischungsbruch $Z_\mathrm{ULF}$",
-        ylabel = r"Massenbrueche $Y_i$"
+        ylabel = u"Massenbrüche "+r"$Y_i$"
     )
     axL.set_xlim( 0,1 )
     axL.set_ylim( yminYi, ymaxYi + 0.1*(ymaxYi-yminYi) )
@@ -324,7 +355,7 @@ for i in range(len(species)):
     ax.append( fig[-1].add_subplot( 111,
         title  = titles[i],
         xlabel = r"Mischungsbruch $Z_\mathrm{ULF}$",
-        ylabel = r"Massenbrueche $Y_\mathrm{"+species[i]+r"}$",
+        ylabel = u"Massenbrüche "+r"$Y_\mathrm{"+species[i]+r"}$",
         xlim   = [ 0, 1 ]
     ) )
 ax[-1].set_ylabel( r"Temperatur $T / ^\circ\mathrm{K}$" )
@@ -360,7 +391,7 @@ for i in range(len(chist_list)):
     ax  = fig.add_subplot( 111,
         title  = chist_sr[i],
         xlabel = r"Fortschrittsvariable PV / %",
-        ylabel = r"Massenbrueche $Y_i$ / %",
+        ylabel = u"Massenbrüche "+r"$Y_i$ / %",
         xlim   = [ np.min(PV)*100, 1.1*np.max(PV)*100 ],
         ylim   = [ yminYi    *100, 1.1*ymaxYi    *100 ]
     )

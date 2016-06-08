@@ -33,9 +33,11 @@ Da viele der Diskussionen der Plots die in den vorigen Kapitel für konstante Le
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsubsection{\texorpdfstring{\gls{Z_Bilger}}{ZBilger} über \texorpdfstring{\gls{Z_ULF}}{ZULF}}
+\label{sct:opplevar:ZBilger-ZUlf}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 Im Vergleich zum Fall $\mathrm{Le}=1$ in Kapitel~\ref{sct:oppdiffLe1:ZBilger_Z} ist der absolute und der relative Fehler um einen Faktor 10 größer. Es ist also zu vermuten, dass zusätzlich zu den numerischen Unterschieden noch systematische hinzugekommen sind, weil die Diffusion nicht mehr für alle Spezies gleich stark ist.
+Dass der relative Fehler für sehr kleine \gls{Z_ULF} unbegrenzt ansteigt, liegt vermutlich an Fließkommaungenauigkeiten bei der Brechnung des relativen Fehlers. Interessant ist der relative Fehler um $Z_\mathrm{st}=\SI{5.45e-2}{}$.
 
 %\begin{figure}[H]
 %    \begin{minipage}{0.5\linewidth}\begin{center}
@@ -75,7 +77,10 @@ Im Vergleich in \autoref{fig:opplevar:yi-x-comp} fällt auf, dass für den Fall 
     \end{center}\end{minipage}\begin{minipage}{0.4\linewidth}\begin{center}
         \includegraphics[width=\linewidth]{{{Beleg-oppdiff-Levar/Yi-over-x-v-0.25}}}
     \end{center}\end{minipage}
-    \caption{Vergleich der Massenbruchverteilungen für \textbf{Links:} $\mathrm{Le}=1$ und \textbf{Rechts:} variable Lewis-Zahlen.}
+    \caption{
+        Vergleich der Massenbruchverteilungen für \textbf{Links:} $\mathrm{Le}=1$ und
+        \textbf{Rechts:} variable Lewis-Zahlen.
+    }
     \label{fig:opplevar:yi-x-comp}
 \end{center}\end{figure}
 
@@ -87,7 +92,11 @@ In \autoref{fig:opplevar:yi-z-comp} links, also für $\mathrm{Le}=1$, hat man fa
     \end{center}\end{minipage}\begin{minipage}{0.4\linewidth}\begin{center}
         \includegraphics[width=\linewidth]{{{Beleg-oppdiff-Levar/Yi-over-Z-v-0.25}}}
     \end{center}\end{minipage}
-    \caption{Vergleich der Massenbruchverteilungen \gls{Y_i} über den Mischungsbruch \gls{Z_ULF}. Bei $\gls{Z_ULF}=1$ ist die Methandüse, bei $\gls{Z_ULF}=0$ die Luftdüse. \textbf{Links:} Diffusionsmodellierung mit stoffunabhängiger Lewis-Zahl $\mathrm{Le}=1$. \textbf{Rechts:} stoffabhängige Lewis-Zahlen. }
+    \caption{
+        Vergleich der Massenbruchverteilungen \gls{Y_i} über den Mischungsbruch \gls{Z_ULF}. Bei $\gls{Z_ULF}=1$ ist die Methandüse, bei $\gls{Z_ULF}=0$ die Luftdüse.
+        \textbf{Links:} Diffusionsmodellierung mit stoffunabhängiger Lewis-Zahl $\mathrm{Le}=1$.
+        \textbf{Rechts:} stoffabhängige Lewis-Zahlen.
+    }
     \label{fig:opplevar:yi-z-comp}
 \end{center}\end{figure}
 
@@ -114,7 +123,12 @@ Zwei Dinge fallen im Vergleich in \autoref{fig:opplevar:yi-pv} auf: Zum einen is
         0.5   & 3.7520 & 3.5782 \\
         \hline
     \end{tabular}\end{scriptsize}\end{center}
-    \caption{Umrechnungstabelle zwischen Einlassgeschwindigkeit und skalarer Dissipationsrate bei Stöchiometrie bei der Diffusionsmodellierung für \textbf{Mitte:} $\mathrm{Le}\neq 1$ und \textbf{Rechts:} $\mathrm{Le}=1$, Werte zum Vergleich übernommen aus Tabelle~\ref{tbl:v-chist} auf Seite~\pageref{tbl:v-chist}.}
+    \caption{
+        Umrechnungstabelle zwischen Einlassgeschwindigkeit und skalarer Dissipationsrate bei Stöchiometrie bei der Diffusionsmodellierung für
+        \textbf{Mitte:} $\mathrm{Le}\neq 1$ und
+        \textbf{Rechts:} $\mathrm{Le}=1$.
+        Werte zum Vergleich übernommen aus Tabelle~\ref{tbl:v-chist} auf Seite~\pageref{tbl:v-chist}.
+    }
     \label{tbl:opplevar:v-chist}
 \end{table}
 

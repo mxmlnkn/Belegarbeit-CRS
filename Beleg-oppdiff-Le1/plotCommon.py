@@ -24,7 +24,8 @@ def bisectionExtrema( f,a,b,nIterations=16,debug=False ):
     """
     extremaWasInside = True
     for i in range(nIterations):
-        assert( b > a )
+        if b < a:
+            a,b = b,a
         c  = 0.5 *(a+b)
         # everything smaller than interval width / 6 should basically be enough
         # if the factor is too small it may result in problems like the
@@ -49,6 +50,11 @@ def bisectionExtrema( f,a,b,nIterations=16,debug=False ):
             if extremaWasInside:
                 break   # this can also happen if dx is too small to resolve, so we break the search
             else:
+                raise Exception(
+                    "Specified Interval seems to not contain any extremum!\n" +
+                    "  ["+str(a)+","+str(b)+"]: f(a)=" + str(f(a)) +
+                    ", f((a+b)/2)=" + str(f(c)) + "f(b)=" + str(f(b))
+                )
                 return None, None, None # unreasonable result, therefore error code
         elif left == middle:
             a = c
@@ -56,6 +62,7 @@ def bisectionExtrema( f,a,b,nIterations=16,debug=False ):
             b = c
         else:
             # This happens if there are two extrema inside interval
+            raise Exception( "Specified Interval has more than one extremum!" )
             return None, None, None
 
     c = 0.5*(a+b)
@@ -133,22 +140,21 @@ def autoRangeXY( ax, lb = 0.1, rb = None, bb = None, tb = None ):
 
 from math import log10,ceil,floor
 def autoLabel( ax, axis, nbins=5, roundFunc=ceil ):
-    #xmin  = axisMin( ax, axis )
-    #xmax  = axisMax( ax, axis )
-    #isLog = axisIsLog( ax, axis )
-    #if isLog:
-    #    dx   = roundFunc( ( log10(xmax) - log10(xmin) ) / nbins )
-    #else:
-    #    assert( False, "Not yet implemented" )
-    #
-    #from numpy import arange
-    #n0 = int( floor( log10( xmin ) ) )
-    #n1 = int( ceil ( log10( xmax ) ) )
-    ##print "n0 =",n0,", n1 =",n1,", dx =",dx
-    #xpos = 10.**( n0 + arange(nbins+2)*dx )
-    #ax.set_xticks( xpos )
-    ##print "set xlabels at : ", xpos
-    print ""
+    xmin  = axisMin( ax, axis )
+    xmax  = axisMax( ax, axis )
+    isLog = axisIsLog( ax, axis )
+    if isLog:
+        dx   = roundFunc( ( log10(xmax) - log10(xmin) ) / nbins )
+    else:
+        assert( False, "Not yet implemented" )
+
+    from numpy import arange
+    n0 = int( floor( log10( xmin ) ) )
+    n1 = int( ceil ( log10( xmax ) ) )
+    #print "n0 =",n0,", n1 =",n1,", dx =",dx
+    xpos = 10.**( n0 + arange(nbins+2)*dx )
+    ax.set_xticks( xpos )
+    #print "set xlabels at : ", xpos
 
 
 def relErr( x, y ):
@@ -361,29 +367,60 @@ def precalcOppdiffValues( basedir ):
         data, hdict = readUlfFile( path )
         T    = data[:,hdict["T"]]
         imax = T.argmax()
-        Tmax_list.append( T[imax] )
+
+        # Fortschrittsvariable
+        PV = data[:,hdict["CO"]] + data[:,hdict["CO2"]]
 
         ZUlf    = data[:,hdict["Z"]]
         ist     = abs( ZUlf - Zstanal ).argmin()
         chi     = calcChi(data,hdict)
 
         chist   = chi[ist] # i-stoch calculated above with Z_st = 0.0545
-        chist_list.append( chist )
-        Tst_list.append( T[ist] )
         #chist_sr.append( r"$\chi_\mathrm{st}=" + format( chist, '.3f' ) + r"\,s^{-1}$" )
         print ""
         print "v =",v
+        print "ist = ",ist
         print "Chi around >chi_st<:", chi[ist-1],",>", chi[ist],"<,", chi[ist+1]
         print "Z   around >Z_st<  :",ZUlf[ist-1],",>",ZUlf[ist],"<,",ZUlf[ist+1]
 
-        Zl = data[ist-1,hdict["Z"]]
-        Zc = data[ist  ,hdict["Z"]]
-        Zr = data[ist+1,hdict["Z"]]
-        chist_intp = chi[ist-1] * (Zc-Zstanal)*(Zr-Zstanal)/( (Zc-Zl)*(Zr-Zl) ) + \
-                     chi[ist  ] * (Zl-Zstanal)*(Zr-Zstanal)/( (Zl-Zc)*(Zr-Zc) ) + \
-                     chi[ist+1] * (Zl-Zstanal)*(Zc-Zstanal)/( (Zl-Zr)*(Zc-Zr) )
+        chist_intp  = p( ZUlf[ ist-1:ist+2 ], chi[ ist-1:ist+2 ], Zstanal )
+        chist_intp2 = p( ZUlf[ ist-2:ist+3 ], chi[ ist-2:ist+3 ], Zstanal )
+        Tst         = p( ZUlf[ ist-2:ist+3 ], T  [ ist-2:ist+3 ], Zstanal )
+        PVst        = p( ZUlf[ ist-2:ist+3 ], PV [ ist-2:ist+3 ], Zstanal )
+
+        imaxT       = T .argmax()
+        imaxPV      = PV.argmax()
+        #print "imax         =",imax
+        #print "imaxT        =",imaxT
+        #print "imaxPV       =",imaxPV
+        #print "Z[0,-1]      =",ZUlf[0],ZUlf[-1]
+        #print "ZUlf[imaxT ] =",ZUlf[ imaxT -1:imaxT +2 ]
+        #print "ZUlf[imaxPV] =",ZUlf[ imaxPV-1:imaxPV+2 ]
+        #print "T [imaxT ]   =",T   [ imaxT -1:imaxT +2 ]
+        #print "PV[imaxPV]   =",PV  [ imaxPV-1:imaxPV+2 ]
+        #print "T [ist]      =",T   [ ist   -1:ist   +2 ]
+        #print "PV[ist]      =",PV  [ ist   -1:ist   +2 ]
+        #print
+        Tintp  = lambda Z: p( ZUlf[ imaxT -2:imaxT +3 ], T [ imaxT -2:imaxT +3 ], Z )
+        PVintp = lambda Z: p( ZUlf[ imaxPV-2:imaxPV+3 ], PV[ imaxPV-2:imaxPV+3 ], Z )
+        # Exceptions (not maximum found) can happen e.g. for cases which didn't ignite!
+        try:
+            Tmax , ZTmax , dZT  = bisectionExtrema(  Tintp , ZUlf[ imaxT -2 ], ZUlf[ imaxT +2 ] )
+        except:
+            Tmax , ZTmax , dZT  = T[imaxT], ZUlf[imaxT], 1
+
+        try:
+            PVmax, ZPVmax, dZPV = bisectionExtrema( PVintp , ZUlf[ imaxPV-2 ], ZUlf[ imaxPV+2 ] )
+        except:
+            PVmax, ZPVmax, dZPV = PV[imaxPV], ZUlf[imaxPV], 1
+
+        chist_list     .append( chist      )
+        Tmax_list      .append( Tmax       )
+        Tst_list       .append( Tst        )
         chist_intp_list.append( chist_intp )
-        print "Chist interpolated :",chist_intp
+        PVst_list      .append( PVst       )
+        PVmax_list     .append( PVmax      )
+
         chist_sr.append( r"$\chi_\mathrm{st}=" + format( chist_intp, '.3f' ) + r"\,\mathrm{s}^{-1}$" )
 
         from math import sqrt
@@ -400,8 +437,24 @@ def precalcOppdiffValues( basedir ):
 
         # Fortschrittsvariable
         PV = data[:,hdict["CO"]] + data[:,hdict["CO2"]]
-        PVst_list.append( PV[ist] )
-        PVmax_list.append( PV[imax] )
+
+        #print "Chist configured              : ", chist
+        #print "Chist calculated naively      : ", chist
+        #print "Chist interpolated (3 points) : ", chist_intp
+        #print "Chist interpolated (5 points) : ", chist_intp2
+        #
+        #print "Z(Tmax) interpolated          : ", ZTmax," +- ",dZT
+        #print "Tmax naively                  : ", T[imax]
+        #print "Tmax interpolated             : ", Tmax
+        #print "Tst naive                     : ", T[ist]
+        #print "Tst interpolated              : ", Tst
+        #
+        #print "Z(PVmax) interpolated         : ", ZPVmax," +- ",dZPV
+        #print "PVmax naive                   : ", PV[imax]
+        #print "PVmax interpolated            : ", PVmax
+        #print "PVst naive                    : ", PV[ist]
+        #print "PVst interpolated             : ", PVst
+        #print
 
     from numpy import array
     return array( v_list          ), \
@@ -445,56 +498,63 @@ def precalcFlameletValues( basedir ):
         data, hdict = readUlfFile( path )
         T    = data[:,hdict["T"]]
         imax = T.argmax()
-        Tmax_list.append( T[imax] )
+
+        # Fortschrittsvariable
+        PV = data[:,hdict["CO"]] + data[:,hdict["CO2"]]
 
         # Calculate Chi_stoich and compare to those input into the simulation
         ZUlf       = data[:,hdict["Z"]]
         ist        = abs( ZUlf - Zstanal ).argmin()
         chi        = calcChi(data,hdict)
         chist_calc = chi[ist]
+
+        chist_intp  = p( ZUlf[ ist-1:ist+2 ], chi[ ist-1:ist+2 ], Zstanal )
+        chist_intp2 = p( ZUlf[ ist-2:ist+3 ], chi[ ist-2:ist+3 ], Zstanal )
+        Tst         = p( ZUlf[ ist-2:ist+3 ], T  [ ist-2:ist+3 ], Zstanal )
+        PVst        = p( ZUlf[ ist-2:ist+3 ], PV [ ist-2:ist+3 ], Zstanal )
+
+        # Note that the limits for the bisection MUST be fitted with
+        # the polynomial, because Lagrange polynomials are TERRIBLE
+        # at extrapolation
+        imaxT       = T .argmax()
+        imaxPV      = PV.argmax()
+        Tintp  = lambda Z: p( ZUlf[ imaxT -2:imaxT +3 ], T [ imaxT -2:imaxT +3 ], Z )
+        PVintp = lambda Z: p( ZUlf[ imaxPV-2:imaxPV+3 ], PV[ imaxPV-2:imaxPV+3 ], Z )
+        # Exceptions (not maximum found) can happen e.g. for cases which didn't ignite!
+        try:
+            Tmax , ZTmax , dZT  = bisectionExtrema(  Tintp , ZUlf[ imaxT -2 ], ZUlf[ imaxT +2 ] )
+        except:
+            Tmax , ZTmax , dZT  = T[imaxT], ZUlf[imaxT], 1
+
+        try:
+            PVmax, ZPVmax, dZPV = bisectionExtrema( PVintp , ZUlf[ imaxPV-2 ], ZUlf[ imaxPV+2 ] )
+        except:
+            PVmax, ZPVmax, dZPV = PV[imaxPV], ZUlf[imaxPV], 1
+
         chist_calc_list.append( chist_calc )
-        Tst_list.append( T[ist] )
-
-        Zl = ZUlf[ist-1]
-        Zc = ZUlf[ist]
-        Zr = ZUlf[ist+1]
-        chist_intp = chi[ist-1] * (Zc-Zstanal)*(Zr-Zstanal)/( (Zc-Zl)*(Zr-Zl) ) + \
-                     chi[ist  ] * (Zl-Zstanal)*(Zr-Zstanal)/( (Zl-Zc)*(Zr-Zc) ) + \
-                     chi[ist+1] * (Zl-Zstanal)*(Zc-Zstanal)/( (Zl-Zr)*(Zc-Zr) )
-        print "Test lagrange: ",chist_intp," ?= ",p( data[ist-1:ist+2,hdict["Z"]], chi[ist-1:ist+2], Zstanal )
-        chist_intp2 = p( data[ist-2:ist+2,hdict["Z"]], chi[ist-2:ist+2], Zstanal )
-
+        Tmax_list.append( Tmax       )
+        Tst_list.append( Tst        )
         chist_intp_list.append( chist_intp )
+        PVst_list   .append( PVst       )
+        PVmax_list  .append( PVmax      )
 
-        print "Chist configured              : ",chist
-        print "Chist calculated naively      : ",chist_calc
-        print "Chist interpolated (3 points) : ",chist_intp
-        print "Chist interpolated (5 points) : ",chist_intp2
-        print "Chist def p                   : ",p( ZUlf[ ist-1:ist+2 ], chi[ ist-1:ist+2 ], Zstanal )
-        print "x: ZUlf = ", ZUlf[ ist-1:ist+2 ]
-        print "y: T    = ", T   [ ist-1:ist+2 ]
-        Tintp = lambda Z: p( ZUlf[ ist-1:ist+2 ], T[ ist-1:ist+2 ], Z )
-        print "polynomial : ",Tintp( ZUlf[ist-1] ), Tintp( ZUlf[ist+1] )
-        Tmax, Zmax, dZ = bisectionExtrema( Tintp , ZUlf[ist-2], ZUlf[ist+2], debug=True )
-        print "Z borders                     : ",ZUlf[ist-2], ZUlf[ist+12]
-        print "Zmax def p                    : ",Zmax," +- ",dZ
-        print "Tmax def p                    : ",Tmax
-        print "Tst def p                     : ",p( ZUlf[ ist-1:ist+2 ], T[ ist-1:ist+2 ], Zstanal )
-
-        from matplotlib.pyplot import figure, plot, show
-        from numpy import linspace
-        figure()
-        Z = linspace( ZUlf[ist-2], ZUlf[ist+2], 100, endpoint=True )
-        plot( Z, Tintp(Z) )
-        plot( ZUlf[ ist-2:ist+3 ], T[ ist-2:ist+3 ], 'ro' )
-        show()
-
-        exit()
-
-        # Fortschrittsvariable
-        PV = data[:,hdict["CO"]] + data[:,hdict["CO2"]]
-        PVst_list.append( PV[ist] )
-        PVmax_list.append( PV[imax] )
+        #print "Chist configured              : ", chist
+        #print "Chist calculated naively      : ", chist_calc
+        #print "Chist interpolated (3 points) : ", chist_intp
+        #print "Chist interpolated (5 points) : ", chist_intp2
+        #
+        #print "Z(Tmax) interpolated          : ", ZTmax," +- ",dZT
+        #print "Tmax naively                  : ", T[imax]
+        #print "Tmax interpolated             : ", Tmax
+        #print "Tst naive                     : ", T[ist]
+        #print "Tst interpolated              : ", Tst
+        #
+        #print "Z(PVmax) interpolated         : ", ZPVmax," +- ",dZPV
+        #print "PVmax naive                   : ", PV[imax]
+        #print "PVmax interpolated            : ", PVmax
+        #print "PVst naive                    : ", PV[ist]
+        #print "PVst interpolated             : ", PVst
+        #print
 
     from numpy import array
     return array( fname_list      ), \

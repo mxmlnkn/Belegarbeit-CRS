@@ -63,7 +63,17 @@ def plotSCurves():
         ax[6].annotate( labels[i], xycoords='data', textcoords='offset points',
             size=9, xytext=(5,-3), xy=( PVmax_list[i]        , Tmax_list[i] ) )
 
-    fnames = [ "chist-Tmax", "chist-Tmax-zoom", "k-Tmax", "k-Tmax-zoom", "PV-Tmax", "PV-Tmax-zoom", "PVmax-Tmax-zoom" ]
+    autoRange( ax[5], 'x', 0.1, 0.2 )
+
+    fnames = [
+        "chist-Tmax"     , # 0
+        "chist-Tmax-zoom", # 1
+        "k-Tmax"         , # 2
+        "k-Tmax-zoom"    , # 3
+        "PV-Tmax"        , # 4
+        "PV-Tmax-zoom"   , # 5
+        "PVmax-Tmax-zoom"  # 6
+    ]
     for i in range(len(fnames)):
         finishPlot( fig[i], ax[i], fnames[i] )
 
@@ -150,12 +160,14 @@ def plotMischungsbruch():
     # fuck doesn't fucking work
     #ax[4].locator_params( axis='x', nbins=5 )  # reduce number of ticks because of overalpping
     #ax[5].locator_params( axis='x', nbins=5 )  # reduce number of ticks because of overalpping
-    filenames=[ "ZULF-ZBilger-for-5-chist",
-                "ZULF-ZBilger-diff-for-5-chist",
-                "Zcalc-ZBilger-for-5-chist",
-                "Zcalc-ZBilger-diff-for-5-chist",
-                "Zcalc-ZBilger-relerr-for-5-chist",
-                "ZULF-ZBilger-relerr-for-5-chist" ]
+    filenames=[
+        "ZULF-ZBilger-for-5-chist"        , # 0
+        "ZULF-ZBilger-diff-for-5-chist"   , # 1
+        "Zcalc-ZBilger-for-5-chist"       , # 2
+        "Zcalc-ZBilger-diff-for-5-chist"  , # 3
+        "Zcalc-ZBilger-relerr-for-5-chist", # 4
+        "ZULF-ZBilger-relerr-for-5-chist"   # 5
+    ]
     for i in range(len(fig)):
         finishPlot( fig[i], ax[i], filenames[i] )
 
@@ -163,8 +175,8 @@ def plotErfcProfiles():
     ############## chi vs. erfc profile (using interpolated chist) #############
     from scipy.special import erfcinv
     fig, ax = [], []
-    for i in range(3):
-        fig.append( plt.figure( figsize=figSmall ) )
+    for i in range(4):
+        fig.append( plt.figure( figsize=figTiny ) )
         ax.append( fig[-1].add_subplot( 111,
             xlabel = r"Mischungsbruch $Z_\mathrm{ULF}$",
             ylabel = r"Skalare Dissipationsrate $\chi / s^{-1}$",
@@ -173,6 +185,10 @@ def plotErfcProfiles():
     ax[0].plot( [0,0], 'k--', label=r'analytisch' )
     ax[1].plot( [0,0], 'k--', label=r'analytisch$\cdot 1.2$' )
     ax[2].plot( [0,0], 'k--', label=r'analytisch' )
+    ax[3].plot( [0,0], 'r-' , label=r'analytisch$\cdot 1.2$' )
+    ax[3].plot( [0,0], 'b-' , label=r'analytisch' )
+    iComp = abs( chist_intp_list - 1.5 ).argmin()
+
     counter = -1
     for i in iSelected:
         counter += 1
@@ -181,6 +197,8 @@ def plotErfcProfiles():
 
         # simulated / experimental chi
         for j in range(len(ax)):
+            if j==3:
+                continue
             ax[j].plot( ZUlf, calcChi(data,hdict), '.', color=colors[counter],
                         label=chist_sr[i] )
         # chi-erfc-profile
@@ -191,8 +209,35 @@ def plotErfcProfiles():
         ax[1].plot( ZUlf, 1.2*chianal, '--', color=colors[counter] )
         # chi_interpolated-erfc-profile
         ax[2].plot( ZUlf, chianal / chist_list[i] * chist_intp_list[i], '--', color=colors[counter] )
+
+    for i in [iComp]:
+        counter += 1
+        data, hdict = readUlfFile( 'results/v_'+str(v_list[i]) )
+        ZUlf = data[:,hdict["Z"]]
+
+        # chi-erfc-profile
+        chianal = chist_list[i]*np.exp(2.*( erfcinv(2.*Zstanal)**2 -
+                                            erfcinv(2.*ZUlf   )**2 ))
+
+        ax[3].plot( ZUlf, 1.2*chianal, 'r-' )
+        ax[3].plot( ZUlf, chianal / chist_list[i] * chist_intp_list[i], 'b-' )
+
+        # simulated / experimental chi
+        ax[3].plot( ZUlf, calcChi(data,hdict), 'k.', markersize=2.0,
+                    label=chist_sr[i] )
+
+    #ax[3].set_title( chist_sr[iComp] )
+    ax[3].set_xlim([0,0.1]) # roughly 2*Zstanal as upper limit
+    ax[3].set_ylim( [0,5] )
+    ax[3].plot( [Zstanal,Zstanal], ax[3].get_ylim(), 'k--' , label=r"$Z_\mathrm{stoch}$" )
+
         #chianal = strainrate_list[i]/np.pi*np.exp(-2.*erfcinv(2.*ZUlf)**2)
-    filenames = [ "chianal", "chianal1.2", "chianal-intp" ]
+    filenames = [
+        "chianal"     , # 1
+        "chianal1.2"  , # 2
+        "chianal-intp", # 3
+        "chianal-zoom"  # 4
+    ]
     for i in range(len(fig)):
         finishPlot( fig[i], ax[i], filenames[i] )
 
@@ -231,8 +276,8 @@ ymaxYi = 0.13
 ################# Plots #################
 
 plotSCurves()
-plotMischungsbruch()
 plotErfcProfiles()
+plotMischungsbruch()
 
 ################################### x over ix ##################################
 
@@ -318,7 +363,7 @@ for i in range(len(v_list)):
     axL = fig.add_subplot(111)
     # putting these options inside add_subplot will weirdly result in weird double tick names ... bug ???
     axL.set_xlabel( r"Ort x / m" )
-    axL.set_ylabel( r"Massenbrueche $Y_i$" )
+    axL.set_ylabel( u"Massenbrüche "+r"$Y_i$" )
     axL.set_xlim( np.min(x),np.max(x) )
     axL.set_ylim( yminYi, ymaxYi + 0.1*(ymaxYi-yminYi) )
     for name in ["CO","CO2","H2","H2O","OH"]:
@@ -344,7 +389,7 @@ for i in range(len(v_list)): # only use 5 lowest velocities
     ZUlf = data[:,hdict["Z"]]
     axL = plt.subplot(111)
     axL.set_xlabel( r"Mischungsbruch $Z_\mathrm{ULF}$" )
-    axL.set_ylabel( r"Massenbrueche $Y_i$" )
+    axL.set_ylabel( u"Massenbrüche "+r"$Y_i$" )
     axL.set_xlim( 0,1 )
     axL.set_ylim( yminYi, ymaxYi + 0.1*(ymaxYi-yminYi) )
     for name in ["CO","CO2","H2","H2O","OH"]:
@@ -368,7 +413,7 @@ for i in range(len(v_list)):
     ax  = fig.add_subplot( 111,
         title  = r"$v="+str(v_list[i]) + r"\,\mathrm{m}/\mathrm{s}$, " + chist_sr[i],
         xlabel = r"Fortschrittsvariable PV / %",
-        ylabel = r"Massenbrueche $Y_i$ / %",
+        ylabel = u"Massenbrüche "+r"$Y_i$ / %",
         xlim   = [ np.min(PV)*100, 1.1*np.max(PV)*100 ],
         ylim   = [ yminYi    *100, 1.1*ymaxYi    *100 ]
     )

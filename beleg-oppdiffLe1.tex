@@ -9,7 +9,7 @@
 \label{sct:oppdiffLe1-execution}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-Um \gls{ULF} auf dem Cluster des NTFD-Lehrstuhls zu benutzen müssen erst einige Umgebungsvariablen gesetzt werden:
+Um \gls{ULF} auf dem Cluster des NTFD-Lehrstuhls benutzen zu können, müssen erst einige Umgebungsvariablen gesetzt werden:
 \begin{lstlisting}[language=bash]
 export ULF_MAIN=/opt/ulf
 export PATH=$PATH:$\gls{ULF}_MAIN
@@ -229,15 +229,22 @@ Interessant zu bemerken ist auch, dass für kleine Einströmgeschwindigkeiten di
     \right)\right]
 \end{align}
 
-Im Vergleich in \autoref{fig:chianal} liegen die analytisch berechneten Werte weit unter den numerischen Werten. Ein Faktor von $1.2$ lässt für alle \gls{chi_st} die Kurven sehr gut mit den numerischen übereinstimmen. Aus diesem Grund ist es nicht auszuschließen dass die Berechnung um einen konstanten Faktor fehlerhaft ist. Dies könnte durch ein fehlerhaftes \gls{chi_st} oder ein fehlerhaftes $Z_\mathrm{st}$ zustande kommen, da beide in Form von Proportionalitätskonstanten eingehen.
+Im Vergleich in \autoref{fig:chianal} liegen die analytisch berechneten Werte weit unter den numerischen Werten. Ein Faktor von $1.2$ lässt für alle \gls{chi_st} die Kurven sehr gut mit den numerischen übereinstimmen. Dafür stimmt die analytische Lösung aber bei $\gls{Z}=Z_\mathrm{st}$ mit den Simulationswerten überein, was bei der Multiplikation mit einem Faktor $1.2$ nicht mehr der Fall wäre, siehe \autoref{fig:chianal} rechts.
+%Aus diesem Grund ist es nicht auszuschließen dass die Berechnung um einen konstanten Faktor fehlerhaft ist. Dies könnte durch ein fehlerhaftes \gls{chi_st} oder ein fehlerhaftes $Z_\mathrm{st}$ zustande kommen, da beide in Form von Proportionalitätskonstanten eingehen.
 
 \begin{figure}[H]\begin{center}
-    \begin{minipage}{0.49\linewidth}\begin{center}
+    \begin{minipage}{0.33\linewidth}\begin{center}
         \includegraphics[width=\linewidth]{Beleg-oppdiff-Le1/chianal}
-    \end{center}\end{minipage}\begin{minipage}{0.49\linewidth}\begin{center}
+    \end{center}\end{minipage}\begin{minipage}{0.33\linewidth}\begin{center}
         \includegraphics[width=\linewidth]{{{Beleg-oppdiff-Le1/chianal1.2}}}
+    \end{center}\end{minipage}\begin{minipage}{0.33\linewidth}\begin{center}
+        \includegraphics[width=\linewidth]{{{Beleg-oppdiff-Le1/chianal-zoom}}}
     \end{center}\end{minipage}
-    \caption{Plot der simulierten skalaren Dissipationsraten \gls{chi} (Punkte) über den Mischungsbruch aus der Simulation \gls{Z_ULF} und Vergleich zum analytischen Verhalten aus \autoref{eq:chianal} (gestrichelt). Gleiche Farben gehören zur gleichen Konfiguration. \textbf{Rechts:} Ibid, aber mit einem Faktor $1.2$ auf die analytische Lösung.}
+    \caption{
+        Plot der simulierten skalaren Dissipationsraten \gls{chi} (Punkte) über den Mischungsbruch aus der Simulation \gls{Z_ULF} und Vergleich zum analytischen Verhalten aus \autoref{eq:chianal} (gestrichelt). Gleiche Farben gehören zur gleichen Konfiguration.
+        \textbf{Mitte:} Ibid, aber mit einem Faktor $1.2$ auf die analytische Lösung.
+        \textbf{Rechts:} Zoom für eine Simulation und dere analytische Lösung um den Punkt stöchiometrischer Mischung.
+    }
     \label{fig:chianal}
 \end{center}\end{figure}
 
