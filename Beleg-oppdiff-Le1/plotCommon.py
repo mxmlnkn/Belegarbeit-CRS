@@ -168,8 +168,11 @@ def relErr( x, y ):
     return y[non0], abs(res[non0])
 
 def finishPlot( fig, ax, fname, loc='best' ):
-    l = ax.legend( loc=loc, prop={'size':10}, labelspacing=0.2,
-                   fancybox=True, framealpha=0.5 )
+    if not isinstance( ax, list):
+        ax = [ ax ]
+    for a in ax:
+        l = a.legend( loc=loc, prop={'size':10}, labelspacing=0.2,
+                      fancybox=True, framealpha=0.5 )
     #if l != None:
     #    l.set_zorder(0)  # alternative to transparency
     fig.tight_layout()
